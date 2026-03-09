@@ -19,7 +19,7 @@
 
 | 영역 | 기술 |
 |------|------|
-| Frontend | Next.js 15.5, React 19, TypeScript, TailwindCSS v4, shadcn/ui |
+| Frontend | Next.js 16.1, React 19, TypeScript, TailwindCSS v4, shadcn/ui |
 | Backend | Next.js API Routes, Prisma ORM 6, PostgreSQL 16 |
 | Auth | NextAuth.js v5 (Auth.js) |
 | Queue | BullMQ, Redis |
