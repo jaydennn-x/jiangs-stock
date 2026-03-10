@@ -169,10 +169,10 @@
       "name": "Task006 작업 파일 생성",
       "description": "tasks/006-landing-page.md 작업 파일을 생성한다. tasks/000-sample.md 템플릿 구조 준수, 빈 체크박스 초기 상태.",
       "notes": "빈 체크박스. 변경사항 요약 섹션 비워둠.",
-      "status": "pending",
+      "status": "completed",
       "dependencies": [],
       "createdAt": "2026-03-10T15:47:49.965Z",
-      "updatedAt": "2026-03-10T15:47:49.965Z",
+      "updatedAt": "2026-03-10T15:58:19.728Z",
       "relatedFiles": [
         {
           "path": "tasks/006-landing-page.md",
@@ -187,21 +187,23 @@
       ],
       "implementationGuide": "tasks/000-sample.md 참고하여 tasks/006-landing-page.md 신규 생성.\n상태: 대기\n설명: 랜딩 페이지 UI 구현 (히어로+카테고리+신규갤러리+베스트셀러)\n관련파일: page.tsx, hero-search.tsx, image-grid.tsx, dummy/images.ts, dummy/categories.ts\n수락기준/구현단계: 모두 빈 체크박스",
       "verificationCriteria": "tasks/006-landing-page.md 파일 존재, 빈 체크박스 구조",
-      "analysisResult": "Task 006: 랜딩 페이지 UI 구현. Shutterstock/Getty Images 스타일. 서버 컴포넌트 기반(page.tsx), SearchInput 래퍼(hero-search.tsx, use client) 분리. 4개 섹션: 히어로(배경이미지+오버레이+검색창+트렌딩태그) + 카테고리퀵링크(6개 이미지카드) + 신규갤러리(createdAt 내림차순 12장) + 베스트셀러(salesCount 내림차순 12장). ImageGrid/ImageCard/SearchInput/dummyData 재사용."
+      "analysisResult": "Task 006: 랜딩 페이지 UI 구현. Shutterstock/Getty Images 스타일. 서버 컴포넌트 기반(page.tsx), SearchInput 래퍼(hero-search.tsx, use client) 분리. 4개 섹션: 히어로(배경이미지+오버레이+검색창+트렌딩태그) + 카테고리퀵링크(6개 이미지카드) + 신규갤러리(createdAt 내림차순 12장) + 베스트셀러(salesCount 내림차순 12장). ImageGrid/ImageCard/SearchInput/dummyData 재사용.",
+      "summary": "tasks/006-landing-page.md 파일 생성 완료. 000-sample.md 템플릿 구조 준수, 빈 체크박스 초기 상태. 히어로섹션/카테고리/신규갤러리/베스트셀러 4개 섹션 수락 기준 및 구현 단계 포함. 변경 사항 요약 섹션 비워둠.",
+      "completedAt": "2026-03-10T15:58:19.725Z"
     },
     {
       "id": "a8cc587f-168a-498e-89de-b48eebb2a52c",
       "name": "HeroSearch 클라이언트 컴포넌트 생성",
       "description": "src/components/landing/hero-search.tsx 생성. SearchInput을 서버 컴포넌트(page.tsx)에서 사용하기 위한 'use client' 래퍼 컴포넌트.",
       "notes": "SearchInput은 이미 src/components/search/search-input.tsx에 구현됨. 단순 래퍼만 생성.",
-      "status": "pending",
+      "status": "completed",
       "dependencies": [
         {
           "taskId": "3d8dc895-6505-4e4d-a00c-c6afce26fa5c"
         }
       ],
       "createdAt": "2026-03-10T15:47:49.965Z",
-      "updatedAt": "2026-03-10T15:47:49.965Z",
+      "updatedAt": "2026-03-10T15:58:38.145Z",
       "relatedFiles": [
         {
           "path": "src/components/landing/hero-search.tsx",
@@ -216,21 +218,23 @@
       ],
       "implementationGuide": "'use client'\nsrc/components/landing/ 디렉토리 생성 후 hero-search.tsx 생성.\nSearchInput 컴포넌트를 흰색 배경, max-w-2xl w-full, shadow-lg 스타일로 래핑.\nHeroSearch({ className?: string }) 함수 export.\nSearchInput placeholder='이미지를 검색해보세요... (예: 자연, 비즈니스, 여행)' 전달.",
       "verificationCriteria": "hero-search.tsx 생성, use client 지시어, SearchInput 래핑, TypeScript 에러 없음",
-      "analysisResult": "Task 006: 랜딩 페이지 UI 구현. Shutterstock/Getty Images 스타일. 서버 컴포넌트 기반(page.tsx), SearchInput 래퍼(hero-search.tsx, use client) 분리. 4개 섹션: 히어로(배경이미지+오버레이+검색창+트렌딩태그) + 카테고리퀵링크(6개 이미지카드) + 신규갤러리(createdAt 내림차순 12장) + 베스트셀러(salesCount 내림차순 12장). ImageGrid/ImageCard/SearchInput/dummyData 재사용."
+      "analysisResult": "Task 006: 랜딩 페이지 UI 구현. Shutterstock/Getty Images 스타일. 서버 컴포넌트 기반(page.tsx), SearchInput 래퍼(hero-search.tsx, use client) 분리. 4개 섹션: 히어로(배경이미지+오버레이+검색창+트렌딩태그) + 카테고리퀵링크(6개 이미지카드) + 신규갤러리(createdAt 내림차순 12장) + 베스트셀러(salesCount 내림차순 12장). ImageGrid/ImageCard/SearchInput/dummyData 재사용.",
+      "summary": "src/components/landing/hero-search.tsx 생성 완료. use client 지시어 포함, SearchInput 래퍼 컴포넌트 구현. 흰색 배경, max-w-2xl, shadow-lg 스타일 적용. placeholder 텍스트 설정 완료.",
+      "completedAt": "2026-03-10T15:58:38.139Z"
     },
     {
       "id": "8441a60a-be73-4a58-87fa-a38041288e39",
       "name": "랜딩 페이지 메인 구현",
       "description": "src/app/(buyer)/page.tsx를 완전한 랜딩 페이지로 구현. 히어로섹션, 카테고리섹션, 신규이미지갤러리, 베스트셀러갤러리 4개 섹션.",
       "notes": "CSS backgroundImage inline style 사용 (next/image fill 대신). 카테고리 카드 hover는 group/group-hover 패턴. Container는 src/components/layout/container.tsx에서 import.",
-      "status": "pending",
+      "status": "completed",
       "dependencies": [
         {
           "taskId": "a8cc587f-168a-498e-89de-b48eebb2a52c"
         }
       ],
       "createdAt": "2026-03-10T15:47:49.965Z",
-      "updatedAt": "2026-03-10T15:47:49.965Z",
+      "updatedAt": "2026-03-10T15:59:59.739Z",
       "relatedFiles": [
         {
           "path": "src/app/(buyer)/page.tsx",
@@ -275,21 +279,23 @@
       ],
       "implementationGuide": "서버 컴포넌트 유지(use client 없음).\n\nTRENDING_TAGS 상수: ['자연','비즈니스','여행','음식','건축','인물','기술','도시']\n\nfunction HeroSection() ~25줄:\n  return div(relative min-h-[70vh] flex items-center justify-center overflow-hidden)\n    div(absolute inset-0, style={{backgroundImage:'url(https://picsum.photos/seed/hero/1920/1080)',backgroundSize:'cover',backgroundPosition:'center'}})\n    div(absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70)\n    div(relative z-10 text-center px-4 w-full max-w-4xl mx-auto)\n      h1(text-white text-4xl md:text-6xl font-bold leading-tight) '완벽한 이미지를 찾아보세요'\n      p(text-white/80 mt-4 text-lg md:text-xl) '수백만 장의 고품질 스톡 이미지'\n      HeroSearch className='mt-8 mx-auto'\n      div(mt-6 flex flex-wrap gap-2 justify-center)\n        트렌딩: 라벨p(text-white/60 text-sm mr-1)+'트렌딩:'\n        TRENDING_TAGS.map(tag=>Link(/search?tag=encodeURIComponent(tag))>Badge(variant=outline, className=text-white border-white/50 hover:bg-white/20 cursor-pointer))\n\nfunction CategorySection({ categories }) ~25줄:\n  SEEDS=[10,20,30,40,50,60]\n  return section(py-16 bg-muted/30)\n    Container\n      div(mb-8) h2(text-2xl md:text-3xl font-bold) '카테고리별 탐색'\n      div(grid grid-cols-2 md:grid-cols-3 gap-4)\n        categories.map((cat,i)=>Link(/search?category=cat.slug)\n          div(group relative overflow-hidden rounded-xl aspect-[4/3])\n            div(absolute inset-0 transition-transform duration-500 group-hover:scale-110, style bgImage picsum seed SEEDS[i])\n            div(absolute inset-0 bg-black/40 group-hover:bg-black/25 transition-colors duration-300)\n            div(absolute inset-0 flex items-end p-4)\n              p(text-white font-semibold text-lg drop-shadow) cat.name\n\nfunction GallerySection({ title, images, showWishlist=false }) ~15줄:\n  return section(py-16)\n    Container\n      div(mb-8 flex items-center justify-between)\n        h2(text-2xl md:text-3xl font-bold) title\n        Link(/search) Button(variant=outline size=sm) '더 보기'\n      ImageGrid images showWishlist\n\nexport default function HomePage():\n  newImages = [...dummyImages].sort((a,b)=>b.createdAt.getTime()-a.createdAt.getTime()).slice(0,12)\n  bestImages = [...dummyImages].sort((a,b)=>b.salesCount-a.salesCount).slice(0,12)\n  return main\n    HeroSection\n    CategorySection categories=dummyCategories\n    GallerySection title='최신 이미지' images=newImages showWishlist\n    GallerySection title='베스트셀러' images=bestImages",
       "verificationCriteria": "1. 히어로 섹션: 배경이미지+오버레이+검색창+트렌딩태그 8개\n2. 카테고리 6개 카드 표시\n3. 신규 12장 갤러리 표시\n4. 베스트셀러 12장 갤러리 표시\n5. TypeScript 에러 없음\n6. 서버 컴포넌트 유지",
-      "analysisResult": "Task 006: 랜딩 페이지 UI 구현. Shutterstock/Getty Images 스타일. 서버 컴포넌트 기반(page.tsx), SearchInput 래퍼(hero-search.tsx, use client) 분리. 4개 섹션: 히어로(배경이미지+오버레이+검색창+트렌딩태그) + 카테고리퀵링크(6개 이미지카드) + 신규갤러리(createdAt 내림차순 12장) + 베스트셀러(salesCount 내림차순 12장). ImageGrid/ImageCard/SearchInput/dummyData 재사용."
+      "analysisResult": "Task 006: 랜딩 페이지 UI 구현. Shutterstock/Getty Images 스타일. 서버 컴포넌트 기반(page.tsx), SearchInput 래퍼(hero-search.tsx, use client) 분리. 4개 섹션: 히어로(배경이미지+오버레이+검색창+트렌딩태그) + 카테고리퀵링크(6개 이미지카드) + 신규갤러리(createdAt 내림차순 12장) + 베스트셀러(salesCount 내림차순 12장). ImageGrid/ImageCard/SearchInput/dummyData 재사용.",
+      "summary": "src/app/(buyer)/page.tsx 완전한 랜딩 페이지로 구현 완료. 서버 컴포넌트 유지. HeroSection(배경이미지+오버레이+HeroSearch+트렌딩태그8개), CategorySection(6개카드 hover 애니메이션), GallerySection x2(신규12장/베스트셀러12장). TypeScript에러 없음, ESLint 0 errors, Prettier 통과.",
+      "completedAt": "2026-03-10T15:59:59.737Z"
     },
     {
       "id": "d51554c8-1374-41c9-8e5a-69646c54a00d",
       "name": "최종 검증 및 완료 처리",
       "description": "npm run check-all 통과 확인, tasks/006 완료 처리, ROADMAP.md Task 006 완료 표시.",
       "notes": "npm run check-all 실패시 에러 메시지 보고 해당 파일 수정.",
-      "status": "pending",
+      "status": "completed",
       "dependencies": [
         {
           "taskId": "8441a60a-be73-4a58-87fa-a38041288e39"
         }
       ],
       "createdAt": "2026-03-10T15:47:49.965Z",
-      "updatedAt": "2026-03-10T15:47:49.965Z",
+      "updatedAt": "2026-03-10T16:00:48.685Z",
       "relatedFiles": [
         {
           "path": "src/app/(buyer)/page.tsx",
@@ -314,7 +320,9 @@
       ],
       "implementationGuide": "1. npm run check-all 실행\n2. Prettier 오류: npx prettier --write 해당파일로 수정\n3. TypeScript/ESLint 오류: 원인 파악 후 수정\n4. tasks/006-landing-page.md 모든 체크박스 체크 + 변경사항 요약 작성\n5. docs/ROADMAP.md Task 006 항목 [x] 완료 표시 및 서브태스크 [x] 체크",
       "verificationCriteria": "npm run check-all 통과, tasks/006 완료, ROADMAP [x]",
-      "analysisResult": "Task 006: 랜딩 페이지 UI 구현. Shutterstock/Getty Images 스타일. 서버 컴포넌트 기반(page.tsx), SearchInput 래퍼(hero-search.tsx, use client) 분리. 4개 섹션: 히어로(배경이미지+오버레이+검색창+트렌딩태그) + 카테고리퀵링크(6개 이미지카드) + 신규갤러리(createdAt 내림차순 12장) + 베스트셀러(salesCount 내림차순 12장). ImageGrid/ImageCard/SearchInput/dummyData 재사용."
+      "analysisResult": "Task 006: 랜딩 페이지 UI 구현. Shutterstock/Getty Images 스타일. 서버 컴포넌트 기반(page.tsx), SearchInput 래퍼(hero-search.tsx, use client) 분리. 4개 섹션: 히어로(배경이미지+오버레이+검색창+트렌딩태그) + 카테고리퀵링크(6개 이미지카드) + 신규갤러리(createdAt 내림차순 12장) + 베스트셀러(salesCount 내림차순 12장). ImageGrid/ImageCard/SearchInput/dummyData 재사용.",
+      "summary": "npm run check-all 통과 확인 (0 errors). tasks/006-landing-page.md 모든 체크박스 완료 처리 및 변경사항 요약 작성. docs/ROADMAP.md Task 006 [x] 완료 표시 및 서브태스크 전체 [x] 체크 완료.",
+      "completedAt": "2026-03-10T16:00:48.682Z"
     }
   ]
 }
