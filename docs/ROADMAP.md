@@ -63,7 +63,7 @@ JiangsStock은 블로그/웹사이트/마케팅 자료용 고품질 이미지를
   - [x] 관리자용 공통 레이아웃 (사이드바, 헤더) 골격 구현
   - [x] 전역 에러 바운더리 (`error.tsx`), 로딩 상태 (`loading.tsx`), not-found 페이지 (`not-found.tsx`) 생성
 
-- **Task 002: TypeScript 타입 정의 및 인터페이스 설계**
+- [x] **Task 002: TypeScript 타입 정의 및 인터페이스 설계** - 완료
   - 데이터 모델 타입 정의: User, Image, Category, Order, OrderItem, Wishlist, Cart, CartItem, TransactionLog, SystemConfig
   - Enum 타입 정의: UserRole, Orientation, ImageSize, LicenseType, OrderStatus, ProcessingStatus, TransactionAction, TransactionStatus
   - API 요청/응답 타입 정의: 검색 파라미터, 페이지네이션, 에러 응답
