@@ -8,7 +8,9 @@ export default function AdminProductsPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold">상품 관리</h1>
-      <p className="text-muted-foreground mt-2">TODO: 상품 관리 UI 구현 예정 (Task 016)</p>
+      <p className="text-muted-foreground mt-2">
+        TODO: 상품 관리 UI 구현 예정 (Task 016)
+      </p>
     </div>
   )
 }

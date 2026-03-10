@@ -8,7 +8,9 @@ export default function AdminDashboardPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold">대시보드</h1>
-      <p className="text-muted-foreground mt-2">TODO: 대시보드 UI 구현 예정 (Task 015)</p>
+      <p className="text-muted-foreground mt-2">
+        TODO: 대시보드 UI 구현 예정 (Task 015)
+      </p>
     </div>
   )
 }
