@@ -1,12 +1,9 @@
 import Link from 'next/link'
 
-import { Container } from '@/components/layout/container'
 import { ImageGrid } from '@/components/common/image-grid'
 import { HeroSearch } from '@/components/landing/hero-search'
-import { Button } from '@/components/ui/button'
+import { EditorialSlider } from '@/components/landing/editorial-slider'
 import { dummyImages } from '@/lib/dummy/images'
-import { dummyCategories } from '@/lib/dummy/categories'
-import type { Category } from '@/types/models'
 import type { Image } from '@/types/models'
 
 const TRENDING_TAGS = [
@@ -22,25 +19,27 @@ const TRENDING_TAGS = [
 
 const HERO_TABS = ['이미지', '비디오', '에디토리얼']
 
-const HERO_MOSAIC_SEEDS = [
-  { seed: 10, col: 1, row: 1 },
-  { seed: 20, col: 1, row: 1 },
-  { seed: 30, col: 1, row: 2 },
-  { seed: 40, col: 1, row: 1 },
-  { seed: 50, col: 1, row: 1 },
-  { seed: 60, col: 1, row: 2 },
-  { seed: 70, col: 1, row: 1 },
-  { seed: 80, col: 1, row: 1 },
-]
+const HERO_MOSAIC_SEEDS = [10, 20, 30, 40, 50, 60, 70, 80]
 
-const CATEGORY_SEEDS = [10, 20, 30, 40, 50, 60]
+// 풀블리드 그리드용 시드 (3컬럼 × n행, 다양한 비율)
+const GRID_IMAGES = [
+  { seed: 'g1', aspect: 'aspect-[4/3]' },
+  { seed: 'g2', aspect: 'aspect-[3/4]' },
+  { seed: 'g3', aspect: 'aspect-square' },
+  { seed: 'g4', aspect: 'aspect-[3/4]' },
+  { seed: 'g5', aspect: 'aspect-[4/3]' },
+  { seed: 'g6', aspect: 'aspect-[4/3]' },
+  { seed: 'g7', aspect: 'aspect-square' },
+  { seed: 'g8', aspect: 'aspect-[4/3]' },
+  { seed: 'g9', aspect: 'aspect-[3/4]' },
+]
 
 function HeroSection() {
   return (
     <div className="relative flex min-h-[88vh] items-center justify-center overflow-hidden bg-black">
       {/* 배경: 이미지 모자이크 그리드 */}
       <div className="absolute inset-0 grid grid-cols-4 grid-rows-2 gap-px opacity-60">
-        {HERO_MOSAIC_SEEDS.map(({ seed }) => (
+        {HERO_MOSAIC_SEEDS.map(seed => (
           <div
             key={seed}
             className="relative overflow-hidden"
@@ -105,114 +104,106 @@ function HeroSection() {
   )
 }
 
-function CategorySection({ categories }: { categories: Category[] }) {
+function FullBleedGrid({ images }: { images: Image[] }) {
   return (
-    <section className="border-b border-gray-100 py-14">
-      <Container>
-        <div className="mb-6 flex items-baseline justify-between">
-          <h2 className="text-xl font-semibold tracking-tight text-gray-900">
-            카테고리 탐색
-          </h2>
-          <Link
-            href="/search"
-            className="text-sm text-gray-500 transition-colors hover:text-gray-900"
-          >
-            전체 보기 →
-          </Link>
-        </div>
-        <div className="grid grid-cols-3 gap-2 md:grid-cols-6">
-          {categories.map((cat, i) => (
-            <Link key={cat.id} href={`/search?category=${cat.slug}`}>
-              <div className="group relative aspect-square overflow-hidden rounded-sm">
-                <div
-                  className="absolute inset-0 transition-transform duration-500 group-hover:scale-110"
-                  style={{
-                    backgroundImage: `url(https://picsum.photos/seed/${CATEGORY_SEEDS[i]}/400/400)`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                  }}
-                />
-                <div className="absolute inset-0 bg-black/35 transition-colors duration-300 group-hover:bg-black/20" />
-                <div className="absolute inset-0 flex items-end p-2.5">
-                  <p className="text-xs font-semibold text-white drop-shadow">
-                    {cat.name}
-                  </p>
-                </div>
+    <section className="border-t border-gray-100">
+      {/* 섹션 헤더 */}
+      <div className="flex items-center justify-between px-6 py-6 md:px-10">
+        <h2 className="text-lg font-semibold tracking-tight text-gray-900">
+          베스트셀러
+        </h2>
+        <Link
+          href="/search?sort=best"
+          className="text-sm text-gray-500 transition-colors hover:text-gray-900"
+        >
+          전체 보기 →
+        </Link>
+      </div>
+
+      {/* 풀블리드 3컬럼 균등 그리드 */}
+      <div className="grid grid-cols-3 gap-px bg-gray-100">
+        {images.slice(0, 9).map((image, i) => (
+          <Link key={image.id} href={`/images/${image.id}`} className="group block">
+            <div className={GRID_IMAGES[i % GRID_IMAGES.length].aspect + ' relative overflow-hidden'}>
+              <div
+                className="absolute inset-0 transition-transform duration-500 group-hover:scale-105"
+                style={{
+                  backgroundImage: `url(${image.thumbnailUrl})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              />
+              {/* 호버 오버레이 */}
+              <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/25" />
+              <div className="absolute inset-x-0 bottom-0 translate-y-2 p-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                <p className="line-clamp-1 text-sm font-medium text-white drop-shadow">
+                  {image.name}
+                </p>
               </div>
-            </Link>
-          ))}
-        </div>
-      </Container>
-    </section>
-  )
-}
-
-function GallerySection({
-  title,
-  images,
-  showWishlist = false,
-}: {
-  title: string
-  images: Image[]
-  showWishlist?: boolean
-}) {
-  return (
-    <section className="border-b border-gray-100 py-14">
-      <Container>
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-xl font-semibold tracking-tight text-gray-900">
-            {title}
-          </h2>
-          <Link href="/search">
-            <Button
-              variant="outline"
-              size="sm"
-              className="rounded-sm text-xs"
-            >
-              더 보기
-            </Button>
+            </div>
           </Link>
-        </div>
-        <ImageGrid images={images} showWishlist={showWishlist} />
-      </Container>
+        ))}
+      </div>
+
+      {/* 더 보기 버튼 */}
+      <div className="flex justify-center py-8">
+        <Link
+          href="/search"
+          className="rounded-sm border border-gray-300 px-8 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:border-gray-800 hover:text-gray-900"
+        >
+          더 많은 이미지 보기
+        </Link>
+      </div>
     </section>
   )
 }
 
-function BannerSection() {
+function NewImagesGrid({ images }: { images: Image[] }) {
   return (
-    <section className="py-14">
-      <Container>
-        <div className="relative overflow-hidden rounded-sm bg-gray-950 px-8 py-12 md:px-16">
-          <div
-            className="absolute inset-0 opacity-20"
-            style={{
-              backgroundImage: 'url(https://picsum.photos/seed/banner/1200/400)',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-            }}
-          />
-          <div className="relative z-10 max-w-lg">
-            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">
-              크리에이터를 위한
-            </p>
-            <h2 className="mt-2 text-2xl font-bold text-white md:text-3xl">
-              당신의 작품을 세계에 선보이세요
-            </h2>
-            <p className="mt-3 text-sm text-gray-400">
-              전 세계 크리에이터들이 Jiangs에서 수익을 창출하고 있습니다.
-            </p>
-            <Link href="/seller">
-              <Button
-                size="sm"
-                className="mt-6 rounded-sm bg-white text-gray-900 hover:bg-gray-100"
-              >
-                판매 시작하기
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </Container>
+    <section className="border-t border-gray-100">
+      <div className="flex items-center justify-between px-6 py-6 md:px-10">
+        <h2 className="text-lg font-semibold tracking-tight text-gray-900">
+          최신 이미지
+        </h2>
+        <Link
+          href="/search?sort=new"
+          className="text-sm text-gray-500 transition-colors hover:text-gray-900"
+        >
+          전체 보기 →
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-3 gap-px bg-gray-100">
+        {images.slice(0, 9).map((image, i) => (
+          <Link key={image.id} href={`/images/${image.id}`} className="group block">
+            <div className={GRID_IMAGES[i % GRID_IMAGES.length].aspect + ' relative overflow-hidden'}>
+              <div
+                className="absolute inset-0 transition-transform duration-500 group-hover:scale-105"
+                style={{
+                  backgroundImage: `url(${image.thumbnailUrl})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              />
+              <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/25" />
+              <div className="absolute inset-x-0 bottom-0 translate-y-2 p-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                <p className="line-clamp-1 text-sm font-medium text-white drop-shadow">
+                  {image.name}
+                </p>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      <div className="flex justify-center py-8">
+        <Link
+          href="/search"
+          className="rounded-sm border border-gray-300 px-8 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:border-gray-800 hover:text-gray-900"
+        >
+          더 많은 이미지 보기
+        </Link>
+      </div>
     </section>
   )
 }
@@ -220,19 +211,18 @@ function BannerSection() {
 export default function HomePage() {
   const newImages = [...dummyImages]
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-    .slice(0, 12)
+    .slice(0, 9)
 
   const bestImages = [...dummyImages]
     .sort((a, b) => b.salesCount - a.salesCount)
-    .slice(0, 12)
+    .slice(0, 9)
 
   return (
     <main className="bg-white">
       <HeroSection />
-      <CategorySection categories={dummyCategories} />
-      <GallerySection title="최신 이미지" images={newImages} showWishlist />
-      <GallerySection title="베스트셀러" images={bestImages} />
-      <BannerSection />
+      <EditorialSlider />
+      <NewImagesGrid images={newImages} />
+      <FullBleedGrid images={bestImages} />
     </main>
   )
 }
