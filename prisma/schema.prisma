@@ -1,0 +1,211 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ==================== Enums ====================
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum Orientation {
+  LANDSCAPE
+  PORTRAIT
+  SQUARE
+}
+
+enum ImageSize {
+  XL
+  L
+  M
+  S
+}
+
+enum LicenseType {
+  STANDARD
+  EXTENDED
+}
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum ProcessingStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum TransactionAction {
+  PAYMENT
+  EMAIL_SENT
+  DOWNLOAD
+}
+
+enum TransactionStatus {
+  SUCCESS
+  FAILURE
+}
+
+// ==================== Models ====================
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  name         String?
+  country      String?
+  birthYear    Int?
+  role         UserRole  @default(USER)
+  agreedTermsAt DateTime
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  orders    Order[]
+  wishlists Wishlist[]
+  cart      Cart?
+}
+
+model Category {
+  id          String  @id @default(cuid())
+  name        String
+  slug        String  @unique
+  description String?
+  sortOrder   Int     @default(0)
+  isActive    Boolean @default(true)
+
+  images Image[]
+}
+
+model Image {
+  id               String           @id @default(cuid())
+  code             String           @unique
+  name             String
+  description      String?
+  categoryId       String
+  orientation      Orientation
+  width            Int
+  height           Int
+  format           String
+  basePrice        Decimal          @db.Decimal(10, 2)
+  originalUrl      String
+  watermarkUrl     String
+  thumbnailUrl     String
+  sizesJson        Json
+  fileSizesJson    Json
+  colorTags        String[]
+  tags             String[]
+  shootDate        String?
+  processingStatus ProcessingStatus @default(PENDING)
+  isActive         Boolean          @default(true)
+  salesCount       Int              @default(0)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  category   Category    @relation(fields: [categoryId], references: [id])
+  orderItems OrderItem[]
+  wishlists  Wishlist[]
+  cartItems  CartItem[]
+
+  @@index([categoryId, isActive])
+}
+
+model Order {
+  id             String      @id @default(cuid())
+  orderNumber    String      @unique
+  idempotencyKey String      @unique
+  userId         String
+  totalAmount    Decimal     @db.Decimal(10, 2)
+  status         OrderStatus @default(PENDING)
+  paymentMethod  String
+  paymentId      String?
+  paidAt         DateTime?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  user             User             @relation(fields: [userId], references: [id])
+  orderItems       OrderItem[]
+  transactionLogs  TransactionLog[]
+}
+
+model OrderItem {
+  id            String      @id @default(cuid())
+  orderId       String
+  imageId       String
+  size          ImageSize
+  licenseType   LicenseType
+  price         Decimal     @db.Decimal(10, 2)
+  downloadToken String      @unique
+  downloadCount Int         @default(0)
+  downloadLimit Int
+  expiresAt     DateTime
+
+  order Order @relation(fields: [orderId], references: [id])
+  image Image @relation(fields: [imageId], references: [id])
+}
+
+model Wishlist {
+  id        String   @id @default(cuid())
+  userId    String
+  imageId   String
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  image Image @relation(fields: [imageId], references: [id])
+
+  @@unique([userId, imageId])
+}
+
+model Cart {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User       @relation(fields: [userId], references: [id])
+  cartItems CartItem[]
+}
+
+model CartItem {
+  id          String      @id @default(cuid())
+  cartId      String
+  imageId     String
+  size        ImageSize
+  licenseType LicenseType
+  createdAt   DateTime    @default(now())
+
+  cart  Cart  @relation(fields: [cartId], references: [id])
+  image Image @relation(fields: [imageId], references: [id])
+
+  @@unique([cartId, imageId, size, licenseType])
+}
+
+model TransactionLog {
+  id        String            @id @default(cuid())
+  orderId   String
+  timestamp DateTime          @default(now())
+  action    TransactionAction
+  status    TransactionStatus
+  details   Json
+  ipAddress String?
+  userAgent String?
+
+  order Order @relation(fields: [orderId], references: [id])
+}
+
+model SystemConfig {
+  key         String   @id
+  value       String
+  description String?
+  updatedAt   DateTime @updatedAt
+}
