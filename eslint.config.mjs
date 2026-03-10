@@ -1,16 +1,16 @@
-import { dirname } from 'path'
-import { fileURLToPath } from 'url'
-import { FlatCompat } from '@eslint/eslintrc'
+// @ts-check
+import { createRequire } from 'module'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
+const require = createRequire(import.meta.url)
 
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-})
+const nextCoreWebVitals = require('eslint-config-next/core-web-vitals')
+const nextTypescript = require('eslint-config-next/typescript')
+const prettier = require('eslint-config-prettier')
 
 const eslintConfig = [
-  ...compat.extends('next/core-web-vitals', 'next/typescript', 'prettier'),
+  ...nextCoreWebVitals,
+  ...nextTypescript,
+  prettier,
   {
     ignores: [
       'node_modules/**',
@@ -18,6 +18,7 @@ const eslintConfig = [
       'out/**',
       'build/**',
       'next-env.d.ts',
+      'src/generated/**',
     ],
   },
 ]
