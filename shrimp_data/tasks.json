@@ -1,0 +1,139 @@
+{
+  "tasks": [
+    {
+      "id": "6179369e-adfb-463f-98d8-df70e04ca564",
+      "name": "Prisma 설치 및 스키마 작성",
+      "description": "Prisma 6.x를 설치하고 전체 데이터 모델 스키마를 작성합니다. 기존 src/types/enums.ts와 src/types/models.ts와 완전히 일치하는 Prisma enum 및 모델을 정의합니다.",
+      "notes": "Decimal 타입은 금액 필드(basePrice, totalAmount, price). Json은 sizesJson, fileSizesJson, details. SystemConfig는 key를 @id로. CartItem에는 price 없음.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2026-03-10T07:18:57.113Z",
+      "updatedAt": "2026-03-10T07:21:44.085Z",
+      "relatedFiles": [
+        {
+          "path": "prisma/schema.prisma",
+          "type": "CREATE",
+          "description": "Prisma 전체 스키마"
+        },
+        {
+          "path": "src/types/enums.ts",
+          "type": "REFERENCE",
+          "description": "Enum 타입 참조"
+        },
+        {
+          "path": "src/types/models.ts",
+          "type": "REFERENCE",
+          "description": "모델 인터페이스 참조"
+        },
+        {
+          "path": "package.json",
+          "type": "TO_MODIFY",
+          "description": "prisma seed 스크립트 추가"
+        }
+      ],
+      "implementationGuide": "1. npm install @prisma/client && npm install -D prisma\n2. npx prisma init --datasource-provider postgresql\n3. prisma/schema.prisma 작성:\n   - 8개 Enum: UserRole(USER,ADMIN), Orientation(LANDSCAPE,PORTRAIT,SQUARE), ImageSize(XL,L,M,S), LicenseType(STANDARD,EXTENDED), OrderStatus(PENDING,COMPLETED,FAILED,CANCELLED), ProcessingStatus(PENDING,PROCESSING,COMPLETED,FAILED), TransactionAction(PAYMENT,EMAIL_SENT,DOWNLOAD), TransactionStatus(SUCCESS,FAILURE)\n   - 10개 모델: User, Category, Image, Order, OrderItem, Wishlist, Cart, CartItem, TransactionLog, SystemConfig\n   - User: id(cuid), email(unique), passwordHash, name?, country?, birthYear?, role(default USER), agreedTermsAt, createdAt, updatedAt\n   - Category: id(cuid), name, slug(unique), description?, sortOrder(default 0), isActive(default true)\n   - Image: id(cuid), code(unique), name, description?, categoryId(FK), orientation, width, height, format, basePrice(Decimal), originalUrl, watermarkUrl, thumbnailUrl, sizesJson(Json), fileSizesJson(Json), colorTags(String[]), tags(String[]), shootDate?, processingStatus(default PENDING), isActive(default true), salesCount(default 0), createdAt, updatedAt + @@index([categoryId, isActive])\n   - Order: id(cuid), orderNumber(unique), idempotencyKey(unique), userId(FK), totalAmount(Decimal), status(default PENDING), paymentMethod, paymentId?, paidAt?, createdAt, updatedAt\n   - OrderItem: id(cuid), orderId(FK), imageId(FK), size(ImageSize), licenseType(LicenseType), price(Decimal), downloadToken(unique), downloadCount(default 0), downloadLimit, expiresAt\n   - Wishlist: id(cuid), userId(FK), imageId(FK), createdAt + @@unique([userId, imageId])\n   - Cart: id(cuid), userId(unique FK), createdAt, updatedAt\n   - CartItem: id(cuid), cartId(FK), imageId(FK), size(ImageSize), licenseType(LicenseType), createdAt + @@unique([cartId, imageId, size, licenseType])\n   - TransactionLog: id(cuid), orderId(FK), timestamp(default now()), action(TransactionAction), status(TransactionStatus), details(Json), ipAddress?, userAgent?\n   - SystemConfig: key(@id), value, description?, updatedAt\n4. package.json에 prisma.seed 추가: {prisma: {seed: 'npx tsx prisma/seed.ts'}}",
+      "verificationCriteria": "npx prisma validate 통과. 8개 Enum과 10개 모델이 모두 정의됨. 기존 TypeScript 타입과 필드명/타입 일치.",
+      "analysisResult": "Task 003: Prisma 스키마 설계, 마이그레이션, Seed 실행. JiangsStock 플랫폼의 데이터베이스 레이어 전체 구축. 1단계(Docker Compose & 환경변수)는 완료됨.",
+      "summary": "Prisma 7.4.2 설치 완료. prisma/schema.prisma에 8개 Enum(UserRole, Orientation, ImageSize, LicenseType, OrderStatus, ProcessingStatus, TransactionAction, TransactionStatus)과 10개 모델(User, Category, Image, Order, OrderItem, Wishlist, Cart, CartItem, TransactionLog, SystemConfig) 정의 완료. 기존 enums.ts/models.ts와 완전히 일치. npx prisma validate 통과. package.json에 prisma.seed 설정 추가. prisma.config.ts DATABASE_URL 연결.",
+      "completedAt": "2026-03-10T07:21:44.083Z"
+    },
+    {
+      "id": "d2af3e18-c59a-4444-bed3-9c0ba16d27a2",
+      "name": "Prisma 마이그레이션 및 Raw SQL 인덱스 적용",
+      "description": "Docker PostgreSQL에 첫 마이그레이션을 실행하고, pg_trgm 확장, GIN 인덱스(tags, colorTags), tsvector 컬럼과 트리거를 Raw SQL로 추가합니다.",
+      "notes": "테이블명은 PascalCase 그대로(\"Image\"). tsvector는 'simple' 딕셔너리. IF NOT EXISTS로 멱등성 보장.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "6179369e-adfb-463f-98d8-df70e04ca564"
+        }
+      ],
+      "createdAt": "2026-03-10T07:18:57.113Z",
+      "updatedAt": "2026-03-10T07:27:37.564Z",
+      "relatedFiles": [
+        {
+          "path": "prisma/schema.prisma",
+          "type": "REFERENCE",
+          "description": "스키마 참조"
+        },
+        {
+          "path": "prisma/migrations",
+          "type": "CREATE",
+          "description": "마이그레이션 디렉토리"
+        }
+      ],
+      "implementationGuide": "1. docker compose up -d 확인\n2. npx prisma migrate dev --name init\n3. npx prisma migrate dev --create-only --name add_search_indexes\n4. migration.sql에 추가:\n   CREATE EXTENSION IF NOT EXISTS pg_trgm;\n   CREATE INDEX IF NOT EXISTS idx_image_tags ON \"Image\" USING GIN (tags);\n   CREATE INDEX IF NOT EXISTS idx_image_color_tags ON \"Image\" USING GIN (\"colorTags\");\n   ALTER TABLE \"Image\" ADD COLUMN IF NOT EXISTS search_vector tsvector;\n   CREATE INDEX IF NOT EXISTS idx_image_search_vector ON \"Image\" USING GIN (search_vector);\n   CREATE OR REPLACE FUNCTION update_image_search_vector() RETURNS trigger...\n   CREATE TRIGGER trg_image_search_vector BEFORE INSERT OR UPDATE ON \"Image\"...\n5. npx prisma migrate dev\n6. npx prisma generate",
+      "verificationCriteria": "npx prisma migrate status에서 모든 마이그레이션 Applied. Image 테이블에 search_vector 컬럼 존재 확인.",
+      "analysisResult": "Task 003: Prisma 스키마 설계, 마이그레이션, Seed 실행. JiangsStock 플랫폼의 데이터베이스 레이어 전체 구축. 1단계(Docker Compose & 환경변수)는 완료됨.",
+      "summary": "두 마이그레이션 모두 Applied 완료. init 마이그레이션으로 10개 테이블 생성. add_search_indexes 마이그레이션으로 pg_trgm 확장, GIN 인덱스(idx_image_tags, idx_image_color_tags, idx_image_search_vector), search_vector tsvector 컬럼, 자동 갱신 트리거(trg_image_search_vector) 적용. npx prisma generate로 클라이언트 생성(src/generated/prisma). DB 직접 확인으로 모든 인덱스/트리거 존재 검증.",
+      "completedAt": "2026-03-10T07:27:37.563Z"
+    },
+    {
+      "id": "597c33f9-23cf-4957-9cb7-5b24cc44b0e9",
+      "name": "Prisma Seed 스크립트 작성 및 실행",
+      "description": "카테고리 6종, SystemConfig 7종, 관리자 계정 1개, 개발용 더미 데이터(이미지 30건, 사용자 3명, 주문 5건)를 생성하는 Seed 스크립트를 작성합니다.",
+      "notes": "seed.ts에서 @/ alias 대신 상대경로 사용. 더미 이미지 URL은 placeholder 경로.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "d2af3e18-c59a-4444-bed3-9c0ba16d27a2"
+        }
+      ],
+      "createdAt": "2026-03-10T07:18:57.113Z",
+      "updatedAt": "2026-03-10T07:32:48.384Z",
+      "relatedFiles": [
+        {
+          "path": "prisma/seed.ts",
+          "type": "CREATE",
+          "description": "Seed 스크립트"
+        },
+        {
+          "path": "src/lib/constants.ts",
+          "type": "REFERENCE",
+          "description": "CATEGORIES, 상수값 참조"
+        },
+        {
+          "path": "package.json",
+          "type": "TO_MODIFY",
+          "description": "prisma seed 설정 확인"
+        }
+      ],
+      "implementationGuide": "1. npm install bcryptjs && npm install -D @types/bcryptjs\n2. prisma/seed.ts 작성 (함수 분리, 30줄 이하):\n   - seedCategories(): constants.ts의 CATEGORIES import, upsert(slug 기준)\n   - seedSystemConfig(): 7종 upsert (EXTENDED_LICENSE_MULTIPLIER=3, DOWNLOAD_LIMIT=3, DOWNLOAD_EXPIRES_DAYS=7, IMAGE_UPLOAD_MAX_SIZE_MB=50, SHARP_CONCURRENCY=2, SHARP_JPEG_QUALITY=90, SHARP_WEBP_QUALITY=85)\n   - seedAdminUser(): bcryptjs.hash('Admin1234!', 12), upsert(email: admin@jiangsstock.com), role: ADMIN\n   - seedDummyUsers(): 3명 upsert\n   - seedDummyImages(): 카테고리ID 조회 후 30건 upsert(code 기준), processingStatus: COMPLETED\n   - seedDummyOrders(): 5건 주문 + OrderItem, downloadToken: crypto.randomUUID()\n   - main(): 각 함수 순서대로 호출\n3. npx prisma db seed",
+      "verificationCriteria": "npx prisma db seed 성공. 카테고리 6건, SystemConfig 7건, 사용자 4명, 이미지 30건, 주문 5건 확인. npm run check-all 통과.",
+      "analysisResult": "Task 003: Prisma 스키마 설계, 마이그레이션, Seed 실행. JiangsStock 플랫폼의 데이터베이스 레이어 전체 구축. 1단계(Docker Compose & 환경변수)는 완료됨.",
+      "summary": "npx prisma db seed 성공. DB 확인: Category 6건, SystemConfig 7건, User 4명(관리자 포함), Image 30건, Order 5건. bcryptjs로 비밀번호 해싱, Prisma 7.x adapter 방식(@prisma/adapter-pg) 적용. typecheck 통과. ESLint/Prettier 오류는 Task 003 이전부터 존재하는 기존 문제로 이번 작업 범위 외.",
+      "completedAt": "2026-03-10T07:32:48.381Z"
+    },
+    {
+      "id": "b28a71a0-1646-45b7-a60c-0d0e0f8cf86b",
+      "name": "Task 003 작업 파일 생성 및 완료 처리",
+      "description": "tasks/003-prisma-schema.md 작업 파일을 생성하고, ROADMAP.md Task 003을 완료로 표시합니다.",
+      "notes": "실제 구현된 파일 목록을 정확히 기록.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "597c33f9-23cf-4957-9cb7-5b24cc44b0e9"
+        }
+      ],
+      "createdAt": "2026-03-10T07:18:57.113Z",
+      "updatedAt": "2026-03-10T07:38:01.624Z",
+      "relatedFiles": [
+        {
+          "path": "tasks/003-prisma-schema.md",
+          "type": "CREATE",
+          "description": "Task 003 작업 파일"
+        },
+        {
+          "path": "docs/ROADMAP.md",
+          "type": "TO_MODIFY",
+          "description": "Task 003 완료 표시"
+        }
+      ],
+      "implementationGuide": "1. tasks/003-prisma-schema.md 생성 (000-sample.md 형식 준수, 완료 상태)\n2. docs/ROADMAP.md Task 003 항목 [x] 표시\n3. npm run check-all 최종 확인",
+      "verificationCriteria": "tasks/003-prisma-schema.md 존재. ROADMAP.md에서 Task 003이 [x]로 표시됨. npm run check-all 통과.",
+      "analysisResult": "Task 003: Prisma 스키마 설계, 마이그레이션, Seed 실행. JiangsStock 플랫폼의 데이터베이스 레이어 전체 구축. 1단계(Docker Compose & 환경변수)는 완료됨.",
+      "summary": "tasks/003-prisma-schema.md 생성 완료. ROADMAP.md Task 003 [x] 완료 표시. ESLint 근본 원인(FlatCompat + next flat config 충돌) 해결 - eslint.config.mjs를 직접 require 방식으로 수정. npm run check-all 완전 통과 (error 0, warning 4개는 기존 코드). Prettier도 전체 파일 통과.",
+      "completedAt": "2026-03-10T07:38:01.613Z"
+    }
+  ]
+}

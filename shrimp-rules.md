@@ -179,10 +179,10 @@ interface ImageCardProps {
 
 ## 의사결정 기준
 
-| 상황 | 결정 |
-|------|------|
+| 상황                              | 결정                                                            |
+| --------------------------------- | --------------------------------------------------------------- |
 | Server vs Client Component 불명확 | Server Component 기본, 인터랙션 필요 시 최소 단위로 Client 분리 |
-| 새 shadcn 컴포넌트 필요 | `npx shadcn@latest add` 사용, 직접 구현 금지 |
-| 타입 정의 위치 불명확 | `src/types/` 하위 도메인별 파일 (image.ts, order.ts 등) |
-| 공통 유틸리티 추가 | `src/lib/` 하위에 기능별 파일 생성 |
-| 스타일 커스터마이징 | Tailwind 클래스 우선, CSS 변수 차선, 인라인 스타일 금지 |
+| 새 shadcn 컴포넌트 필요           | `npx shadcn@latest add` 사용, 직접 구현 금지                    |
+| 타입 정의 위치 불명확             | `src/types/` 하위 도메인별 파일 (image.ts, order.ts 등)         |
+| 공통 유틸리티 추가                | `src/lib/` 하위에 기능별 파일 생성                              |
+| 스타일 커스터마이징               | Tailwind 클래스 우선, CSS 변수 차선, 인라인 스타일 금지         |
