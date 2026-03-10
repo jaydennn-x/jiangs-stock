@@ -504,7 +504,7 @@ JiangsStock 내비게이션
 |------|------|----------|
 | id | 고유 식별자 | UUID |
 | email | 이메일, 로그인 ID | String, Unique |
-| passwordHash | bcrypt 암호화 비밀번호 | String |
+| passwordHash | bcryptjs 암호화 비밀번호 | String |
 | name | 이름 (선택) | String? |
 | country | 국가 (선택, 통계용) | String? |
 | birthYear | 출생연도 (선택, 통계용) | Int? |
@@ -655,7 +655,7 @@ JiangsStock 내비게이션
 
 ### 프론트엔드 프레임워크
 
-- **Next.js 15.5.3** (App Router + Turbopack) - React 풀스택 프레임워크
+- **Next.js 16.1.6** (App Router + Turbopack) - React 풀스택 프레임워크
 - **TypeScript 5.x** - 타입 안전성 보장
 - **React 19.1.0** - UI 라이브러리 (최신 동시성 기능)
 
@@ -677,11 +677,11 @@ JiangsStock 내비게이션
 
 ### 백엔드 & 데이터베이스
 
-- **Next.js API Routes / Server Actions** (15.5.3) - 백엔드 엔드포인트
+- **Next.js API Routes / Server Actions**  - 백엔드 엔드포인트
 - **Prisma ORM 6.x** - 타입 안전 데이터베이스 ORM
 - **PostgreSQL 16** - 관계형 데이터베이스 (전문 검색, JSON 네이티브 지원)
 - **NextAuth.js v5 (Auth.js)** - 인증·세션 관리 (베타 상태이나 프로덕션 사용 가능, @auth/prisma-adapter 필요)
-- **bcrypt** - 비밀번호 해싱
+- **bcryptjs** - 비밀번호 해싱 (순수 JS 구현, Node-gyp 빌드 불필요)
 
 ### 이미지 처리
 
@@ -728,7 +728,7 @@ JiangsStock 내비게이션
 
 - **다중 레이어 인증 검증**: 미들웨어 인증 외에, Server Action 및 API Route 핸들러 내부에서도 세션/권한을 반드시 재검증
 - **관리자 경로 보호**: /admin 경로는 미들웨어 + Server Action 양쪽에서 ADMIN 역할 검증
-- **비밀번호 정책**: 최소 8자, 영문+숫자+특수문자 조합, bcrypt saltRounds 12 이상
+- **비밀번호 정책**: 최소 8자, 영문+숫자+특수문자 조합, bcryptjs saltRounds 12 이상
 - **세션 관리**: JWT 기반 세션 (httpOnly + secure + sameSite=strict 쿠키). **강제 로그아웃 지원**: Redis에 세션 블록리스트를 관리하여 관리자 계정 탈취 시 토큰 만료 전 즉시 무효화 가능
 - **관리자 IP 화이트리스트**: 관리자 로그인 시 `ADMIN_ALLOWED_IPS` 환경변수에 등록된 IP 대역에서만 허용. 미등록 IP 접근 시 즉시 거부 (401 응답). CIDR 표기 지원 (예: `1.2.3.4/32,5.6.7.8/32`)
 - **관리자 로그인 알림 (MVP)**: 관리자 계정 로그인 성공 시 AWS SES로 운영자 이메일에 즉시 알림 발송 (IP, User-Agent, 시각 포함). 침입 탐지의 최소 안전망으로 MVP에 포함.
