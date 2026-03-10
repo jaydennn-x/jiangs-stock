@@ -1,195 +1,171 @@
 {
   "tasks": [
     {
-      "id": "1d515a60-7221-4aab-bb69-b5bce55d7134",
-      "name": "wishlist-store 생성",
-      "description": "Zustand 기반 위시리스트 상태 관리 스토어 생성. cart-store.ts와 동일한 패턴으로 localStorage persist 적용.",
+      "id": "f394865e-c80a-456d-9e3b-40c858316a5b",
+      "name": "shadcn Accordion 컴포넌트 설치",
+      "description": "구매 내역 아코디언 UI를 위해 shadcn/ui Accordion 컴포넌트를 설치한다. src/components/ui/accordion.tsx가 없으므로 npx shadcn@latest add accordion 명령으로 설치한다.",
       "status": "completed",
       "dependencies": [],
-      "createdAt": "2026-03-10T18:05:21.508Z",
-      "updatedAt": "2026-03-10T18:07:21.622Z",
+      "createdAt": "2026-03-10T18:24:30.023Z",
+      "updatedAt": "2026-03-10T18:26:11.045Z",
       "relatedFiles": [
         {
-          "path": "src/stores/cart-store.ts",
-          "type": "REFERENCE",
-          "description": "동일 패턴 참조"
-        },
-        {
-          "path": "src/stores/wishlist-store.ts",
+          "path": "src/components/ui/accordion.tsx",
           "type": "CREATE",
-          "description": "신규 생성"
+          "description": "shadcn Accordion 컴포넌트"
         }
       ],
-      "implementationGuide": "파일: src/stores/wishlist-store.ts\n\n인터페이스:\ninterface WishlistStore {\n  imageIds: string[]\n  addItem: (imageId: string) => void\n  removeItem: (imageId: string) => void\n  toggleItem: (imageId: string) => void\n  isWishlisted: (imageId: string) => boolean\n}\n\n구현:\n- create<WishlistStore>()(persist(...)) 패턴\n- addItem: 중복 체크 후 추가\n- removeItem: filter로 제거\n- toggleItem: isWishlisted 결과에 따라 add/remove\n- isWishlisted: imageIds.includes(imageId)\n- persist name: 'jiangs-wishlist'\n- storage: createJSONStorage(() => localStorage)",
-      "verificationCriteria": "WishlistStore 타입이 올바르게 정의되고, addItem/removeItem/toggleItem/isWishlisted 4개 액션이 모두 구현됨. localStorage에 'jiangs-wishlist' 키로 persist됨.",
-      "analysisResult": "Task 012: 위시리스트 페이지 UI 구현. 더미 데이터 기반, Phase 2 단계. 기술 스택: Next.js 15.5.3 + React 19 + TailwindCSS v4 + shadcn/ui + Zustand 5.x. 기존 패턴: cart-store.ts(Zustand persist), cart/page.tsx(useSyncExternalStore SSR 방지), cart-item-row.tsx(Dialog 패턴), SizeSelector/LicenseSelector 재사용.",
-      "summary": "wishlist-store.ts 생성 완료. WishlistStore 인터페이스(imageIds, addItem, removeItem, toggleItem, isWishlisted) 구현. cart-store.ts와 동일한 Zustand persist 패턴 적용, localStorage 'jiangs-wishlist' 키로 저장. addItem 중복 체크, removeItem filter, toggleItem 조건 분기, isWishlisted includes 모두 구현.",
-      "completedAt": "2026-03-10T18:07:21.607Z"
+      "implementationGuide": "1. 터미널에서 npx shadcn@latest add accordion 실행\n2. src/components/ui/accordion.tsx 생성 확인",
+      "verificationCriteria": "src/components/ui/accordion.tsx 파일이 생성되고, Accordion, AccordionItem, AccordionTrigger, AccordionContent export 확인",
+      "analysisResult": "Task 013: 마이페이지 UI 구현 (더미 데이터 기반). 기술 스택: Next.js 15.5.3 App Router, TypeScript, TailwindCSS v4, shadcn/ui new-york style. 기존 패턴: CompleteOrderItem 컴포넌트(checkout), formatPrice/getSizeLabel(price.ts), EmptyState, dummyOrders/dummyImages/dummyUsers, passwordChangeSchema/profileUpdateSchema(forms.ts) 재사용.",
+      "summary": "accordion.tsx 생성 완료. Accordion, AccordionItem, AccordionTrigger, AccordionContent 모두 export 확인됨.",
+      "completedAt": "2026-03-10T18:26:11.044Z"
     },
     {
-      "id": "2615e6c5-534c-4f6e-a1c5-03cc1e8498d5",
-      "name": "AddToCartModal 컴포넌트 생성",
-      "description": "위시리스트에서 장바구니 추가 시 크기/라이선스 선택 모달. Dialog + SizeSelector + LicenseSelector 재사용.",
+      "id": "e082c55b-f3c3-40ab-9f34-834630ddb4cc",
+      "name": "OrderCard 컴포넌트 생성",
+      "description": "마이페이지 구매 내역에서 개별 주문을 표시하는 아코디언 카드 컴포넌트. 주문 헤더(날짜/주문번호/금액/상태 Badge)와 펼치기 시 OrderItem 목록(CompleteOrderItem 재사용)을 보여준다.",
       "status": "completed",
       "dependencies": [
         {
-          "taskId": "1d515a60-7221-4aab-bb69-b5bce55d7134"
+          "taskId": "f394865e-c80a-456d-9e3b-40c858316a5b"
         }
       ],
-      "createdAt": "2026-03-10T18:05:21.508Z",
-      "updatedAt": "2026-03-10T18:07:54.673Z",
+      "createdAt": "2026-03-10T18:24:30.023Z",
+      "updatedAt": "2026-03-10T18:26:46.452Z",
       "relatedFiles": [
         {
-          "path": "src/components/wishlist/add-to-cart-modal.tsx",
+          "path": "src/components/mypage/order-card.tsx",
           "type": "CREATE",
-          "description": "신규 생성"
+          "description": "주문 아코디언 카드 컴포넌트"
         },
         {
-          "path": "src/components/cart/cart-item-row.tsx",
+          "path": "src/components/checkout/complete-order-item.tsx",
           "type": "REFERENCE",
-          "description": "Dialog 패턴 참조"
+          "description": "OrderItem 행 컴포넌트 재사용"
         },
         {
-          "path": "src/components/common/size-selector.tsx",
-          "type": "DEPENDENCY",
-          "description": "SizeSelector 재사용"
-        },
-        {
-          "path": "src/components/common/license-selector.tsx",
-          "type": "DEPENDENCY",
-          "description": "LicenseSelector 재사용"
-        },
-        {
-          "path": "src/stores/cart-store.ts",
-          "type": "DEPENDENCY",
-          "description": "addItem 호출"
+          "path": "src/lib/dummy/orders.ts",
+          "type": "REFERENCE",
+          "description": "DummyOrder 타입 참조"
         },
         {
           "path": "src/lib/price.ts",
           "type": "DEPENDENCY",
-          "description": "calculatePrice 사용"
+          "description": "formatPrice 유틸"
         },
         {
-          "path": "src/types/models.ts",
+          "path": "src/components/ui/accordion.tsx",
           "type": "DEPENDENCY",
-          "description": "Image 타입"
+          "description": "Accordion 컴포넌트"
+        },
+        {
+          "path": "src/components/ui/badge.tsx",
+          "type": "DEPENDENCY",
+          "description": "Badge 컴포넌트"
         }
       ],
-      "implementationGuide": "파일: src/components/wishlist/add-to-cart-modal.tsx\n'use client'\n\nprops:\ninterface AddToCartModalProps {\n  image: Image\n  open: boolean\n  onOpenChange: (open: boolean) => void\n}\n\n내부 상태:\n- selectedSize: ImageSize = 'XL'\n- selectedLicense: LicenseType = 'STANDARD'\n\n렌더링:\n- Dialog > DialogContent (max-w-md)\n  - DialogHeader > DialogTitle: 이미지명\n  - 썸네일 이미지 (relative h-32 w-full, ProtectedImage fill object-cover rounded)\n  - SizeSelector (value=selectedSize, onChange=setSelectedSize, basePrice=image.basePrice)\n  - LicenseSelector (value=selectedLicense, onChange=setSelectedLicense, basePrice=image.basePrice, selectedSize=selectedSize)\n  - DialogFooter\n    - 취소 버튼 (variant=outline, onOpenChange(false))\n    - 장바구니 추가 버튼: cart-store addItem 호출 후 onOpenChange(false)\n\ncart-store addItem 호출 시:\n{\n  imageId: image.id,\n  size: selectedSize,\n  licenseType: selectedLicense,\n  price: calculatePrice(image.basePrice, selectedSize, selectedLicense),\n  imageName: image.name,\n  thumbnailUrl: image.thumbnailUrl\n}",
-      "verificationCriteria": "모달 열림/닫힘 동작, SizeSelector/LicenseSelector 선택 변경, 장바구니 추가 버튼 클릭 시 cart-store에 아이템 추가 및 모달 닫힘.",
-      "analysisResult": "Task 012: 위시리스트 페이지 UI 구현. 더미 데이터 기반, Phase 2 단계. 기술 스택: Next.js 15.5.3 + React 19 + TailwindCSS v4 + shadcn/ui + Zustand 5.x. 기존 패턴: cart-store.ts(Zustand persist), cart/page.tsx(useSyncExternalStore SSR 방지), cart-item-row.tsx(Dialog 패턴), SizeSelector/LicenseSelector 재사용.",
-      "summary": "AddToCartModal 컴포넌트 생성 완료. Dialog + SizeSelector + LicenseSelector 재사용, selectedSize/selectedLicense 내부 상태 관리, cart-store addItem 호출 후 모달 닫힘. ProtectedImage로 썸네일 표시.",
-      "completedAt": "2026-03-10T18:07:54.671Z"
+      "implementationGuide": "파일: src/components/mypage/order-card.tsx\n\ninterface OrderCardProps {\n  order: DummyOrder (from @/lib/dummy/orders)\n  images: Image[] (from @/types/models)\n}\n\npseudocode:\n- 'use client'\n- Accordion(type=single, collapsible) 사용\n- AccordionItem value={order.id}\n- AccordionTrigger: 주문 날짜(createdAt.toLocaleDateString('ko-KR')), 주문번호(order.orderNumber), 총금액(formatPrice(order.totalAmount)), 주문상태 Badge\n- 주문상태 Badge 색상: COMPLETED=green(bg-green-500 text-white), PENDING=amber(variant secondary), FAILED=destructive, CANCELLED=secondary\n- AccordionContent: order.items.map -> CompleteOrderItem 컴포넌트 재사용 (import from @/components/checkout/complete-order-item)\n- handleDownload: alert 더미 처리\n- 만료일 안내 텍스트: items[0].expiresAt.toLocaleDateString('ko-KR') + '까지'",
+      "verificationCriteria": "컴포넌트가 타입 오류 없이 렌더링되고, AccordionTrigger 클릭 시 OrderItem 목록이 펼쳐지며, 주문 상태에 따라 Badge 색상이 다르게 표시됨",
+      "analysisResult": "Task 013: 마이페이지 UI 구현 (더미 데이터 기반). 기술 스택: Next.js 15.5.3 App Router, TypeScript, TailwindCSS v4, shadcn/ui new-york style. 기존 패턴: CompleteOrderItem 컴포넌트(checkout), formatPrice/getSizeLabel(price.ts), EmptyState, dummyOrders/dummyImages/dummyUsers, passwordChangeSchema/profileUpdateSchema(forms.ts) 재사용.",
+      "summary": "OrderCard 컴포넌트 생성 완료. Accordion 기반 주문 카드, 주문상태 Badge(COMPLETED=green, PENDING=amber, FAILED=destructive), CompleteOrderItem 재사용, 만료일 안내 텍스트 포함.",
+      "completedAt": "2026-03-10T18:26:46.450Z"
     },
     {
-      "id": "d4b84345-61db-4a1b-ba3e-81f5bd59078b",
-      "name": "WishlistCard 컴포넌트 생성",
-      "description": "위시리스트 페이지에서 개별 이미지를 표시하는 카드 컴포넌트. 썸네일, 이름, 기준 가격, 하트 제거 버튼, 장바구니 추가 버튼 포함.",
+      "id": "e5ccc197-49ce-4024-8ea5-d677ad91dab9",
+      "name": "구매 내역 페이지 완성",
+      "description": "src/app/(buyer)/mypage/orders/page.tsx를 실제 UI로 완성. 더미 데이터(user-001 기준)로 주문 목록을 OrderCard로 렌더링. 빈 상태 처리 포함.",
       "status": "completed",
       "dependencies": [
         {
-          "taskId": "2615e6c5-534c-4f6e-a1c5-03cc1e8498d5"
+          "taskId": "e082c55b-f3c3-40ab-9f34-834630ddb4cc"
         }
       ],
-      "createdAt": "2026-03-10T18:05:21.508Z",
-      "updatedAt": "2026-03-10T18:08:22.541Z",
+      "createdAt": "2026-03-10T18:24:30.023Z",
+      "updatedAt": "2026-03-10T18:27:13.221Z",
       "relatedFiles": [
         {
-          "path": "src/components/wishlist/wishlist-card.tsx",
-          "type": "CREATE",
-          "description": "신규 생성"
-        },
-        {
-          "path": "src/components/wishlist/add-to-cart-modal.tsx",
-          "type": "DEPENDENCY",
-          "description": "AddToCartModal 사용"
-        },
-        {
-          "path": "src/stores/wishlist-store.ts",
-          "type": "DEPENDENCY",
-          "description": "removeItem 사용"
-        },
-        {
-          "path": "src/components/common/protected-image.tsx",
-          "type": "DEPENDENCY",
-          "description": "ProtectedImage 사용"
-        },
-        {
-          "path": "src/components/common/image-card.tsx",
-          "type": "REFERENCE",
-          "description": "카드 레이아웃 패턴 참조"
-        },
-        {
-          "path": "src/lib/price.ts",
-          "type": "DEPENDENCY",
-          "description": "formatPrice 사용"
-        },
-        {
-          "path": "src/types/models.ts",
-          "type": "DEPENDENCY",
-          "description": "Image 타입"
-        }
-      ],
-      "implementationGuide": "파일: src/components/wishlist/wishlist-card.tsx\n'use client'\n\nprops:\ninterface WishlistCardProps {\n  image: Image\n}\n\n구조:\n- useState: modalOpen = false\n- wishlist store에서 removeItem 가져오기\n\n렌더링:\n<div className='group relative overflow-hidden rounded-sm'>\n  <Link href={'/images/' + image.id}>\n    <div className='relative aspect-[4/3] overflow-hidden'>\n      <ProtectedImage fill object-cover transition group-hover:scale-105 />\n    </div>\n  </Link>\n\n  하트 제거 버튼 (absolute top-2 right-2, 항상 표시):\n  - Heart 아이콘 (fill-red-400 text-red-400 고정)\n  - 클릭: e.preventDefault() + removeItem(image.id)\n  - aria-label: '위시리스트에서 제거'\n\n  하단 정보 영역 (px-1 pt-2 pb-1):\n  - 이미지명 (text-sm font-medium line-clamp-1)\n  - 기준 가격 (text-xs text-muted-foreground): 'from ' + formatPrice(image.basePrice)\n  - '장바구니 추가' 버튼 (variant='outline' size='sm' w-full mt-2)\n    - 클릭: setModalOpen(true)\n\n  AddToCartModal (image=image, open=modalOpen, onOpenChange=setModalOpen)\n</div>",
-      "verificationCriteria": "썸네일/이름/가격 표시, 하트 버튼 클릭 시 위시리스트에서 제거, 장바구니 추가 버튼 클릭 시 모달 오픈.",
-      "analysisResult": "Task 012: 위시리스트 페이지 UI 구현. 더미 데이터 기반, Phase 2 단계. 기술 스택: Next.js 15.5.3 + React 19 + TailwindCSS v4 + shadcn/ui + Zustand 5.x. 기존 패턴: cart-store.ts(Zustand persist), cart/page.tsx(useSyncExternalStore SSR 방지), cart-item-row.tsx(Dialog 패턴), SizeSelector/LicenseSelector 재사용.",
-      "summary": "WishlistCard 컴포넌트 생성 완료. 썸네일(ProtectedImage)/이름/가격 표시, 하트 버튼(항상 표시, fill-red-400 고정)으로 위시리스트 제거, 장바구니 추가 버튼으로 AddToCartModal 오픈. ShoppingCart 아이콘 추가로 UX 개선.",
-      "completedAt": "2026-03-10T18:08:22.539Z"
-    },
-    {
-      "id": "6cebe389-44bb-4d7b-acdb-ecd77e6ed788",
-      "name": "위시리스트 페이지 완성",
-      "description": "src/app/(buyer)/wishlist/page.tsx를 실제 UI로 완성. useSyncExternalStore SSR 패턴 적용, 빈 상태 처리 포함.",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "d4b84345-61db-4a1b-ba3e-81f5bd59078b"
-        }
-      ],
-      "createdAt": "2026-03-10T18:05:21.508Z",
-      "updatedAt": "2026-03-10T18:08:59.279Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/(buyer)/wishlist/page.tsx",
+          "path": "src/app/(buyer)/mypage/orders/page.tsx",
           "type": "TO_MODIFY",
-          "description": "빈 껍데기를 실제 UI로 교체"
+          "description": "구매 내역 페이지"
         },
         {
-          "path": "src/app/(buyer)/cart/page.tsx",
-          "type": "REFERENCE",
-          "description": "useSyncExternalStore + EmptyState 패턴 참조"
-        },
-        {
-          "path": "src/components/wishlist/wishlist-card.tsx",
+          "path": "src/components/mypage/order-card.tsx",
           "type": "DEPENDENCY",
-          "description": "WishlistCard 사용"
+          "description": "주문 카드 컴포넌트"
         },
         {
-          "path": "src/stores/wishlist-store.ts",
+          "path": "src/lib/dummy/orders.ts",
           "type": "DEPENDENCY",
-          "description": "imageIds 가져오기"
+          "description": "더미 주문 데이터"
         },
         {
           "path": "src/lib/dummy/images.ts",
           "type": "DEPENDENCY",
-          "description": "dummyImages 필터링"
+          "description": "더미 이미지 데이터"
         },
         {
           "path": "src/components/common/empty-state.tsx",
           "type": "DEPENDENCY",
-          "description": "EmptyState 사용"
-        },
-        {
-          "path": "src/components/ui/skeleton.tsx",
-          "type": "DEPENDENCY",
-          "description": "로딩 스켈레톤"
+          "description": "빈 상태 컴포넌트"
         }
       ],
-      "implementationGuide": "파일: src/app/(buyer)/wishlist/page.tsx\n'use client'\n\nSSR hydration 방지 (cart/page.tsx 패턴):\nfunction useIsClient() {\n  return useSyncExternalStore(() => () => {}, () => true, () => false)\n}\n\n메인 로직:\n- wishlist store에서 imageIds 가져오기\n- dummyImages 필터링: dummyImages.filter(img => imageIds.includes(img.id))\n- isClient false: Skeleton 그리드 표시 (grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4, Skeleton h-48)\n- wishlistImages.length === 0: EmptyState (Heart 아이콘, '위시리스트가 비어 있습니다', '마음에 드는 이미지를 찾아 위시리스트에 추가해보세요', action: {label: '이미지 검색하기', href: '/search'})\n- 목록 있을 때:\n  - 헤더: '위시리스트 ({wishlistImages.length}건)'\n  - grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4\n  - WishlistCard 렌더링",
-      "verificationCriteria": "SSR hydration 오류 없음, 빈 상태/스켈레톤/목록 3가지 상태 모두 정상 렌더링. 위시리스트 아이템 제거 시 그리드에서 즉시 사라짐.",
-      "analysisResult": "Task 012: 위시리스트 페이지 UI 구현. 더미 데이터 기반, Phase 2 단계. 기술 스택: Next.js 15.5.3 + React 19 + TailwindCSS v4 + shadcn/ui + Zustand 5.x. 기존 패턴: cart-store.ts(Zustand persist), cart/page.tsx(useSyncExternalStore SSR 방지), cart-item-row.tsx(Dialog 패턴), SizeSelector/LicenseSelector 재사용.",
-      "summary": "위시리스트 페이지 완성. useSyncExternalStore SSR hydration 방지 패턴 적용, 스켈레톤/빈 상태/목록 3가지 상태 모두 구현. dummyImages 필터링으로 위시리스트 아이템 표시, WishlistCard 그리드 렌더링. TypeScript 타입 체크 통과.",
-      "completedAt": "2026-03-10T18:08:59.276Z"
+      "implementationGuide": "파일: src/app/(buyer)/mypage/orders/page.tsx (Server Component)\n\npseudocode:\n- import dummyOrders, dummyImages, dummyUsers\n- const CURRENT_USER_ID = 'user-001'\n- const userOrders = dummyOrders.filter(o => o.userId === CURRENT_USER_ID)\n  - UI 다양성을 위해 전체 dummyOrders 사용 가능 (혹은 user-001 주문만)\n  - 실제로는 dummyOrders 전체 표시(5개 주문으로 다양한 상태 확인)\n- 페이지 상단: 마이페이지 탭 네비게이션 (구매 내역 | 내 정보 링크)\n- 주문 목록: userOrders.map(order => <OrderCard order={order} images={dummyImages} />)\n- 빈 상태: EmptyState (ShoppingBag 아이콘, '구매 내역이 없습니다', '이미지 검색하기' -> /search)\n- metadata export: title '구매 내역 | JiangsStock'\n- 마이페이지 탭 네비게이션: Link href='/mypage/orders' 와 href='/mypage/profile' 를 탭 스타일로 표시",
+      "verificationCriteria": "페이지 접속 시 주문 목록이 렌더링되고, 각 주문 카드를 클릭하면 아이템 목록이 펼쳐지며, 마이페이지 탭 네비게이션이 표시됨",
+      "analysisResult": "Task 013: 마이페이지 UI 구현 (더미 데이터 기반). 기술 스택: Next.js 15.5.3 App Router, TypeScript, TailwindCSS v4, shadcn/ui new-york style. 기존 패턴: CompleteOrderItem 컴포넌트(checkout), formatPrice/getSizeLabel(price.ts), EmptyState, dummyOrders/dummyImages/dummyUsers, passwordChangeSchema/profileUpdateSchema(forms.ts) 재사용.",
+      "summary": "구매 내역 페이지 완성. user-001 기준 더미 주문 필터링, OrderCard 목록 렌더링, 마이페이지 탭 네비게이션(구매 내역/내 정보), 빈 상태 EmptyState 처리 포함.",
+      "completedAt": "2026-03-10T18:27:13.218Z"
+    },
+    {
+      "id": "5aa82137-431e-4a49-adec-549e1fca97ee",
+      "name": "내 정보 페이지 완성",
+      "description": "src/app/(buyer)/mypage/profile/page.tsx를 실제 UI로 완성. 이메일 표시(수정불가), 비밀번호 변경 폼, 프로필 정보 수정 폼 구현. React Hook Form + Zod 사용.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2026-03-10T18:24:30.023Z",
+      "updatedAt": "2026-03-10T18:28:17.535Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/(buyer)/mypage/profile/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "내 정보 페이지"
+        },
+        {
+          "path": "src/types/forms.ts",
+          "type": "REFERENCE",
+          "description": "passwordChangeSchema, profileUpdateSchema Zod 스키마"
+        },
+        {
+          "path": "src/lib/dummy/users.ts",
+          "type": "DEPENDENCY",
+          "description": "더미 사용자 데이터"
+        },
+        {
+          "path": "src/components/ui/form.tsx",
+          "type": "DEPENDENCY",
+          "description": "Form 컴포넌트"
+        },
+        {
+          "path": "src/components/ui/card.tsx",
+          "type": "DEPENDENCY",
+          "description": "Card 컴포넌트"
+        },
+        {
+          "path": "src/components/ui/select.tsx",
+          "type": "DEPENDENCY",
+          "description": "Select 컴포넌트"
+        },
+        {
+          "path": "src/components/ui/sonner.tsx",
+          "type": "DEPENDENCY",
+          "description": "Toast 알림"
+        }
+      ],
+      "implementationGuide": "파일: src/app/(buyer)/mypage/profile/page.tsx ('use client')\n\n의존성:\n- import { useForm } from 'react-hook-form'\n- import { zodResolver } from '@hookform/resolvers/zod'\n- import { passwordChangeSchema, profileUpdateSchema } from '@/types/forms'\n- import { dummyUsers } from '@/lib/dummy/users'\n- import { toast } from 'sonner'\n- Form, FormField, FormItem, FormLabel, FormControl, FormMessage from '@/components/ui/form'\n- Input from '@/components/ui/input'\n- Button from '@/components/ui/button'\n- Card, CardHeader, CardTitle, CardContent from '@/components/ui/card'\n- Select, SelectTrigger, SelectContent, SelectItem from '@/components/ui/select'\n\n구조:\n1. 마이페이지 탭 네비게이션 (orders/profile 공통)\n2. 이메일 섹션: Card 안에 Input disabled value={dummyUsers[0].email}\n3. 비밀번호 변경 Card:\n   - useForm({ resolver: zodResolver(passwordChangeSchema) })\n   - 현재 비밀번호, 새 비밀번호, 새 비밀번호 확인 Input (type=password)\n   - onSubmit: toast.success('비밀번호가 변경되었습니다') + reset()\n4. 프로필 정보 수정 Card:\n   - useForm({ resolver: zodResolver(profileUpdateSchema), defaultValues: { name: dummyUsers[0].name, country: dummyUsers[0].country, birthYear: dummyUsers[0].birthYear } })\n   - 이름 Input, 국가 Select(KR/US/JP/CN/OTHER), 출생연도 Input(type=number)\n   - onSubmit: toast.success('정보가 저장되었습니다')\n\n주의: metadata export는 Server Component에서만 가능하므로 'use client'이면 제거하거나 별도 layout.tsx에 추가",
+      "verificationCriteria": "이메일이 수정 불가 상태로 표시되고, 비밀번호 변경 폼과 프로필 수정 폼이 Zod 유효성 검사로 동작하며, 저장 시 toast 알림이 표시됨",
+      "analysisResult": "Task 013: 마이페이지 UI 구현 (더미 데이터 기반). 기술 스택: Next.js 15.5.3 App Router, TypeScript, TailwindCSS v4, shadcn/ui new-york style. 기존 패턴: CompleteOrderItem 컴포넌트(checkout), formatPrice/getSizeLabel(price.ts), EmptyState, dummyOrders/dummyImages/dummyUsers, passwordChangeSchema/profileUpdateSchema(forms.ts) 재사용.",
+      "summary": "내 정보 페이지 완성. 이메일 disabled 표시, 비밀번호 변경 폼(passwordChangeSchema), 프로필 수정 폼(profileUpdateSchema, 이름/국가 Select/출생연도), 저장 시 sonner toast 알림, 마이페이지 탭 네비게이션 포함. TypeScript 오류 없음.",
+      "completedAt": "2026-03-10T18:28:17.532Z"
     }
   ]
 }
