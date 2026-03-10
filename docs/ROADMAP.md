@@ -53,15 +53,15 @@ JiangsStock은 블로그/웹사이트/마케팅 자료용 고품질 이미지를
 
 > 전체 라우트 구조, 빈 페이지 껍데기, 공통 레이아웃, 타입 정의를 먼저 완성하여 전체 앱의 뼈대를 잡는다.
 
-- **Task 001: 프로젝트 구조 및 전체 라우트 설정** - 우선순위
-  - Next.js App Router 기반 전체 라우트 구조 생성 (구매자 + 관리자)
-  - 구매자 페이지 빈 껍데기 생성: `/`, `/search`, `/images/[id]`, `/cart`, `/checkout`, `/checkout/complete`, `/login`, `/signup`, `/wishlist`, `/mypage/orders`, `/mypage/profile`
-  - 관리자 페이지 빈 껍데기 생성: `/admin`, `/admin/dashboard`, `/admin/products`, `/admin/orders`
-  - 정적 페이지 빈 껍데기 생성: `/terms`, `/privacy`, `/license`
-  - API Route 빈 껍데기 생성: `/api/images/thumbnail/[imageId]`, `/api/images/preview/[imageId]`, `/api/downloads/[downloadToken]`, `/api/admin/images/[imageId]/original`, `/api/health`, `/api/webhooks/payment`
-  - 구매자용 공통 레이아웃 (헤더, 푸터, 네비게이션) 골격 구현
-  - 관리자용 공통 레이아웃 (사이드바, 헤더) 골격 구현
-  - 전역 에러 바운더리 (`error.tsx`), 로딩 상태 (`loading.tsx`), not-found 페이지 (`not-found.tsx`) 생성
+- [x] **Task 001: 프로젝트 구조 및 전체 라우트 설정** - 완료
+  - [x] Next.js App Router 기반 전체 라우트 구조 생성 (구매자 + 관리자)
+  - [x] 구매자 페이지 빈 껍데기 생성: `/`, `/search`, `/images/[id]`, `/cart`, `/checkout`, `/checkout/complete`, `/login`, `/signup`, `/wishlist`, `/mypage/orders`, `/mypage/profile`
+  - [x] 관리자 페이지 빈 껍데기 생성: `/admin`, `/admin/dashboard`, `/admin/products`, `/admin/orders`
+  - [x] 정적 페이지 빈 껍데기 생성: `/terms`, `/privacy`, `/license`
+  - [x] API Route 빈 껍데기 생성: `/api/images/thumbnail/[imageId]`, `/api/images/preview/[imageId]`, `/api/downloads/[downloadToken]`, `/api/admin/images/[imageId]/original`, `/api/health`, `/api/webhooks/payment`
+  - [x] 구매자용 공통 레이아웃 (헤더, 푸터, 네비게이션) 골격 구현
+  - [x] 관리자용 공통 레이아웃 (사이드바, 헤더) 골격 구현
+  - [x] 전역 에러 바운더리 (`error.tsx`), 로딩 상태 (`loading.tsx`), not-found 페이지 (`not-found.tsx`) 생성
 
 - **Task 002: TypeScript 타입 정의 및 인터페이스 설계**
   - 데이터 모델 타입 정의: User, Image, Category, Order, OrderItem, Wishlist, Cart, CartItem, TransactionLog, SystemConfig
@@ -211,7 +211,7 @@ JiangsStock은 블로그/웹사이트/마케팅 자료용 고품질 이미지를
 - **Task 019: NextAuth.js v5 인증 시스템 구현** - 우선순위
   - NextAuth.js v5 (Auth.js) 설치 및 설정
   - @auth/prisma-adapter 연동
-  - Credentials Provider 구현: 이메일/비밀번호 인증 (bcrypt saltRounds 12)
+  - Credentials Provider 구현: 이메일/비밀번호 인증 (bcryptjs saltRounds 12)
   - JWT 세션 전략 설정 (httpOnly + secure + sameSite=strict 쿠키)
   - 구매자 회원가입 Server Action 구현 (Zod 스키마 검증)
   - 구매자 로그인/로그아웃 Server Action 구현
@@ -278,7 +278,7 @@ JiangsStock은 블로그/웹사이트/마케팅 자료용 고품질 이미지를
 - **Task 026: 마이페이지 API 구현 (F011)**
   - 구매 내역 조회 API: 주문 목록 + 주문 상세 (OrderItem 포함)
   - 다운로드 링크 상태 조회: 남은 횟수, 만료일, 유효 여부
-  - 비밀번호 변경 Server Action (현재 비밀번호 확인 + bcrypt)
+  - 비밀번호 변경 Server Action (현재 비밀번호 확인 + bcryptjs)
   - 프로필 정보 수정 Server Action (이름/국가/출생연도)
   - 마이페이지 더미 데이터를 실제 API로 교체
   - Playwright MCP를 활용한 마이페이지 E2E 테스트
