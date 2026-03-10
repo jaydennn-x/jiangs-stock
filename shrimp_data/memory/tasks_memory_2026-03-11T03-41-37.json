@@ -1,0 +1,171 @@
+{
+  "tasks": [
+    {
+      "id": "f394865e-c80a-456d-9e3b-40c858316a5b",
+      "name": "shadcn Accordion 컴포넌트 설치",
+      "description": "구매 내역 아코디언 UI를 위해 shadcn/ui Accordion 컴포넌트를 설치한다. src/components/ui/accordion.tsx가 없으므로 npx shadcn@latest add accordion 명령으로 설치한다.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2026-03-10T18:24:30.023Z",
+      "updatedAt": "2026-03-10T18:26:11.045Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/ui/accordion.tsx",
+          "type": "CREATE",
+          "description": "shadcn Accordion 컴포넌트"
+        }
+      ],
+      "implementationGuide": "1. 터미널에서 npx shadcn@latest add accordion 실행\n2. src/components/ui/accordion.tsx 생성 확인",
+      "verificationCriteria": "src/components/ui/accordion.tsx 파일이 생성되고, Accordion, AccordionItem, AccordionTrigger, AccordionContent export 확인",
+      "analysisResult": "Task 013: 마이페이지 UI 구현 (더미 데이터 기반). 기술 스택: Next.js 15.5.3 App Router, TypeScript, TailwindCSS v4, shadcn/ui new-york style. 기존 패턴: CompleteOrderItem 컴포넌트(checkout), formatPrice/getSizeLabel(price.ts), EmptyState, dummyOrders/dummyImages/dummyUsers, passwordChangeSchema/profileUpdateSchema(forms.ts) 재사용.",
+      "summary": "accordion.tsx 생성 완료. Accordion, AccordionItem, AccordionTrigger, AccordionContent 모두 export 확인됨.",
+      "completedAt": "2026-03-10T18:26:11.044Z"
+    },
+    {
+      "id": "e082c55b-f3c3-40ab-9f34-834630ddb4cc",
+      "name": "OrderCard 컴포넌트 생성",
+      "description": "마이페이지 구매 내역에서 개별 주문을 표시하는 아코디언 카드 컴포넌트. 주문 헤더(날짜/주문번호/금액/상태 Badge)와 펼치기 시 OrderItem 목록(CompleteOrderItem 재사용)을 보여준다.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "f394865e-c80a-456d-9e3b-40c858316a5b"
+        }
+      ],
+      "createdAt": "2026-03-10T18:24:30.023Z",
+      "updatedAt": "2026-03-10T18:26:46.452Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/mypage/order-card.tsx",
+          "type": "CREATE",
+          "description": "주문 아코디언 카드 컴포넌트"
+        },
+        {
+          "path": "src/components/checkout/complete-order-item.tsx",
+          "type": "REFERENCE",
+          "description": "OrderItem 행 컴포넌트 재사용"
+        },
+        {
+          "path": "src/lib/dummy/orders.ts",
+          "type": "REFERENCE",
+          "description": "DummyOrder 타입 참조"
+        },
+        {
+          "path": "src/lib/price.ts",
+          "type": "DEPENDENCY",
+          "description": "formatPrice 유틸"
+        },
+        {
+          "path": "src/components/ui/accordion.tsx",
+          "type": "DEPENDENCY",
+          "description": "Accordion 컴포넌트"
+        },
+        {
+          "path": "src/components/ui/badge.tsx",
+          "type": "DEPENDENCY",
+          "description": "Badge 컴포넌트"
+        }
+      ],
+      "implementationGuide": "파일: src/components/mypage/order-card.tsx\n\ninterface OrderCardProps {\n  order: DummyOrder (from @/lib/dummy/orders)\n  images: Image[] (from @/types/models)\n}\n\npseudocode:\n- 'use client'\n- Accordion(type=single, collapsible) 사용\n- AccordionItem value={order.id}\n- AccordionTrigger: 주문 날짜(createdAt.toLocaleDateString('ko-KR')), 주문번호(order.orderNumber), 총금액(formatPrice(order.totalAmount)), 주문상태 Badge\n- 주문상태 Badge 색상: COMPLETED=green(bg-green-500 text-white), PENDING=amber(variant secondary), FAILED=destructive, CANCELLED=secondary\n- AccordionContent: order.items.map -> CompleteOrderItem 컴포넌트 재사용 (import from @/components/checkout/complete-order-item)\n- handleDownload: alert 더미 처리\n- 만료일 안내 텍스트: items[0].expiresAt.toLocaleDateString('ko-KR') + '까지'",
+      "verificationCriteria": "컴포넌트가 타입 오류 없이 렌더링되고, AccordionTrigger 클릭 시 OrderItem 목록이 펼쳐지며, 주문 상태에 따라 Badge 색상이 다르게 표시됨",
+      "analysisResult": "Task 013: 마이페이지 UI 구현 (더미 데이터 기반). 기술 스택: Next.js 15.5.3 App Router, TypeScript, TailwindCSS v4, shadcn/ui new-york style. 기존 패턴: CompleteOrderItem 컴포넌트(checkout), formatPrice/getSizeLabel(price.ts), EmptyState, dummyOrders/dummyImages/dummyUsers, passwordChangeSchema/profileUpdateSchema(forms.ts) 재사용.",
+      "summary": "OrderCard 컴포넌트 생성 완료. Accordion 기반 주문 카드, 주문상태 Badge(COMPLETED=green, PENDING=amber, FAILED=destructive), CompleteOrderItem 재사용, 만료일 안내 텍스트 포함.",
+      "completedAt": "2026-03-10T18:26:46.450Z"
+    },
+    {
+      "id": "e5ccc197-49ce-4024-8ea5-d677ad91dab9",
+      "name": "구매 내역 페이지 완성",
+      "description": "src/app/(buyer)/mypage/orders/page.tsx를 실제 UI로 완성. 더미 데이터(user-001 기준)로 주문 목록을 OrderCard로 렌더링. 빈 상태 처리 포함.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "e082c55b-f3c3-40ab-9f34-834630ddb4cc"
+        }
+      ],
+      "createdAt": "2026-03-10T18:24:30.023Z",
+      "updatedAt": "2026-03-10T18:27:13.221Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/(buyer)/mypage/orders/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "구매 내역 페이지"
+        },
+        {
+          "path": "src/components/mypage/order-card.tsx",
+          "type": "DEPENDENCY",
+          "description": "주문 카드 컴포넌트"
+        },
+        {
+          "path": "src/lib/dummy/orders.ts",
+          "type": "DEPENDENCY",
+          "description": "더미 주문 데이터"
+        },
+        {
+          "path": "src/lib/dummy/images.ts",
+          "type": "DEPENDENCY",
+          "description": "더미 이미지 데이터"
+        },
+        {
+          "path": "src/components/common/empty-state.tsx",
+          "type": "DEPENDENCY",
+          "description": "빈 상태 컴포넌트"
+        }
+      ],
+      "implementationGuide": "파일: src/app/(buyer)/mypage/orders/page.tsx (Server Component)\n\npseudocode:\n- import dummyOrders, dummyImages, dummyUsers\n- const CURRENT_USER_ID = 'user-001'\n- const userOrders = dummyOrders.filter(o => o.userId === CURRENT_USER_ID)\n  - UI 다양성을 위해 전체 dummyOrders 사용 가능 (혹은 user-001 주문만)\n  - 실제로는 dummyOrders 전체 표시(5개 주문으로 다양한 상태 확인)\n- 페이지 상단: 마이페이지 탭 네비게이션 (구매 내역 | 내 정보 링크)\n- 주문 목록: userOrders.map(order => <OrderCard order={order} images={dummyImages} />)\n- 빈 상태: EmptyState (ShoppingBag 아이콘, '구매 내역이 없습니다', '이미지 검색하기' -> /search)\n- metadata export: title '구매 내역 | JiangsStock'\n- 마이페이지 탭 네비게이션: Link href='/mypage/orders' 와 href='/mypage/profile' 를 탭 스타일로 표시",
+      "verificationCriteria": "페이지 접속 시 주문 목록이 렌더링되고, 각 주문 카드를 클릭하면 아이템 목록이 펼쳐지며, 마이페이지 탭 네비게이션이 표시됨",
+      "analysisResult": "Task 013: 마이페이지 UI 구현 (더미 데이터 기반). 기술 스택: Next.js 15.5.3 App Router, TypeScript, TailwindCSS v4, shadcn/ui new-york style. 기존 패턴: CompleteOrderItem 컴포넌트(checkout), formatPrice/getSizeLabel(price.ts), EmptyState, dummyOrders/dummyImages/dummyUsers, passwordChangeSchema/profileUpdateSchema(forms.ts) 재사용.",
+      "summary": "구매 내역 페이지 완성. user-001 기준 더미 주문 필터링, OrderCard 목록 렌더링, 마이페이지 탭 네비게이션(구매 내역/내 정보), 빈 상태 EmptyState 처리 포함.",
+      "completedAt": "2026-03-10T18:27:13.218Z"
+    },
+    {
+      "id": "5aa82137-431e-4a49-adec-549e1fca97ee",
+      "name": "내 정보 페이지 완성",
+      "description": "src/app/(buyer)/mypage/profile/page.tsx를 실제 UI로 완성. 이메일 표시(수정불가), 비밀번호 변경 폼, 프로필 정보 수정 폼 구현. React Hook Form + Zod 사용.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2026-03-10T18:24:30.023Z",
+      "updatedAt": "2026-03-10T18:28:17.535Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/(buyer)/mypage/profile/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "내 정보 페이지"
+        },
+        {
+          "path": "src/types/forms.ts",
+          "type": "REFERENCE",
+          "description": "passwordChangeSchema, profileUpdateSchema Zod 스키마"
+        },
+        {
+          "path": "src/lib/dummy/users.ts",
+          "type": "DEPENDENCY",
+          "description": "더미 사용자 데이터"
+        },
+        {
+          "path": "src/components/ui/form.tsx",
+          "type": "DEPENDENCY",
+          "description": "Form 컴포넌트"
+        },
+        {
+          "path": "src/components/ui/card.tsx",
+          "type": "DEPENDENCY",
+          "description": "Card 컴포넌트"
+        },
+        {
+          "path": "src/components/ui/select.tsx",
+          "type": "DEPENDENCY",
+          "description": "Select 컴포넌트"
+        },
+        {
+          "path": "src/components/ui/sonner.tsx",
+          "type": "DEPENDENCY",
+          "description": "Toast 알림"
+        }
+      ],
+      "implementationGuide": "파일: src/app/(buyer)/mypage/profile/page.tsx ('use client')\n\n의존성:\n- import { useForm } from 'react-hook-form'\n- import { zodResolver } from '@hookform/resolvers/zod'\n- import { passwordChangeSchema, profileUpdateSchema } from '@/types/forms'\n- import { dummyUsers } from '@/lib/dummy/users'\n- import { toast } from 'sonner'\n- Form, FormField, FormItem, FormLabel, FormControl, FormMessage from '@/components/ui/form'\n- Input from '@/components/ui/input'\n- Button from '@/components/ui/button'\n- Card, CardHeader, CardTitle, CardContent from '@/components/ui/card'\n- Select, SelectTrigger, SelectContent, SelectItem from '@/components/ui/select'\n\n구조:\n1. 마이페이지 탭 네비게이션 (orders/profile 공통)\n2. 이메일 섹션: Card 안에 Input disabled value={dummyUsers[0].email}\n3. 비밀번호 변경 Card:\n   - useForm({ resolver: zodResolver(passwordChangeSchema) })\n   - 현재 비밀번호, 새 비밀번호, 새 비밀번호 확인 Input (type=password)\n   - onSubmit: toast.success('비밀번호가 변경되었습니다') + reset()\n4. 프로필 정보 수정 Card:\n   - useForm({ resolver: zodResolver(profileUpdateSchema), defaultValues: { name: dummyUsers[0].name, country: dummyUsers[0].country, birthYear: dummyUsers[0].birthYear } })\n   - 이름 Input, 국가 Select(KR/US/JP/CN/OTHER), 출생연도 Input(type=number)\n   - onSubmit: toast.success('정보가 저장되었습니다')\n\n주의: metadata export는 Server Component에서만 가능하므로 'use client'이면 제거하거나 별도 layout.tsx에 추가",
+      "verificationCriteria": "이메일이 수정 불가 상태로 표시되고, 비밀번호 변경 폼과 프로필 수정 폼이 Zod 유효성 검사로 동작하며, 저장 시 toast 알림이 표시됨",
+      "analysisResult": "Task 013: 마이페이지 UI 구현 (더미 데이터 기반). 기술 스택: Next.js 15.5.3 App Router, TypeScript, TailwindCSS v4, shadcn/ui new-york style. 기존 패턴: CompleteOrderItem 컴포넌트(checkout), formatPrice/getSizeLabel(price.ts), EmptyState, dummyOrders/dummyImages/dummyUsers, passwordChangeSchema/profileUpdateSchema(forms.ts) 재사용.",
+      "summary": "내 정보 페이지 완성. 이메일 disabled 표시, 비밀번호 변경 폼(passwordChangeSchema), 프로필 수정 폼(profileUpdateSchema, 이름/국가 Select/출생연도), 저장 시 sonner toast 알림, 마이페이지 탭 네비게이션 포함. TypeScript 오류 없음.",
+      "completedAt": "2026-03-10T18:28:17.532Z"
+    }
+  ]
+}

@@ -1,171 +1,236 @@
 {
   "tasks": [
     {
-      "id": "f394865e-c80a-456d-9e3b-40c858316a5b",
-      "name": "shadcn Accordion 컴포넌트 설치",
-      "description": "구매 내역 아코디언 UI를 위해 shadcn/ui Accordion 컴포넌트를 설치한다. src/components/ui/accordion.tsx가 없으므로 npx shadcn@latest add accordion 명령으로 설치한다.",
+      "id": "f93ec967-720a-463b-b4c2-23d6474f1996",
+      "name": "Route Group 구조 재편 및 작업 파일 생성",
+      "description": "기존 src/app/admin/ 구조를 Route Group 패턴으로 재편한다. 현재 admin/layout.tsx와 admin/dashboard|products|orders 페이지를 admin/(protected)/ 그룹으로 이동하여 /admin/login이 레이아웃 없이 독립 렌더링되도록 한다. tasks/014-admin-layout-login.md 작업 파일도 생성한다.",
+      "notes": "Route Group 폴더명 (protected)는 URL에 포함되지 않음. /admin/dashboard URL은 동일하게 유지됨. 파일 삭제 전 새 파일 생성 완료 후 삭제할 것.",
       "status": "completed",
       "dependencies": [],
-      "createdAt": "2026-03-10T18:24:30.023Z",
-      "updatedAt": "2026-03-10T18:26:11.045Z",
+      "createdAt": "2026-03-10T18:41:37.627Z",
+      "updatedAt": "2026-03-10T18:50:58.629Z",
       "relatedFiles": [
         {
-          "path": "src/components/ui/accordion.tsx",
+          "path": "src/app/admin/layout.tsx",
+          "type": "TO_MODIFY",
+          "description": "삭제 예정 — (protected)/layout.tsx로 대체"
+        },
+        {
+          "path": "src/app/admin/dashboard/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "삭제 예정 — (protected)/dashboard/page.tsx로 이전"
+        },
+        {
+          "path": "src/app/admin/products/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "삭제 예정 — (protected)/products/page.tsx로 이전"
+        },
+        {
+          "path": "src/app/admin/orders/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "삭제 예정 — (protected)/orders/page.tsx로 이전"
+        },
+        {
+          "path": "src/app/admin/(protected)/layout.tsx",
           "type": "CREATE",
-          "description": "shadcn Accordion 컴포넌트"
+          "description": "새 레이아웃 파일 — AdminSidebar + AdminHeader 조합"
+        },
+        {
+          "path": "src/app/admin/(protected)/dashboard/page.tsx",
+          "type": "CREATE",
+          "description": "대시보드 페이지 이전"
+        },
+        {
+          "path": "src/app/admin/(protected)/products/page.tsx",
+          "type": "CREATE",
+          "description": "상품 관리 페이지 이전"
+        },
+        {
+          "path": "src/app/admin/(protected)/orders/page.tsx",
+          "type": "CREATE",
+          "description": "주문 관리 페이지 이전"
+        },
+        {
+          "path": "src/app/admin/page.tsx",
+          "type": "REFERENCE",
+          "description": "/admin/dashboard redirect — 변경 없음"
+        },
+        {
+          "path": "tasks/014-admin-layout-login.md",
+          "type": "CREATE",
+          "description": "Task 014 작업 파일"
+        },
+        {
+          "path": "tasks/000-sample.md",
+          "type": "REFERENCE",
+          "description": "작업 파일 양식 참고"
+        },
+        {
+          "path": "tasks/011-checkout-pages.md",
+          "type": "REFERENCE",
+          "description": "완료된 작업 파일 형식 참고"
         }
       ],
-      "implementationGuide": "1. 터미널에서 npx shadcn@latest add accordion 실행\n2. src/components/ui/accordion.tsx 생성 확인",
-      "verificationCriteria": "src/components/ui/accordion.tsx 파일이 생성되고, Accordion, AccordionItem, AccordionTrigger, AccordionContent export 확인",
-      "analysisResult": "Task 013: 마이페이지 UI 구현 (더미 데이터 기반). 기술 스택: Next.js 15.5.3 App Router, TypeScript, TailwindCSS v4, shadcn/ui new-york style. 기존 패턴: CompleteOrderItem 컴포넌트(checkout), formatPrice/getSizeLabel(price.ts), EmptyState, dummyOrders/dummyImages/dummyUsers, passwordChangeSchema/profileUpdateSchema(forms.ts) 재사용.",
-      "summary": "accordion.tsx 생성 완료. Accordion, AccordionItem, AccordionTrigger, AccordionContent 모두 export 확인됨.",
-      "completedAt": "2026-03-10T18:26:11.044Z"
+      "implementationGuide": "1. src/app/admin/(protected)/layout.tsx 생성 — 기존 admin/layout.tsx 내용 복사 (AdminSidebar + AdminHeader 조합)\n2. src/app/admin/(protected)/dashboard/page.tsx 생성 — 기존 admin/dashboard/page.tsx 내용 복사\n3. src/app/admin/(protected)/products/page.tsx 생성 — 기존 admin/products/page.tsx 내용 복사\n4. src/app/admin/(protected)/orders/page.tsx 생성 — 기존 admin/orders/page.tsx 내용 복사\n5. 기존 admin/layout.tsx 삭제\n6. 기존 admin/dashboard/page.tsx, admin/products/page.tsx, admin/orders/page.tsx 삭제\n7. src/app/admin/page.tsx는 유지 (/admin/dashboard로 redirect)\n8. tasks/014-admin-layout-login.md 생성 — 000-sample.md 양식 참고, 빈 체크박스로",
+      "verificationCriteria": "1. /admin/dashboard, /admin/products, /admin/orders URL이 정상 동작\n2. src/app/admin/(protected)/layout.tsx 존재\n3. 기존 admin/layout.tsx, dashboard/page.tsx, products/page.tsx, orders/page.tsx 삭제됨\n4. tasks/014-admin-layout-login.md 생성됨\n5. npm run build 성공",
+      "analysisResult": "Task 014: 관리자 레이아웃 및 로그인 페이지 UI 구현\\n\\n목표: JiangsStock 관리자 영역 UI를 완성한다. Route Group 패턴으로 /admin/login을 사이드바/헤더 레이아웃에서 분리하고, 반응형 사이드바(모바일 Sheet), 개선된 헤더(관리자 이름/로그아웃), 독립적인 관리자 로그인 페이지를 구현한다.\\n\\n기술 스택: Next.js 15.5.3 App Router, TailwindCSS v4, shadcn/ui (new-york), React Hook Form + Zod, Lucide Icons\\n\\n핵심 아키텍처 결정:\\n- src/app/admin/(protected)/ — Route Group으로 사이드바+헤더 레이아웃 적용 범위 한정\\n- src/app/admin/login/ — 독립 페이지 (레이아웃 없음, 다크 테마)\\n- AdminSidebar: 데스크톱만 표시(hidden md:flex), SidebarNav 내부 분리\\n- AdminHeader: 모바일 햄버거+Sheet(SidebarNav 재사용), 우측 관리자이름+로그아웃\\n- 더미 데이터 기반 (Phase 3 NextAuth 연동 예정)",
+      "summary": "Route Group (protected) 패턴으로 admin 구조 재편 완료. src/app/admin/(protected)/ 하위에 layout.tsx, dashboard, products, orders 페이지 생성. 기존 파일 삭제. /admin/login이 레이아웃 없이 독립 렌더링될 수 있는 기반 마련. tasks/014-admin-layout-login.md 작업 파일 생성. 빌드 성공 확인.",
+      "completedAt": "2026-03-10T18:50:58.621Z"
     },
     {
-      "id": "e082c55b-f3c3-40ab-9f34-834630ddb4cc",
-      "name": "OrderCard 컴포넌트 생성",
-      "description": "마이페이지 구매 내역에서 개별 주문을 표시하는 아코디언 카드 컴포넌트. 주문 헤더(날짜/주문번호/금액/상태 Badge)와 펼치기 시 OrderItem 목록(CompleteOrderItem 재사용)을 보여준다.",
+      "id": "cc1bcd7c-7954-4ced-ad38-30cae4ca1559",
+      "name": "AdminSidebar 반응형 개선 및 SidebarNav 분리",
+      "description": "기존 AdminSidebar를 데스크톱 전용(hidden md:flex)으로 변경하고, 네비게이션 아이템을 SidebarNav 내부 컴포넌트로 분리한다. SidebarNav는 모바일 Sheet에서도 재사용된다.",
+      "notes": "SidebarNav를 별도 파일로 분리하지 않고 admin-sidebar.tsx 내부에서 export하는 방식도 가능. AdminHeader에서 import하여 Sheet 내부에서 재사용할 수 있도록 NAV_ITEMS와 네비게이션 렌더링 함수를 named export로 노출하거나, 별도 src/components/admin/sidebar-nav.tsx로 분리할 것.",
       "status": "completed",
       "dependencies": [
         {
-          "taskId": "f394865e-c80a-456d-9e3b-40c858316a5b"
+          "taskId": "f93ec967-720a-463b-b4c2-23d6474f1996"
         }
       ],
-      "createdAt": "2026-03-10T18:24:30.023Z",
-      "updatedAt": "2026-03-10T18:26:46.452Z",
+      "createdAt": "2026-03-10T18:41:37.627Z",
+      "updatedAt": "2026-03-10T18:55:56.123Z",
       "relatedFiles": [
         {
-          "path": "src/components/mypage/order-card.tsx",
+          "path": "src/components/admin/admin-sidebar.tsx",
+          "type": "TO_MODIFY",
+          "description": "반응형 적용 — hidden md:flex, SidebarNav 분리"
+        },
+        {
+          "path": "src/components/admin/sidebar-nav.tsx",
           "type": "CREATE",
-          "description": "주문 아코디언 카드 컴포넌트"
-        },
-        {
-          "path": "src/components/checkout/complete-order-item.tsx",
-          "type": "REFERENCE",
-          "description": "OrderItem 행 컴포넌트 재사용"
-        },
-        {
-          "path": "src/lib/dummy/orders.ts",
-          "type": "REFERENCE",
-          "description": "DummyOrder 타입 참조"
-        },
-        {
-          "path": "src/lib/price.ts",
-          "type": "DEPENDENCY",
-          "description": "formatPrice 유틸"
-        },
-        {
-          "path": "src/components/ui/accordion.tsx",
-          "type": "DEPENDENCY",
-          "description": "Accordion 컴포넌트"
-        },
-        {
-          "path": "src/components/ui/badge.tsx",
-          "type": "DEPENDENCY",
-          "description": "Badge 컴포넌트"
+          "description": "공통 네비게이션 컴포넌트 (AdminSidebar와 모바일 Sheet 모두 재사용)"
         }
       ],
-      "implementationGuide": "파일: src/components/mypage/order-card.tsx\n\ninterface OrderCardProps {\n  order: DummyOrder (from @/lib/dummy/orders)\n  images: Image[] (from @/types/models)\n}\n\npseudocode:\n- 'use client'\n- Accordion(type=single, collapsible) 사용\n- AccordionItem value={order.id}\n- AccordionTrigger: 주문 날짜(createdAt.toLocaleDateString('ko-KR')), 주문번호(order.orderNumber), 총금액(formatPrice(order.totalAmount)), 주문상태 Badge\n- 주문상태 Badge 색상: COMPLETED=green(bg-green-500 text-white), PENDING=amber(variant secondary), FAILED=destructive, CANCELLED=secondary\n- AccordionContent: order.items.map -> CompleteOrderItem 컴포넌트 재사용 (import from @/components/checkout/complete-order-item)\n- handleDownload: alert 더미 처리\n- 만료일 안내 텍스트: items[0].expiresAt.toLocaleDateString('ko-KR') + '까지'",
-      "verificationCriteria": "컴포넌트가 타입 오류 없이 렌더링되고, AccordionTrigger 클릭 시 OrderItem 목록이 펼쳐지며, 주문 상태에 따라 Badge 색상이 다르게 표시됨",
-      "analysisResult": "Task 013: 마이페이지 UI 구현 (더미 데이터 기반). 기술 스택: Next.js 15.5.3 App Router, TypeScript, TailwindCSS v4, shadcn/ui new-york style. 기존 패턴: CompleteOrderItem 컴포넌트(checkout), formatPrice/getSizeLabel(price.ts), EmptyState, dummyOrders/dummyImages/dummyUsers, passwordChangeSchema/profileUpdateSchema(forms.ts) 재사용.",
-      "summary": "OrderCard 컴포넌트 생성 완료. Accordion 기반 주문 카드, 주문상태 Badge(COMPLETED=green, PENDING=amber, FAILED=destructive), CompleteOrderItem 재사용, 만료일 안내 텍스트 포함.",
-      "completedAt": "2026-03-10T18:26:46.450Z"
+      "implementationGuide": "admin-sidebar.tsx 수정:\n1. 최상위 aside에 'hidden md:flex' 클래스 적용 (모바일 숨김)\n2. 네비게이션 아이템 렌더링 로직을 SidebarNavItems 또는 인라인으로 유지\n3. NAV_ITEMS 상수와 링크 렌더링 로직은 그대로 유지\n4. 로고 영역, 네비게이션, 로그아웃 버튼 구조 유지\n\n상수 정의 확인:\n- NAV_ITEMS: href, label, icon 3개 항목\n- 로그아웃 버튼: 현재 더미 (Phase 3에서 실제 연동)",
+      "verificationCriteria": "1. 데스크톱(768px+)에서 AdminSidebar 표시\n2. 모바일(<768px)에서 AdminSidebar hidden\n3. SidebarNav 컴포넌트가 분리되어 export됨\n4. TypeScript 타입 에러 없음",
+      "analysisResult": "Task 014: 관리자 레이아웃 및 로그인 페이지 UI 구현\\n\\n목표: JiangsStock 관리자 영역 UI를 완성한다. Route Group 패턴으로 /admin/login을 사이드바/헤더 레이아웃에서 분리하고, 반응형 사이드바(모바일 Sheet), 개선된 헤더(관리자 이름/로그아웃), 독립적인 관리자 로그인 페이지를 구현한다.\\n\\n기술 스택: Next.js 15.5.3 App Router, TailwindCSS v4, shadcn/ui (new-york), React Hook Form + Zod, Lucide Icons\\n\\n핵심 아키텍처 결정:\\n- src/app/admin/(protected)/ — Route Group으로 사이드바+헤더 레이아웃 적용 범위 한정\\n- src/app/admin/login/ — 독립 페이지 (레이아웃 없음, 다크 테마)\\n- AdminSidebar: 데스크톱만 표시(hidden md:flex), SidebarNav 내부 분리\\n- AdminHeader: 모바일 햄버거+Sheet(SidebarNav 재사용), 우측 관리자이름+로그아웃\\n- 더미 데이터 기반 (Phase 3 NextAuth 연동 예정)",
+      "summary": "SidebarNav 컴포넌트를 sidebar-nav.tsx로 분리하여 NAV_ITEMS 상수와 네비게이션 렌더링 로직을 named export로 노출. AdminSidebar는 hidden md:flex로 데스크톱 전용 표시로 변경하고 SidebarNav를 재사용. TypeScript 타입 에러 없음. 다음 단계인 AdminHeader에서 Sheet 내부에 SidebarNav를 재사용할 준비 완료.",
+      "completedAt": "2026-03-10T18:55:56.086Z"
     },
     {
-      "id": "e5ccc197-49ce-4024-8ea5-d677ad91dab9",
-      "name": "구매 내역 페이지 완성",
-      "description": "src/app/(buyer)/mypage/orders/page.tsx를 실제 UI로 완성. 더미 데이터(user-001 기준)로 주문 목록을 OrderCard로 렌더링. 빈 상태 처리 포함.",
+      "id": "8d1017b1-77b7-4efc-bfec-d3b25c8c9bb0",
+      "name": "AdminHeader 개선 — 모바일 햄버거 메뉴 및 관리자 정보",
+      "description": "AdminHeader를 개선하여 모바일에서 햄버거 버튼(Sheet 트리거)을 표시하고, Sheet 내부에 SidebarNav를 렌더링한다. 우측에는 관리자 이름(더미)과 로그아웃 버튼을 표시한다.",
       "status": "completed",
       "dependencies": [
         {
-          "taskId": "e082c55b-f3c3-40ab-9f34-834630ddb4cc"
+          "taskId": "cc1bcd7c-7954-4ced-ad38-30cae4ca1559"
         }
       ],
-      "createdAt": "2026-03-10T18:24:30.023Z",
-      "updatedAt": "2026-03-10T18:27:13.221Z",
+      "createdAt": "2026-03-10T18:41:37.627Z",
+      "updatedAt": "2026-03-10T18:57:53.523Z",
       "relatedFiles": [
         {
-          "path": "src/app/(buyer)/mypage/orders/page.tsx",
+          "path": "src/components/admin/admin-header.tsx",
           "type": "TO_MODIFY",
-          "description": "구매 내역 페이지"
+          "description": "모바일 햄버거+Sheet, 관리자 이름, 로그아웃 버튼 추가"
         },
         {
-          "path": "src/components/mypage/order-card.tsx",
+          "path": "src/components/admin/sidebar-nav.tsx",
           "type": "DEPENDENCY",
-          "description": "주문 카드 컴포넌트"
+          "description": "Sheet 내부에서 재사용"
         },
         {
-          "path": "src/lib/dummy/orders.ts",
+          "path": "src/components/ui/sheet.tsx",
           "type": "DEPENDENCY",
-          "description": "더미 주문 데이터"
-        },
-        {
-          "path": "src/lib/dummy/images.ts",
-          "type": "DEPENDENCY",
-          "description": "더미 이미지 데이터"
-        },
-        {
-          "path": "src/components/common/empty-state.tsx",
-          "type": "DEPENDENCY",
-          "description": "빈 상태 컴포넌트"
+          "description": "모바일 사이드바 Sheet 컴포넌트"
         }
       ],
-      "implementationGuide": "파일: src/app/(buyer)/mypage/orders/page.tsx (Server Component)\n\npseudocode:\n- import dummyOrders, dummyImages, dummyUsers\n- const CURRENT_USER_ID = 'user-001'\n- const userOrders = dummyOrders.filter(o => o.userId === CURRENT_USER_ID)\n  - UI 다양성을 위해 전체 dummyOrders 사용 가능 (혹은 user-001 주문만)\n  - 실제로는 dummyOrders 전체 표시(5개 주문으로 다양한 상태 확인)\n- 페이지 상단: 마이페이지 탭 네비게이션 (구매 내역 | 내 정보 링크)\n- 주문 목록: userOrders.map(order => <OrderCard order={order} images={dummyImages} />)\n- 빈 상태: EmptyState (ShoppingBag 아이콘, '구매 내역이 없습니다', '이미지 검색하기' -> /search)\n- metadata export: title '구매 내역 | JiangsStock'\n- 마이페이지 탭 네비게이션: Link href='/mypage/orders' 와 href='/mypage/profile' 를 탭 스타일로 표시",
-      "verificationCriteria": "페이지 접속 시 주문 목록이 렌더링되고, 각 주문 카드를 클릭하면 아이템 목록이 펼쳐지며, 마이페이지 탭 네비게이션이 표시됨",
-      "analysisResult": "Task 013: 마이페이지 UI 구현 (더미 데이터 기반). 기술 스택: Next.js 15.5.3 App Router, TypeScript, TailwindCSS v4, shadcn/ui new-york style. 기존 패턴: CompleteOrderItem 컴포넌트(checkout), formatPrice/getSizeLabel(price.ts), EmptyState, dummyOrders/dummyImages/dummyUsers, passwordChangeSchema/profileUpdateSchema(forms.ts) 재사용.",
-      "summary": "구매 내역 페이지 완성. user-001 기준 더미 주문 필터링, OrderCard 목록 렌더링, 마이페이지 탭 네비게이션(구매 내역/내 정보), 빈 상태 EmptyState 처리 포함.",
-      "completedAt": "2026-03-10T18:27:13.218Z"
+      "implementationGuide": "admin-header.tsx를 'use client' Client Component로 변경:\n1. useState로 mobileOpen 상태 관리\n2. 좌측: md:hidden Menu 아이콘 버튼 (햄버거)\n3. Sheet 컴포넌트: open={mobileOpen}, onOpenChange={setMobileOpen}\n   - SheetContent side='left', w-60\n   - 내부: 로고 + SidebarNav 렌더링\n4. 중앙/우측: flex-1 spacer + 관리자 이름 텍스트 + 로그아웃 Button\n5. 더미 adminName = '관리자' 상수로 정의\n\nimport 목록:\n- Sheet, SheetContent, SheetHeader, SheetTitle from '@/components/ui/sheet'\n- Button from '@/components/ui/button'\n- Menu, LogOut from 'lucide-react'\n- SidebarNav from '@/components/admin/sidebar-nav'",
+      "verificationCriteria": "1. 모바일에서 햄버거 버튼 클릭 시 Sheet 사이드바 슬라이드\n2. Sheet 내부에 네비게이션 링크 표시\n3. 헤더 우측에 '관리자' 텍스트와 로그아웃 버튼 표시\n4. TypeScript 타입 에러 없음",
+      "analysisResult": "Task 014: 관리자 레이아웃 및 로그인 페이지 UI 구현\\n\\n목표: JiangsStock 관리자 영역 UI를 완성한다. Route Group 패턴으로 /admin/login을 사이드바/헤더 레이아웃에서 분리하고, 반응형 사이드바(모바일 Sheet), 개선된 헤더(관리자 이름/로그아웃), 독립적인 관리자 로그인 페이지를 구현한다.\\n\\n기술 스택: Next.js 15.5.3 App Router, TailwindCSS v4, shadcn/ui (new-york), React Hook Form + Zod, Lucide Icons\\n\\n핵심 아키텍처 결정:\\n- src/app/admin/(protected)/ — Route Group으로 사이드바+헤더 레이아웃 적용 범위 한정\\n- src/app/admin/login/ — 독립 페이지 (레이아웃 없음, 다크 테마)\\n- AdminSidebar: 데스크톱만 표시(hidden md:flex), SidebarNav 내부 분리\\n- AdminHeader: 모바일 햄버거+Sheet(SidebarNav 재사용), 우측 관리자이름+로그아웃\\n- 더미 데이터 기반 (Phase 3 NextAuth 연동 예정)",
+      "summary": "AdminHeader를 use client 컴포넌트로 전환. useState로 mobileOpen 상태 관리. 모바일에서 Menu 아이콘 버튼으로 Sheet 트리거, SheetContent 내부에 SidebarNav 재사용. 헤더 우측에 관리자 이름과 LogOut 버튼 추가. TypeScript 타입 에러 없음.",
+      "completedAt": "2026-03-10T18:57:53.520Z"
     },
     {
-      "id": "5aa82137-431e-4a49-adec-549e1fca97ee",
-      "name": "내 정보 페이지 완성",
-      "description": "src/app/(buyer)/mypage/profile/page.tsx를 실제 UI로 완성. 이메일 표시(수정불가), 비밀번호 변경 폼, 프로필 정보 수정 폼 구현. React Hook Form + Zod 사용.",
+      "id": "9cd631ad-8956-4be3-b638-b7682849e9cb",
+      "name": "관리자 로그인 페이지 구현",
+      "description": "src/app/admin/login/page.tsx를 새로 생성한다. 일반 구매자 로그인(/login)과 완전히 다른 디자인으로, 어둡고 전문적인 관리자 전용 느낌. React Hook Form + Zod 유효성 검사 적용. 더미 onSubmit으로 /admin/dashboard 이동.",
+      "notes": "일반 로그인 페이지(src/app/(buyer)/login/page.tsx)는 흰 배경 + LoginForm 구조. 관리자 로그인은 slate-900 다크 배경으로 완전히 다른 느낌이어야 함. shadcn Card 컴포넌트에 className으로 다크 스타일 오버라이드.",
       "status": "completed",
-      "dependencies": [],
-      "createdAt": "2026-03-10T18:24:30.023Z",
-      "updatedAt": "2026-03-10T18:28:17.535Z",
+      "dependencies": [
+        {
+          "taskId": "f93ec967-720a-463b-b4c2-23d6474f1996"
+        }
+      ],
+      "createdAt": "2026-03-10T18:41:37.627Z",
+      "updatedAt": "2026-03-10T19:00:10.628Z",
       "relatedFiles": [
         {
-          "path": "src/app/(buyer)/mypage/profile/page.tsx",
-          "type": "TO_MODIFY",
-          "description": "내 정보 페이지"
+          "path": "src/app/admin/login/page.tsx",
+          "type": "CREATE",
+          "description": "관리자 로그인 페이지 — 독립 다크 테마"
         },
         {
-          "path": "src/types/forms.ts",
+          "path": "src/components/admin/admin-login-form.tsx",
+          "type": "CREATE",
+          "description": "관리자 로그인 폼 컴포넌트 — RHF+Zod"
+        },
+        {
+          "path": "src/app/(buyer)/login/page.tsx",
           "type": "REFERENCE",
-          "description": "passwordChangeSchema, profileUpdateSchema Zod 스키마"
-        },
-        {
-          "path": "src/lib/dummy/users.ts",
-          "type": "DEPENDENCY",
-          "description": "더미 사용자 데이터"
-        },
-        {
-          "path": "src/components/ui/form.tsx",
-          "type": "DEPENDENCY",
-          "description": "Form 컴포넌트"
+          "description": "일반 로그인 페이지 구조 참고 (다른 디자인으로 구현)"
         },
         {
           "path": "src/components/ui/card.tsx",
           "type": "DEPENDENCY",
-          "description": "Card 컴포넌트"
+          "description": "Card, CardHeader, CardContent 사용"
         },
         {
-          "path": "src/components/ui/select.tsx",
+          "path": "src/components/ui/button.tsx",
           "type": "DEPENDENCY",
-          "description": "Select 컴포넌트"
+          "description": "로그인 버튼"
         },
         {
-          "path": "src/components/ui/sonner.tsx",
+          "path": "src/components/ui/input.tsx",
           "type": "DEPENDENCY",
-          "description": "Toast 알림"
+          "description": "이메일/비밀번호 입력"
+        },
+        {
+          "path": "src/components/ui/form.tsx",
+          "type": "DEPENDENCY",
+          "description": "Form, FormField, FormItem, FormLabel, FormMessage"
         }
       ],
-      "implementationGuide": "파일: src/app/(buyer)/mypage/profile/page.tsx ('use client')\n\n의존성:\n- import { useForm } from 'react-hook-form'\n- import { zodResolver } from '@hookform/resolvers/zod'\n- import { passwordChangeSchema, profileUpdateSchema } from '@/types/forms'\n- import { dummyUsers } from '@/lib/dummy/users'\n- import { toast } from 'sonner'\n- Form, FormField, FormItem, FormLabel, FormControl, FormMessage from '@/components/ui/form'\n- Input from '@/components/ui/input'\n- Button from '@/components/ui/button'\n- Card, CardHeader, CardTitle, CardContent from '@/components/ui/card'\n- Select, SelectTrigger, SelectContent, SelectItem from '@/components/ui/select'\n\n구조:\n1. 마이페이지 탭 네비게이션 (orders/profile 공통)\n2. 이메일 섹션: Card 안에 Input disabled value={dummyUsers[0].email}\n3. 비밀번호 변경 Card:\n   - useForm({ resolver: zodResolver(passwordChangeSchema) })\n   - 현재 비밀번호, 새 비밀번호, 새 비밀번호 확인 Input (type=password)\n   - onSubmit: toast.success('비밀번호가 변경되었습니다') + reset()\n4. 프로필 정보 수정 Card:\n   - useForm({ resolver: zodResolver(profileUpdateSchema), defaultValues: { name: dummyUsers[0].name, country: dummyUsers[0].country, birthYear: dummyUsers[0].birthYear } })\n   - 이름 Input, 국가 Select(KR/US/JP/CN/OTHER), 출생연도 Input(type=number)\n   - onSubmit: toast.success('정보가 저장되었습니다')\n\n주의: metadata export는 Server Component에서만 가능하므로 'use client'이면 제거하거나 별도 layout.tsx에 추가",
-      "verificationCriteria": "이메일이 수정 불가 상태로 표시되고, 비밀번호 변경 폼과 프로필 수정 폼이 Zod 유효성 검사로 동작하며, 저장 시 toast 알림이 표시됨",
-      "analysisResult": "Task 013: 마이페이지 UI 구현 (더미 데이터 기반). 기술 스택: Next.js 15.5.3 App Router, TypeScript, TailwindCSS v4, shadcn/ui new-york style. 기존 패턴: CompleteOrderItem 컴포넌트(checkout), formatPrice/getSizeLabel(price.ts), EmptyState, dummyOrders/dummyImages/dummyUsers, passwordChangeSchema/profileUpdateSchema(forms.ts) 재사용.",
-      "summary": "내 정보 페이지 완성. 이메일 disabled 표시, 비밀번호 변경 폼(passwordChangeSchema), 프로필 수정 폼(profileUpdateSchema, 이름/국가 Select/출생연도), 저장 시 sonner toast 알림, 마이페이지 탭 네비게이션 포함. TypeScript 오류 없음.",
-      "completedAt": "2026-03-10T18:28:17.532Z"
+      "implementationGuide": "1. AdminLoginForm 컴포넌트 생성 (src/components/admin/admin-login-form.tsx):\n   - 'use client'\n   - Zod 스키마: email(이메일 형식), password(최소 1자)\n   - useForm with zodResolver\n   - onSubmit: router.push('/admin/dashboard') (더미)\n   - Form 구조: email Input + password Input (type='password') + 로그인 버튼\n\n2. src/app/admin/login/page.tsx:\n   - 전체 화면 다크 배경: min-h-screen bg-slate-900\n   - 중앙 정렬: flex items-center justify-center\n   - Card: bg-slate-800 border-slate-700 text-white, max-w-md w-full\n   - 상단: Shield 또는 Lock 아이콘 + 'JiangsStock' 로고 + '관리자 포털' 부제목\n   - CardContent: AdminLoginForm\n   - Metadata: '관리자 로그인 | JiangsStock'\n\n3. 이 페이지는 src/app/admin/(protected) 밖에 있으므로 사이드바/헤더 레이아웃 없음",
+      "verificationCriteria": "1. /admin/login 접속 시 사이드바/헤더 없는 다크 테마 페이지 표시\n2. 이메일 필드 미입력 또는 잘못된 형식 시 에러 메시지\n3. 폼 제출 시 /admin/dashboard로 이동\n4. TypeScript 타입 에러 없음\n5. npm run build 성공",
+      "analysisResult": "Task 014: 관리자 레이아웃 및 로그인 페이지 UI 구현\\n\\n목표: JiangsStock 관리자 영역 UI를 완성한다. Route Group 패턴으로 /admin/login을 사이드바/헤더 레이아웃에서 분리하고, 반응형 사이드바(모바일 Sheet), 개선된 헤더(관리자 이름/로그아웃), 독립적인 관리자 로그인 페이지를 구현한다.\\n\\n기술 스택: Next.js 15.5.3 App Router, TailwindCSS v4, shadcn/ui (new-york), React Hook Form + Zod, Lucide Icons\\n\\n핵심 아키텍처 결정:\\n- src/app/admin/(protected)/ — Route Group으로 사이드바+헤더 레이아웃 적용 범위 한정\\n- src/app/admin/login/ — 독립 페이지 (레이아웃 없음, 다크 테마)\\n- AdminSidebar: 데스크톱만 표시(hidden md:flex), SidebarNav 내부 분리\\n- AdminHeader: 모바일 햄버거+Sheet(SidebarNav 재사용), 우측 관리자이름+로그아웃\\n- 더미 데이터 기반 (Phase 3 NextAuth 연동 예정)",
+      "summary": "AdminLoginForm(RHF+Zod, 다크 스타일 Input)과 관리자 로그인 페이지(slate-900 배경, Shield 아이콘, Card 다크 테마) 생성 완료. /admin/login이 (protected) 그룹 밖에 위치하여 사이드바/헤더 없이 독립 렌더링. 빌드 성공.",
+      "completedAt": "2026-03-10T19:00:10.626Z"
+    },
+    {
+      "id": "f711bcd1-a759-49aa-8f50-6c082db5d7c4",
+      "name": "빌드 검증 및 작업 파일 업데이트",
+      "description": "모든 구현 완료 후 npm run check-all 및 npm run build로 최종 검증한다. tasks/014-admin-layout-login.md의 체크박스를 완료 상태로 업데이트하고 변경 사항 요약을 작성한다.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "9cd631ad-8956-4be3-b638-b7682849e9cb"
+        },
+        {
+          "taskId": "8d1017b1-77b7-4efc-bfec-d3b25c8c9bb0"
+        }
+      ],
+      "createdAt": "2026-03-10T18:41:37.627Z",
+      "updatedAt": "2026-03-10T19:02:02.044Z",
+      "relatedFiles": [
+        {
+          "path": "tasks/014-admin-layout-login.md",
+          "type": "TO_MODIFY",
+          "description": "작업 완료 상태 업데이트"
+        },
+        {
+          "path": "docs/ROADMAP.md",
+          "type": "TO_MODIFY",
+          "description": "Task 014 완료 표시"
+        }
+      ],
+      "implementationGuide": "1. npm run check-all 실행 — lint, typecheck 통과 확인\n2. npm run build 실행 — 빌드 성공 확인\n3. tasks/014-admin-layout-login.md 업데이트:\n   - 모든 수락 기준 체크박스 체크\n   - 구현 단계 체크박스 체크\n   - 변경 사항 요약 섹션 작성 (신규/수정/삭제 파일 목록)\n4. docs/ROADMAP.md Task 014 항목을 완료([x])로 표시",
+      "verificationCriteria": "1. npm run check-all 통과\n2. npm run build 성공\n3. tasks/014-admin-layout-login.md 완료 상태\n4. ROADMAP.md Task 014 [x] 표시",
+      "analysisResult": "Task 014: 관리자 레이아웃 및 로그인 페이지 UI 구현\\n\\n목표: JiangsStock 관리자 영역 UI를 완성한다. Route Group 패턴으로 /admin/login을 사이드바/헤더 레이아웃에서 분리하고, 반응형 사이드바(모바일 Sheet), 개선된 헤더(관리자 이름/로그아웃), 독립적인 관리자 로그인 페이지를 구현한다.\\n\\n기술 스택: Next.js 15.5.3 App Router, TailwindCSS v4, shadcn/ui (new-york), React Hook Form + Zod, Lucide Icons\\n\\n핵심 아키텍처 결정:\\n- src/app/admin/(protected)/ — Route Group으로 사이드바+헤더 레이아웃 적용 범위 한정\\n- src/app/admin/login/ — 독립 페이지 (레이아웃 없음, 다크 테마)\\n- AdminSidebar: 데스크톱만 표시(hidden md:flex), SidebarNav 내부 분리\\n- AdminHeader: 모바일 햄버거+Sheet(SidebarNav 재사용), 우측 관리자이름+로그아웃\\n- 더미 데이터 기반 (Phase 3 NextAuth 연동 예정)",
+      "summary": "npm run check-all 통과 (에러 없음, 기존 파일 warning만 존재). npm run build 성공 (/admin/login 포함 전체 라우트 빌드). tasks/014-admin-layout-login.md 완료 상태로 업데이트 및 변경 사항 요약 작성. ROADMAP.md Task 014 완료([x]) 표시.",
+      "completedAt": "2026-03-10T19:02:02.042Z"
     }
   ]
 }
