@@ -86,16 +86,16 @@ JiangsStock은 블로그/웹사이트/마케팅 자료용 고품질 이미지를
 
 > 모든 페이지 UI를 더미 데이터로 완성하여 전체 사용자 플로우를 체험할 수 있도록 한다.
 
-- **Task 004: 더미 데이터, 클라이언트 상태 관리, 공통 UI 컴포넌트 구현** - 우선순위
-  - 더미 데이터 모듈 작성: 이미지 30건, 카테고리 6종, 주문 5건, 사용자 3명
-  - Zustand 5.x 설치 및 장바구니 스토어 생성 (localStorage persist 미들웨어 적용)
-  - 장바구니 액션: 추가, 삭제, 옵션 변경 (크기/라이선스), 수량 표시
-  - 가격 계산 유틸리티: basePrice × 크기별 비율 × 라이선스 배율
-  - TanStack Query v5 설치 및 기본 설정 (QueryClient Provider)
-  - 공통 컴포넌트 구현: ImageCard (썸네일+가격+위시리스트 아이콘), ImageGrid (Masonry 레이아웃), PriceDisplay (가격 포맷), SizeSelector (XL/L/M/S 라디오), LicenseSelector (스탠다드/확장 라디오)
-  - 검색 관련 컴포넌트: SearchInput (헤더 검색창), FilterSidebar (카테고리/방향/색상 필터), SortDropdown (정렬 옵션)
-  - 상태 표시 컴포넌트: EmptyState, LoadingSkeleton, ErrorMessage, StatusBadge (처리 상태 배지)
-  - 이미지 보호 컴포넌트: ProtectedImage (우클릭/드래그 방지 래퍼, F017)
+- [x] **Task 004: 더미 데이터, 클라이언트 상태 관리, 공통 UI 컴포넌트 구현** - 완료
+  - [x] 더미 데이터 모듈 작성: 이미지 30건, 카테고리 6종, 주문 5건, 사용자 3명
+  - [x] Zustand 5.x 설치 및 장바구니 스토어 생성 (localStorage persist 미들웨어 적용)
+  - [x] 장바구니 액션: 추가, 삭제, 옵션 변경 (크기/라이선스), 수량 표시
+  - [x] 가격 계산 유틸리티: basePrice × 크기별 비율 × 라이선스 배율
+  - [x] TanStack Query v5 설치 및 기본 설정 (QueryClient Provider)
+  - [x] 공통 컴포넌트 구현: ImageCard (썸네일+가격+위시리스트 아이콘), ImageGrid (Masonry 레이아웃), PriceDisplay (가격 포맷), SizeSelector (XL/L/M/S 라디오), LicenseSelector (스탠다드/확장 라디오)
+  - [x] 검색 관련 컴포넌트: SearchInput (헤더 검색창), FilterSidebar (카테고리/방향/색상 필터), SortDropdown (정렬 옵션)
+  - [x] 상태 표시 컴포넌트: EmptyState, LoadingSkeleton, ErrorMessage, StatusBadge (처리 상태 배지)
+  - [x] 이미지 보호 컴포넌트: ProtectedImage (우클릭/드래그 방지 래퍼, F017)
 
 - **Task 005: 구매자 헤더, 푸터, 네비게이션 UI 완성**
   - 헤더: 로고, 검색창, 카테고리 드롭다운 (6종), 장바구니 아이콘 (수량 배지), 인증 메뉴 (로그인/회원가입 또는 사용자 드롭다운)

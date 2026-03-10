@@ -5,6 +5,12 @@ const nextConfig: NextConfig = {
   compress: true,
   images: {
     formats: ['image/webp', 'image/avif'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos',
+      },
+    ],
   },
   experimental: {
     optimizePackageImports: ['lucide-react'],
