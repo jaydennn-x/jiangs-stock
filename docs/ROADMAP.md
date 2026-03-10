@@ -16,13 +16,11 @@ JiangsStock은 블로그/웹사이트/마케팅 자료용 고품질 이미지를
 ## 개발 워크플로우
 
 1. **작업 계획**
-
    - 기존 코드베이스를 학습하고 현재 상태를 파악
    - 새로운 작업을 포함하도록 `ROADMAP.md` 업데이트
    - 우선순위 작업은 마지막 완료된 작업 다음에 삽입
 
 2. **작업 생성**
-
    - 기존 코드베이스를 학습하고 현재 상태를 파악
    - `/tasks` 디렉토리에 새 작업 파일 생성
    - 명명 형식: `XXX-description.md` (예: `001-setup.md`)
@@ -32,7 +30,6 @@ JiangsStock은 블로그/웹사이트/마케팅 자료용 고품질 이미지를
    - 이러한 예시들은 완료된 작업이므로 내용이 완료된 작업의 최종 상태를 반영함 (체크된 박스와 변경 사항 요약). 새 작업의 경우, 문서에는 빈 박스와 변경 사항 요약이 없어야 함. 초기 상태의 샘플로 `000-sample.md` 참조.
 
 3. **작업 구현**
-
    - 작업 파일의 명세서를 따름
    - 기능과 기능성 구현
    - API 연동 및 비즈니스 로직 구현 시 Playwright MCP로 테스트 수행 필수
@@ -42,7 +39,6 @@ JiangsStock은 블로그/웹사이트/마케팅 자료용 고품질 이미지를
    - 각 단계 완료 후 중단하고 추가 지시를 기다림
 
 4. **로드맵 업데이트**
-
    - 로드맵에서 완료된 작업을 완료로 표시
 
 ---
@@ -64,25 +60,25 @@ JiangsStock은 블로그/웹사이트/마케팅 자료용 고품질 이미지를
   - [x] 전역 에러 바운더리 (`error.tsx`), 로딩 상태 (`loading.tsx`), not-found 페이지 (`not-found.tsx`) 생성
 
 - [x] **Task 002: TypeScript 타입 정의 및 인터페이스 설계** - 완료
-  - 데이터 모델 타입 정의: User, Image, Category, Order, OrderItem, Wishlist, Cart, CartItem, TransactionLog, SystemConfig
-  - Enum 타입 정의: UserRole, Orientation, ImageSize, LicenseType, OrderStatus, ProcessingStatus, TransactionAction, TransactionStatus
-  - API 요청/응답 타입 정의: 검색 파라미터, 페이지네이션, 에러 응답
-  - 폼 스키마 타입 정의: 회원가입, 로그인, 상품 등록/수정, 비밀번호 변경
-  - 가격 계산 관련 상수 정의: 크기별 비율 (L=0.45, M=0.20, S=0.07), 확장 라이선스 기본 배율
-  - 환경변수 타입 정의 (`env.d.ts`)
-  - 환경변수 Zod 스키마 검증 유틸리티: 서버 시작 시 필수 환경변수 누락 검증 (`src/lib/env.ts`)
+  - [x] 데이터 모델 타입 정의: User, Image, Category, Order, OrderItem, Wishlist, Cart, CartItem, TransactionLog, SystemConfig
+  - [x] Enum 타입 정의: UserRole, Orientation, ImageSize, LicenseType, OrderStatus, ProcessingStatus, TransactionAction, TransactionStatus
+  - [x] API 요청/응답 타입 정의: 검색 파라미터, 페이지네이션, 에러 응답
+  - [x] 폼 스키마 타입 정의: 회원가입, 로그인, 상품 등록/수정, 비밀번호 변경
+  - [x] 가격 계산 관련 상수 정의: 크기별 비율 (L=0.45, M=0.20, S=0.07), 확장 라이선스 기본 배율
+  - [x] 환경변수 타입 정의 (`env.d.ts`)
+  - [x] 환경변수 Zod 스키마 검증 유틸리티: 서버 시작 시 필수 환경변수 누락 검증 (`src/lib/env.ts`)
 
-- **Task 003: Prisma 스키마 설계, 마이그레이션, Seed 실행**
-  - Prisma ORM 6.x 설치 및 설정
-  - 전체 데이터 모델 스키마 작성 (User, Image, Category, Order, OrderItem, Wishlist, Cart, CartItem, TransactionLog, SystemConfig)
-  - 인덱스 설계: tags/colorTags GIN 인덱스, name+description tsvector GIN 인덱스, categoryId+isActive B-tree 복합 인덱스
-  - 복합 유니크 제약조건: Wishlist(userId+imageId), CartItem(cartId+imageId+size+licenseType)
-  - PostgreSQL 16 + Redis 로컬 개발 환경 설정 (Docker Compose)
-  - Prisma 마이그레이션 실행
-  - PostgreSQL 확장 설치: pg_trgm (trigram 검색)
-  - tsvector 컬럼 및 GIN 인덱스 생성 (Raw SQL 마이그레이션)
-  - Seed 스크립트 작성 및 실행: 기본 카테고리 6종 (자연/풍경, 인물, 비즈니스, 음식, 건축, 기타), SystemConfig 기본값 7종, 관리자 계정 1개
-  - 개발용 더미 데이터 Seed: 이미지 30건, 사용자 3명, 주문/주문아이템 5건
+- [x] **Task 003: Prisma 스키마 설계, 마이그레이션, Seed 실행** - 완료
+  - [x] Prisma ORM 7.x 설치 및 설정 (prisma.config.ts 방식)
+  - [x] 전체 데이터 모델 스키마 작성 (User, Image, Category, Order, OrderItem, Wishlist, Cart, CartItem, TransactionLog, SystemConfig)
+  - [x] 인덱스 설계: tags/colorTags GIN 인덱스, name+description tsvector GIN 인덱스, categoryId+isActive B-tree 복합 인덱스
+  - [x] 복합 유니크 제약조건: Wishlist(userId+imageId), CartItem(cartId+imageId+size+licenseType)
+  - [x] PostgreSQL 16 + Redis 7 로컬 개발 환경 설정 (Docker Compose)
+  - [x] Prisma 마이그레이션 실행 (init + add_search_indexes)
+  - [x] PostgreSQL 확장 설치: pg_trgm (trigram 검색)
+  - [x] tsvector 컬럼 및 GIN 인덱스 생성, 자동 업데이트 트리거 (Raw SQL 마이그레이션)
+  - [x] Seed 스크립트 작성 및 실행: 기본 카테고리 6종, SystemConfig 기본값 7종, 관리자 계정 1개
+  - [x] 개발용 더미 데이터 Seed: 이미지 30건, 사용자 3명, 주문/주문아이템 5건
 
 ---
 

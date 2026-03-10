@@ -5,27 +5,29 @@
 ## 주요 기능
 
 **구매자**
+
 - 키워드·카테고리·색상·방향 기반 이미지 검색
 - 크기(XL/L/M/S) 및 라이선스(스탠다드/확장) 선택 구매
 - 장바구니 및 위시리스트
 - 보안 다운로드 링크 (3회 제한, 7일 만료)
 
 **관리자**
+
 - 이미지 업로드 시 자동 리사이징 및 워터마크 생성
 - 주문 관리 및 다운로드 링크 재발송
 - 매출 통계 대시보드
 
 ## 기술 스택
 
-| 영역 | 기술 |
-|------|------|
+| 영역     | 기술                                                          |
+| -------- | ------------------------------------------------------------- |
 | Frontend | Next.js 16.1, React 19, TypeScript, TailwindCSS v4, shadcn/ui |
-| Backend | Next.js API Routes, Prisma ORM 6, PostgreSQL 16 |
-| Auth | NextAuth.js v5 (Auth.js) |
-| Queue | BullMQ, Redis |
-| Image | Sharp 0.34 |
-| Payment | 포트원 v2 / 토스페이먼츠 |
-| Infra | AWS (EC2, RDS, ElastiCache, SES, S3) |
+| Backend  | Next.js API Routes, Prisma ORM 6, PostgreSQL 16               |
+| Auth     | NextAuth.js v5 (Auth.js)                                      |
+| Queue    | BullMQ, Redis                                                 |
+| Image    | Sharp 0.34                                                    |
+| Payment  | 포트원 v2 / 토스페이먼츠                                      |
+| Infra    | AWS (EC2, RDS, ElastiCache, SES, S3)                          |
 
 ## 설치 방법
 
@@ -87,8 +89,8 @@ PORTONE_API_SECRET=""
 
 ```typescript
 // 키워드 검색
-const response = await fetch('/api/images?q=nature&category=landscape');
-const images = await response.json();
+const response = await fetch('/api/images?q=nature&category=landscape')
+const images = await response.json()
 ```
 
 ### 결제 처리
@@ -96,10 +98,8 @@ const images = await response.json();
 ```typescript
 // 주문 생성 및 결제
 const order = await createOrder({
-  items: [
-    { imageId: 'uuid', size: 'XL', licenseType: 'STANDARD' }
-  ]
-});
+  items: [{ imageId: 'uuid', size: 'XL', licenseType: 'STANDARD' }],
+})
 ```
 
 ## 프로젝트 구조

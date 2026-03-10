@@ -9,6 +9,7 @@ Next.js App Router 기반 전체 라우트 구조를 생성한다. 구매자/(bu
 ## 관련 파일
 
 **구매자 레이아웃 및 공통 페이지**
+
 - `src/app/(buyer)/layout.tsx` - 구매자 공통 레이아웃 (Header + Footer)
 - `src/app/(buyer)/page.tsx` - 랜딩 페이지 빈 껍데기
 - `src/app/(buyer)/login/page.tsx` - 로그인 페이지 이동
@@ -17,6 +18,7 @@ Next.js App Router 기반 전체 라우트 구조를 생성한다. 구매자/(bu
 - `src/components/layout/footer.tsx` - 푸터 링크 수정
 
 **구매자 페이지**
+
 - `src/app/(buyer)/search/page.tsx`
 - `src/app/(buyer)/images/[id]/page.tsx`
 - `src/app/(buyer)/cart/page.tsx`
@@ -30,6 +32,7 @@ Next.js App Router 기반 전체 라우트 구조를 생성한다. 구매자/(bu
 - `src/app/(buyer)/license/page.tsx`
 
 **관리자 레이아웃 및 페이지**
+
 - `src/components/admin/admin-sidebar.tsx`
 - `src/components/admin/admin-header.tsx`
 - `src/app/admin/layout.tsx`
@@ -39,6 +42,7 @@ Next.js App Router 기반 전체 라우트 구조를 생성한다. 구매자/(bu
 - `src/app/admin/orders/page.tsx`
 
 **API Routes**
+
 - `src/app/api/images/thumbnail/[imageId]/route.ts`
 - `src/app/api/images/preview/[imageId]/route.ts`
 - `src/app/api/downloads/[downloadToken]/route.ts`
@@ -47,6 +51,7 @@ Next.js App Router 기반 전체 라우트 구조를 생성한다. 구매자/(bu
 - `src/app/api/webhooks/payment/route.ts`
 
 **전역 페이지**
+
 - `src/app/error.tsx`
 - `src/app/loading.tsx`
 - `src/app/not-found.tsx`
@@ -129,15 +134,18 @@ Next.js App Router 기반 전체 라우트 구조를 생성한다. 구매자/(bu
 ### 생성/수정된 파일 목록
 
 **수정된 파일:**
+
 - `src/components/layout/header.tsx` - JiangsStock 브랜드로 변경 (로고, 검색/장바구니/로그인/회원가입 링크), 불필요한 MainNav/ThemeToggle 제거
 - `src/components/layout/footer.tsx` - 이용약관/개인정보처리방침/라이선스 링크 추가
 
 **이동된 파일:**
+
 - `src/app/page.tsx` → `src/app/(buyer)/page.tsx` (빈 껍데기로 변경)
 - `src/app/login/page.tsx` → `src/app/(buyer)/login/page.tsx`
 - `src/app/signup/page.tsx` → `src/app/(buyer)/signup/page.tsx`
 
 **신규 생성된 파일:**
+
 - `src/app/(buyer)/layout.tsx` - 구매자 공통 레이아웃
 - `src/app/(buyer)/search/page.tsx`
 - `src/app/(buyer)/images/[id]/page.tsx`
