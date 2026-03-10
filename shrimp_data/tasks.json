@@ -1,328 +1,306 @@
 {
   "tasks": [
     {
-      "id": "f47ac10b-58cc-4372-a567-0e02b2c3d001",
-      "name": "작업 파일 생성 및 ROADMAP 업데이트",
-      "description": "tasks/005-buyer-header-footer-nav.md 작업 파일 생성 및 docs/ROADMAP.md Task 005 진행 중 표시",
+      "id": "57a83697-0fe3-452b-8839-279986a97f37",
+      "name": "MetadataSection 컴포넌트 구현",
+      "description": "이미지 메타데이터 섹션 컴포넌트를 구현한다. 구매자에게는 실제 메타데이터를, 미구매자에게는 잠금 UI를 표시한다.",
+      "notes": "isPurchased=false일 때 image 객체의 실제 메타데이터 값(code, width, height, fileSizesJson, colorTags)을 절대 렌더링 출력에 포함하지 않는다. 더미 플레이스홀더는 고정 텍스트(예: '----', '0000×0000')만 사용.",
       "status": "completed",
       "dependencies": [],
-      "createdAt": "2026-03-11T00:00:00.000Z",
-      "updatedAt": "2026-03-11T00:01:00.000Z",
-      "implementationGuide": "1. tasks/000-sample.md 구조 참고하여 tasks/005-buyer-header-footer-nav.md 신규 생성 (빈 체크박스)\n2. 관련 파일: header.tsx, footer.tsx, sheet.tsx, search-input.tsx, cart-store.ts, categories.ts\n3. 수락기준, 구현단계 모두 빈 체크박스로 초기 상태",
-      "notes": "000-sample.md 템플릿 구조 동일하게 유지. 빈 체크박스로 초기 상태.",
+      "createdAt": "2026-03-10T16:54:26.401Z",
+      "updatedAt": "2026-03-10T16:56:00.180Z",
       "relatedFiles": [
         {
-          "path": "tasks/005-buyer-header-footer-nav.md",
+          "path": "src/components/image-detail/metadata-section.tsx",
           "type": "CREATE",
-          "description": "Task 005 작업 파일"
+          "description": "메타데이터 섹션 컴포넌트"
         },
         {
-          "path": "tasks/000-sample.md",
+          "path": "src/types/models.ts",
           "type": "REFERENCE",
-          "description": "작업 파일 템플릿"
+          "description": "Image 타입 (code, width, height, fileSizesJson, colorTags, shootDate, format)"
         },
         {
-          "path": "docs/ROADMAP.md",
+          "path": "src/types/enums.ts",
           "type": "REFERENCE",
-          "description": "로드맵 파일"
+          "description": "ImageSize 타입"
         }
       ],
-      "verificationCriteria": "tasks/005-buyer-header-footer-nav.md 파일 존재, 빈 체크박스 구조",
-      "summary": "tasks/005-buyer-header-footer-nav.md 파일 생성 완료. 000-sample.md 템플릿 구조 준수, 빈 체크박스 초기 상태.",
-      "completedAt": "2026-03-11T00:01:00.000Z"
+      "implementationGuide": "파일: src/components/image-detail/metadata-section.tsx\n\nServer Component (use client 불필요)\n\ninterface MetadataSectionProps {\n  image: Image\n  isPurchased: boolean\n}\n\nfunction formatFileSize(bytes: number): string {\n  if (bytes >= 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB'\n  return Math.round(bytes / 1024) + ' KB'\n}\n\nexport function MetadataSection({ image, isPurchased }: MetadataSectionProps) {\n  if (!isPurchased) {\n    return (\n      <div className=\"relative rounded-lg border border-gray-200 p-5 overflow-hidden\">\n        <div className=\"blur-sm select-none pointer-events-none space-y-3\">\n          {/* 더미 플레이스홀더 행 4개 */}\n          {/* 실제 데이터 절대 노출 금지 */}\n        </div>\n        <div className=\"absolute inset-0 flex flex-col items-center justify-center bg-white/80\">\n          <Lock className=\"h-8 w-8 text-gray-400 mb-2\" />\n          <p className=\"text-sm font-medium text-gray-700\">구매 후 확인 가능</p>\n          <p className=\"text-xs text-gray-500 mt-1\">이 이미지를 구매하면 상세 정보를 확인할 수 있습니다</p>\n        </div>\n      </div>\n    )\n  }\n\n  const SIZES: ImageSize[] = ['XL', 'L', 'M', 'S']\n  return (\n    <div className=\"space-y-4\">\n      <h3 className=\"text-sm font-semibold text-gray-900\">이미지 정보</h3>\n      <dl className=\"space-y-2\">\n        <MetaRow label=\"이미지 코드\" value={image.code} />\n        <MetaRow label=\"해상도\" value={image.width + '×' + image.height} />\n        <MetaRow label=\"포맷\" value={image.format.toUpperCase()} />\n        {image.shootDate && <MetaRow label=\"촬영 연월\" value={image.shootDate} />}\n      </dl>\n      <div>\n        <p className=\"text-xs font-medium text-gray-500 mb-2\">파일 크기</p>\n        <div className=\"grid grid-cols-4 gap-2\">\n          {SIZES.map(s => (\n            <div key={s} className=\"rounded-md bg-gray-50 p-2 text-center\">\n              <div className=\"text-xs font-semibold text-gray-700\">{s}</div>\n              <div className=\"text-xs text-gray-500 mt-0.5\">{formatFileSize(image.fileSizesJson[s])}</div>\n            </div>\n          ))}\n        </div>\n      </div>\n      {image.colorTags.length > 0 && (\n        <div>\n          <p className=\"text-xs font-medium text-gray-500 mb-2\">색상 태그</p>\n          <div className=\"flex flex-wrap gap-1.5\">\n            {image.colorTags.map(tag => (\n              <span key={tag} className=\"rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-600\">{tag}</span>\n            ))}\n          </div>\n        </div>\n      )}\n    </div>\n  )\n}",
+      "verificationCriteria": "1) isPurchased=true: 이미지 코드·해상도·포맷·촬영연월·파일크기 4종·색상 태그 표시 2) isPurchased=false: 잠금 아이콘 + '구매 후 확인 가능' 오버레이 표시, 실제 데이터 미노출 3) formatFileSize: 1MB 이상은 'X.X MB', 이하는 'X KB' 형식",
+      "analysisResult": "Task 008: 이미지 상세 페이지 UI 구현. Next.js 15 App Router + TailwindCSS v4 + shadcn/ui 기반. 핵심 정책: 메타데이터(이미지 코드·해상도·파일 크기·촬영 연월·색상 태그)는 COMPLETED 상태 구매자에게만 표시. 더미 세션 DEMO_USER_ID='user-001'. 기존 재사용: SizeSelector, LicenseSelector, ProtectedImage, ImageCard, useCartStore, calculatePrice, formatPrice. LocalCartItem.imageName 필드명 주의.",
+      "summary": "MetadataSection 구현 완료. isPurchased=true: 코드·해상도·포맷·촬영연월·크기별 파일크기·색상 태그 표시. isPurchased=false: 고정 플레이스홀더(JS-XXXX, 0000×0000) blur+오버레이, 실제 데이터 절대 미노출. formatFileSize: 1MB 이상 X.X MB, 이하 X KB. MetaRow 헬퍼로 dl/dt/dd 구조화.",
+      "completedAt": "2026-03-10T16:56:00.178Z"
     },
     {
-      "id": "f47ac10b-58cc-4372-a567-0e02b2c3d002",
-      "name": "헤더 컴포넌트 UI 완성",
-      "description": "src/components/layout/header.tsx 개선: 검색창 통합, 카테고리 드롭다운, 장바구니 수량 배지, 더미 인증 메뉴, 모바일 Sheet 개선",
+      "id": "9487bc49-7c03-4775-a57a-8c8562c17316",
+      "name": "PurchasePanel 컴포넌트 구현",
+      "description": "이미지 구매 옵션 패널 Client Component를 구현한다. 크기/라이선스 선택, 실시간 가격 계산, 장바구니 추가, 즉시 결제 기능을 포함한다.",
+      "notes": "LocalCartItem.imageName 필드명 정확히 사용 (name 아님). SizeSelector는 calculatePrice를 내부에서 호출하나 selectedLicense를 반영하지 않음 — PurchasePanel에서 selectedLicense 반영 가격은 별도 표시. handleAddToCart 후 router.push('/cart')로 즉시 이동.",
       "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "f47ac10b-58cc-4372-a567-0e02b2c3d001"
-        }
-      ],
-      "createdAt": "2026-03-11T00:00:00.000Z",
-      "updatedAt": "2026-03-10T15:37:41.770Z",
-      "implementationGuide": "'use client' 유지. 내부 함수 4개로 분리:\nCartButton(): useCartStore().items.length로 count. relative div + ShoppingCart Button + count>0시 Badge(absolute -top-1 -right-1 h-4 w-4 p-0 destructive)\nCategoryNav(): dummyCategories import. NavigationMenu>List>Item. Trigger('카테고리')+Content>map(cat=>NavigationMenuLink asChild>Link '/search?category='+cat.slug)\nAuthMenu({isLoggedIn,onLogin,onLogout}): false->Link /login Button(outline sm)+Link /signup Button(sm). true->DropdownMenu(Avatar AvatarFallback '유')+Content(위시리스트/구매내역/내정보/Separator/로그아웃)\nMobileMenu({isLoggedIn,onLogout}): Sheet+SheetHeader+SheetTitle('JiangsStock')+SearchInput+카테고리링크+인증링크\nHeader(): [isLoggedIn,setIsLoggedIn]=useState(false). isMobile=useMediaQuery('(max-width: 768px)'). sticky z-50 backdrop-blur > Container > flex h-16",
-      "notes": "SheetHeader/SheetTitle 반드시 포함. NavigationMenuLink asChild로 Next.js Link 조합.",
+      "dependencies": [],
+      "createdAt": "2026-03-10T16:54:26.401Z",
+      "updatedAt": "2026-03-10T16:56:28.271Z",
       "relatedFiles": [
         {
-          "path": "src/components/layout/header.tsx",
-          "type": "TO_MODIFY",
-          "description": "헤더 컴포넌트"
+          "path": "src/components/image-detail/purchase-panel.tsx",
+          "type": "CREATE",
+          "description": "구매 패널 Client Component"
         },
         {
-          "path": "src/components/search/search-input.tsx",
-          "type": "DEPENDENCY",
-          "description": "검색창"
+          "path": "src/components/common/size-selector.tsx",
+          "type": "REFERENCE",
+          "description": "재사용할 SizeSelector"
+        },
+        {
+          "path": "src/components/common/license-selector.tsx",
+          "type": "REFERENCE",
+          "description": "재사용할 LicenseSelector"
         },
         {
           "path": "src/stores/cart-store.ts",
-          "type": "DEPENDENCY",
-          "description": "장바구니 스토어"
-        },
-        {
-          "path": "src/lib/dummy/categories.ts",
-          "type": "DEPENDENCY",
-          "description": "카테고리 더미"
-        },
-        {
-          "path": "src/components/ui/navigation-menu.tsx",
-          "type": "DEPENDENCY",
-          "description": "NavigationMenu"
-        },
-        {
-          "path": "src/components/ui/dropdown-menu.tsx",
-          "type": "DEPENDENCY",
-          "description": "DropdownMenu"
-        },
-        {
-          "path": "src/components/ui/avatar.tsx",
-          "type": "DEPENDENCY",
-          "description": "Avatar"
-        },
-        {
-          "path": "src/components/ui/badge.tsx",
-          "type": "DEPENDENCY",
-          "description": "Badge"
-        },
-        {
-          "path": "src/components/ui/sheet.tsx",
-          "type": "DEPENDENCY",
-          "description": "Sheet"
-        }
-      ],
-      "verificationCriteria": "1. TypeScript 에러 없음\n2. 카테고리드롭다운+검색창+배지+인증메뉴\n3. 모바일 Sheet에 검색창+카테고리 포함\n4. 카테고리 클릭시 /search?category=슬러그 이동\n5. 장바구니 0개시 배지 숨김",
-      "summary": "header.tsx 완전히 재구현. CartButton(장바구니 수량 배지), CategoryNav(NavigationMenu 카테고리 드롭다운), AuthMenu(더미 인증 메뉴), MobileMenu(Sheet+검색창+카테고리) 4개 내부 함수로 분리. SheetHeader/SheetTitle 포함. NavigationMenuLink asChild+Link 조합. useCartStore 연동. 모든 요구사항 충족.",
-      "completedAt": "2026-03-10T15:37:41.766Z"
-    },
-    {
-      "id": "f47ac10b-58cc-4372-a567-0e02b2c3d003",
-      "name": "푸터 컴포넌트 디자인 개선",
-      "description": "src/components/layout/footer.tsx: 브랜드 설명 추가, 2단 레이아웃, 기존 링크 3개 유지",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "f47ac10b-58cc-4372-a567-0e02b2c3d001"
-        }
-      ],
-      "createdAt": "2026-03-11T00:00:00.000Z",
-      "updatedAt": "2026-03-10T15:37:58.364Z",
-      "implementationGuide": "서버 컴포넌트 유지('use client' 추가 금지).\nfooter(border-t) > Container > div(py-10):\n상단(mb-6): Link href='/' > span(text-lg font-bold) 'JiangsStock' + p(text-muted-foreground text-sm mt-1) '고품질 스톡 이미지를 합리적인 가격에 제공합니다.'\n하단(mt-6 flex flex-col sm:flex-row sm:justify-between items-center gap-4): 저작권p + nav(이용약관/개인정보처리방침/라이선스 링크 3개)",
-      "notes": "서버 컴포넌트 유지. 기존 링크 3개 반드시 유지.",
-      "relatedFiles": [
-        {
-          "path": "src/components/layout/footer.tsx",
-          "type": "TO_MODIFY",
-          "description": "푸터 컴포넌트"
-        },
-        {
-          "path": "src/components/layout/container.tsx",
-          "type": "DEPENDENCY",
-          "description": "Container"
-        }
-      ],
-      "verificationCriteria": "1. 브랜드명+설명 표시\n2. 이용약관/개인정보처리방침/라이선스 링크 유지\n3. 서버 컴포넌트 유지\n4. TypeScript 에러 없음",
-      "summary": "footer.tsx 개선 완료. 서버 컴포넌트 유지. 상단 브랜드명+설명, 하단 저작권+이용약관/개인정보처리방침/라이선스 링크 3개 모두 유지. 2단 반응형 레이아웃 적용.",
-      "completedAt": "2026-03-10T15:37:58.360Z"
-    },
-    {
-      "id": "f47ac10b-58cc-4372-a567-0e02b2c3d004",
-      "name": "Sheet 확인 및 최종 검증",
-      "description": "sheet.tsx SheetHeader/SheetTitle export 확인 및 추가, npm run check-all 통과, 작업 파일 및 ROADMAP 완료 처리",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "f47ac10b-58cc-4372-a567-0e02b2c3d002"
-        },
-        {
-          "taskId": "f47ac10b-58cc-4372-a567-0e02b2c3d003"
-        }
-      ],
-      "createdAt": "2026-03-11T00:00:00.000Z",
-      "updatedAt": "2026-03-10T15:40:25.915Z",
-      "implementationGuide": "1. src/components/ui/sheet.tsx 읽어서 SheetHeader/SheetTitle export 확인\n2. 없으면 추가: SheetHeader(div data-slot='sheet-header' className='flex flex-col gap-1.5 p-6'), SheetTitle(SheetPrimitive.Title)\n3. npm run check-all 실행\n4. 에러 수정\n5. tasks/005-buyer-header-footer-nav.md 완료 처리\n6. docs/ROADMAP.md Task 005 [x] 완료 표시",
-      "notes": "반드시 파일 읽어서 확인 후 처리. npm run check-all 실패시 에러 수정.",
-      "relatedFiles": [
-        {
-          "path": "src/components/ui/sheet.tsx",
-          "type": "TO_MODIFY",
-          "description": "SheetHeader/SheetTitle 확인"
-        },
-        {
-          "path": "tasks/005-buyer-header-footer-nav.md",
-          "type": "TO_MODIFY",
-          "description": "완료 처리"
-        },
-        {
-          "path": "docs/ROADMAP.md",
-          "type": "TO_MODIFY",
-          "description": "Task 005 완료 표시"
-        }
-      ],
-      "verificationCriteria": "1. npm run check-all 통과\n2. tasks/005 완료 상태\n3. ROADMAP.md Task 005 [x] 완료",
-      "summary": "sheet.tsx SheetHeader/SheetTitle 이미 export 확인. npm run check-all 통과 (0 errors, warnings는 기존 파일). tasks/005 완료 처리. ROADMAP.md Task 005 [x] 완료 표시. 모든 검증 기준 충족.",
-      "completedAt": "2026-03-10T15:40:25.873Z"
-    },
-    {
-      "id": "3d8dc895-6505-4e4d-a00c-c6afce26fa5c",
-      "name": "Task006 작업 파일 생성",
-      "description": "tasks/006-landing-page.md 작업 파일을 생성한다. tasks/000-sample.md 템플릿 구조 준수, 빈 체크박스 초기 상태.",
-      "notes": "빈 체크박스. 변경사항 요약 섹션 비워둠.",
-      "status": "completed",
-      "dependencies": [],
-      "createdAt": "2026-03-10T15:47:49.965Z",
-      "updatedAt": "2026-03-10T15:58:19.728Z",
-      "relatedFiles": [
-        {
-          "path": "tasks/006-landing-page.md",
-          "type": "CREATE",
-          "description": "Task 006 작업 파일"
-        },
-        {
-          "path": "tasks/000-sample.md",
           "type": "REFERENCE",
-          "description": "템플릿"
-        }
-      ],
-      "implementationGuide": "tasks/000-sample.md 참고하여 tasks/006-landing-page.md 신규 생성.\n상태: 대기\n설명: 랜딩 페이지 UI 구현 (히어로+카테고리+신규갤러리+베스트셀러)\n관련파일: page.tsx, hero-search.tsx, image-grid.tsx, dummy/images.ts, dummy/categories.ts\n수락기준/구현단계: 모두 빈 체크박스",
-      "verificationCriteria": "tasks/006-landing-page.md 파일 존재, 빈 체크박스 구조",
-      "analysisResult": "Task 006: 랜딩 페이지 UI 구현. Shutterstock/Getty Images 스타일. 서버 컴포넌트 기반(page.tsx), SearchInput 래퍼(hero-search.tsx, use client) 분리. 4개 섹션: 히어로(배경이미지+오버레이+검색창+트렌딩태그) + 카테고리퀵링크(6개 이미지카드) + 신규갤러리(createdAt 내림차순 12장) + 베스트셀러(salesCount 내림차순 12장). ImageGrid/ImageCard/SearchInput/dummyData 재사용.",
-      "summary": "tasks/006-landing-page.md 파일 생성 완료. 000-sample.md 템플릿 구조 준수, 빈 체크박스 초기 상태. 히어로섹션/카테고리/신규갤러리/베스트셀러 4개 섹션 수락 기준 및 구현 단계 포함. 변경 사항 요약 섹션 비워둠.",
-      "completedAt": "2026-03-10T15:58:19.725Z"
-    },
-    {
-      "id": "a8cc587f-168a-498e-89de-b48eebb2a52c",
-      "name": "HeroSearch 클라이언트 컴포넌트 생성",
-      "description": "src/components/landing/hero-search.tsx 생성. SearchInput을 서버 컴포넌트(page.tsx)에서 사용하기 위한 'use client' 래퍼 컴포넌트.",
-      "notes": "SearchInput은 이미 src/components/search/search-input.tsx에 구현됨. 단순 래퍼만 생성.",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "3d8dc895-6505-4e4d-a00c-c6afce26fa5c"
-        }
-      ],
-      "createdAt": "2026-03-10T15:47:49.965Z",
-      "updatedAt": "2026-03-10T15:58:38.145Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/landing/hero-search.tsx",
-          "type": "CREATE",
-          "description": "히어로 검색창 클라이언트 래퍼"
+          "description": "useCartStore.addItem"
         },
         {
-          "path": "src/components/search/search-input.tsx",
-          "type": "DEPENDENCY",
-          "description": "재사용할 SearchInput"
+          "path": "src/types/cart.ts",
+          "type": "REFERENCE",
+          "description": "LocalCartItem 타입 (imageName 필드)"
+        },
+        {
+          "path": "src/lib/price.ts",
+          "type": "REFERENCE",
+          "description": "calculatePrice, formatPrice"
         }
       ],
-      "implementationGuide": "'use client'\nsrc/components/landing/ 디렉토리 생성 후 hero-search.tsx 생성.\nSearchInput 컴포넌트를 흰색 배경, max-w-2xl w-full, shadow-lg 스타일로 래핑.\nHeroSearch({ className?: string }) 함수 export.\nSearchInput placeholder='이미지를 검색해보세요... (예: 자연, 비즈니스, 여행)' 전달.",
-      "verificationCriteria": "hero-search.tsx 생성, use client 지시어, SearchInput 래핑, TypeScript 에러 없음",
-      "analysisResult": "Task 006: 랜딩 페이지 UI 구현. Shutterstock/Getty Images 스타일. 서버 컴포넌트 기반(page.tsx), SearchInput 래퍼(hero-search.tsx, use client) 분리. 4개 섹션: 히어로(배경이미지+오버레이+검색창+트렌딩태그) + 카테고리퀵링크(6개 이미지카드) + 신규갤러리(createdAt 내림차순 12장) + 베스트셀러(salesCount 내림차순 12장). ImageGrid/ImageCard/SearchInput/dummyData 재사용.",
-      "summary": "src/components/landing/hero-search.tsx 생성 완료. use client 지시어 포함, SearchInput 래퍼 컴포넌트 구현. 흰색 배경, max-w-2xl, shadow-lg 스타일 적용. placeholder 텍스트 설정 완료.",
-      "completedAt": "2026-03-10T15:58:38.139Z"
+      "implementationGuide": "파일: src/components/image-detail/purchase-panel.tsx\n\n'use client'\nimport { useState } from 'react'\nimport { useRouter } from 'next/navigation'\nimport { Heart, ShoppingCart } from 'lucide-react'\nimport { SizeSelector } from '@/components/common/size-selector'\nimport { LicenseSelector } from '@/components/common/license-selector'\nimport { Button } from '@/components/ui/button'\nimport { useCartStore } from '@/stores/cart-store'\nimport { calculatePrice, formatPrice } from '@/lib/price'\nimport type { Image } from '@/types/models'\nimport type { ImageSize, LicenseType } from '@/types/enums'\n\ninterface PurchasePanelProps {\n  image: Image\n}\n\nexport function PurchasePanel({ image }: PurchasePanelProps) {\n  const router = useRouter()\n  const addItem = useCartStore(s => s.addItem)\n  const [selectedSize, setSelectedSize] = useState<ImageSize>('XL')\n  const [selectedLicense, setSelectedLicense] = useState<LicenseType>('STANDARD')\n  const [isWishlisted, setIsWishlisted] = useState(false)\n\n  const price = calculatePrice(image.basePrice, selectedSize, selectedLicense)\n\n  function handleAddToCart() {\n    addItem({\n      imageId: image.id,\n      size: selectedSize,\n      licenseType: selectedLicense,\n      price,\n      imageName: image.name,\n      thumbnailUrl: image.thumbnailUrl,\n    })\n    router.push('/cart')\n  }\n\n  function handleBuyNow() {\n    router.push('/checkout')\n  }\n\n  return (\n    <div className=\"sticky top-6 space-y-5\">\n      <div>\n        <h1 className=\"text-xl font-bold text-gray-900\">{image.name}</h1>\n        <p className=\"mt-2 text-2xl font-bold text-gray-900\">{formatPrice(price)}</p>\n      </div>\n      <SizeSelector value={selectedSize} onChange={setSelectedSize} basePrice={image.basePrice} />\n      <LicenseSelector value={selectedLicense} onChange={setSelectedLicense} basePrice={image.basePrice} selectedSize={selectedSize} />\n      <div className=\"space-y-2\">\n        <Button className=\"w-full\" size=\"lg\" onClick={handleAddToCart}>\n          <ShoppingCart className=\"mr-2 h-4 w-4\" />\n          장바구니 추가\n        </Button>\n        <Button className=\"w-full\" size=\"lg\" variant=\"outline\" onClick={handleBuyNow}>\n          즉시 결제\n        </Button>\n        <Button variant=\"ghost\" size=\"sm\" className=\"w-full\" onClick={() => setIsWishlisted(p => !p)}>\n          <Heart className={isWishlisted ? 'fill-red-400 text-red-400 mr-2 h-4 w-4' : 'mr-2 h-4 w-4'} />\n          {isWishlisted ? '위시리스트에서 제거' : '위시리스트에 추가'}\n        </Button>\n      </div>\n    </div>\n  )\n}",
+      "verificationCriteria": "1) 크기 변경 시 가격 실시간 업데이트 2) 라이선스 변경 시 가격 실시간 업데이트 3) 장바구니 추가 클릭 시 useCartStore.addItem 호출 후 /cart 이동 4) 위시리스트 버튼 토글 시 하트 아이콘 채워짐/비워짐 5) imageName 필드 올바르게 전달",
+      "analysisResult": "Task 008: 이미지 상세 페이지 UI 구현. Next.js 15 App Router + TailwindCSS v4 + shadcn/ui 기반. 핵심 정책: 메타데이터(이미지 코드·해상도·파일 크기·촬영 연월·색상 태그)는 COMPLETED 상태 구매자에게만 표시. 더미 세션 DEMO_USER_ID='user-001'. 기존 재사용: SizeSelector, LicenseSelector, ProtectedImage, ImageCard, useCartStore, calculatePrice, formatPrice. LocalCartItem.imageName 필드명 주의.",
+      "summary": "PurchasePanel 구현 완료. selectedSize/selectedLicense 상태로 calculatePrice 실시간 반영, imageName 필드 정확히 사용, 장바구니 추가 후 /cart 이동, 위시리스트 하트 토글, SizeSelector+LicenseSelector 재사용, Separator로 섹션 구분.",
+      "completedAt": "2026-03-10T16:56:28.269Z"
     },
     {
-      "id": "8441a60a-be73-4a58-87fa-a38041288e39",
-      "name": "랜딩 페이지 메인 구현",
-      "description": "src/app/(buyer)/page.tsx를 완전한 랜딩 페이지로 구현. 히어로섹션, 카테고리섹션, 신규이미지갤러리, 베스트셀러갤러리 4개 섹션.",
-      "notes": "CSS backgroundImage inline style 사용 (next/image fill 대신). 카테고리 카드 hover는 group/group-hover 패턴. Container는 src/components/layout/container.tsx에서 import.",
+      "id": "e61b274d-0a8d-480b-b192-2b01bc87a714",
+      "name": "이미지 상세 페이지 Server Component 구현",
+      "description": "src/app/(buyer)/images/[id]/page.tsx를 Next.js 15 Server Component로 구현한다. 2컬럼 레이아웃, 구매 여부 판단, 관련 이미지 갤러리를 완성한다.",
+      "notes": "notFound()는 반환값 없이 호출만 해도 됨. DEMO_USER_ID 상수에 TODO 주석 필수. RELATED_IMAGES_LIMIT 상수 분리. generateMetadata도 await params 처리.",
       "status": "completed",
       "dependencies": [
         {
-          "taskId": "a8cc587f-168a-498e-89de-b48eebb2a52c"
+          "taskId": "57a83697-0fe3-452b-8839-279986a97f37"
+        },
+        {
+          "taskId": "9487bc49-7c03-4775-a57a-8c8562c17316"
         }
       ],
-      "createdAt": "2026-03-10T15:47:49.965Z",
-      "updatedAt": "2026-03-10T15:59:59.739Z",
+      "createdAt": "2026-03-10T16:54:26.401Z",
+      "updatedAt": "2026-03-10T16:57:17.607Z",
       "relatedFiles": [
         {
-          "path": "src/app/(buyer)/page.tsx",
+          "path": "src/app/(buyer)/images/[id]/page.tsx",
           "type": "TO_MODIFY",
-          "description": "랜딩 페이지 메인"
+          "description": "TODO 플레이스홀더를 완전한 구현으로 교체"
         },
         {
-          "path": "src/components/landing/hero-search.tsx",
+          "path": "src/components/image-detail/metadata-section.tsx",
           "type": "DEPENDENCY",
-          "description": "히어로 검색창"
+          "description": "MetadataSection"
         },
         {
-          "path": "src/components/common/image-grid.tsx",
+          "path": "src/components/image-detail/purchase-panel.tsx",
           "type": "DEPENDENCY",
-          "description": "ImageGrid"
+          "description": "PurchasePanel"
+        },
+        {
+          "path": "src/components/common/protected-image.tsx",
+          "type": "REFERENCE",
+          "description": "워터마크 프리뷰"
+        },
+        {
+          "path": "src/components/common/image-card.tsx",
+          "type": "REFERENCE",
+          "description": "관련 이미지 카드"
         },
         {
           "path": "src/lib/dummy/images.ts",
           "type": "DEPENDENCY",
-          "description": "dummyImages"
+          "description": "이미지 더미 데이터"
         },
         {
-          "path": "src/lib/dummy/categories.ts",
+          "path": "src/lib/dummy/orders.ts",
           "type": "DEPENDENCY",
-          "description": "dummyCategories"
+          "description": "구매 여부 판단"
+        }
+      ],
+      "implementationGuide": "파일: src/app/(buyer)/images/[id]/page.tsx\n\nimport { notFound } from 'next/navigation'\nimport Link from 'next/link'\nimport { dummyImages } from '@/lib/dummy/images'\nimport { dummyOrders } from '@/lib/dummy/orders'\nimport { ProtectedImage } from '@/components/common/protected-image'\nimport { ImageCard } from '@/components/common/image-card'\nimport { MetadataSection } from '@/components/image-detail/metadata-section'\nimport { PurchasePanel } from '@/components/image-detail/purchase-panel'\n\nconst DEMO_USER_ID = 'user-001' // TODO: 실제 세션으로 교체\nconst RELATED_IMAGES_LIMIT = 8\n\nconst ASPECT_MAP = { LANDSCAPE: 'aspect-[4/3]', PORTRAIT: 'aspect-[3/4]', SQUARE: 'aspect-square' }\n\nexport async function generateMetadata({ params }) {\n  const { id } = await params\n  const image = dummyImages.find(img => img.id === id)\n  if (!image) return { title: '이미지를 찾을 수 없습니다 | JiangsStock' }\n  return { title: image.name + ' | JiangsStock' }\n}\n\nexport default async function ImageDetailPage({ params }) {\n  const { id } = await params\n  const image = dummyImages.find(img => img.id === id)\n  if (!image) notFound()\n\n  const isPurchased = dummyOrders.some(\n    o => o.userId === DEMO_USER_ID && o.status === 'COMPLETED' && o.items.some(i => i.imageId === id)\n  )\n\n  const relatedImages = dummyImages\n    .filter(img => img.categoryId === image.categoryId && img.id !== id && img.isActive)\n    .slice(0, RELATED_IMAGES_LIMIT)\n\n  return (\n    <div className=\"mx-auto max-w-screen-xl px-4 py-10 md:px-8\">\n      <div className=\"grid grid-cols-1 gap-10 lg:grid-cols-[1fr_360px]\">\n        <div className=\"space-y-8\">\n          <div className={ASPECT_MAP[image.orientation] + ' relative w-full overflow-hidden rounded-lg bg-gray-100'}>\n            <ProtectedImage src={image.watermarkUrl} alt={image.name} fill sizes=\"(max-width: 1024px) 100vw, calc(100vw - 420px)\" className=\"object-cover\" />\n          </div>\n          <MetadataSection image={image} isPurchased={isPurchased} />\n          {image.tags.length > 0 && (\n            <div className=\"flex flex-wrap gap-2\">\n              {image.tags.map(tag => (\n                <Link key={tag} href={'/search?q=' + encodeURIComponent(tag)} className=\"rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-600 hover:bg-gray-200 transition-colors\">{tag}</Link>\n              ))}\n            </div>\n          )}\n        </div>\n        <PurchasePanel image={image} />\n      </div>\n      {relatedImages.length > 0 && (\n        <section className=\"mt-16\">\n          <h2 className=\"mb-6 text-lg font-semibold text-gray-900\">관련 이미지</h2>\n          <div className=\"columns-2 gap-2 md:columns-3 lg:columns-4\">\n            {relatedImages.map(img => (\n              <div key={img.id} className=\"mb-2 break-inside-avoid\">\n                <ImageCard image={img} showWishlist={false} />\n              </div>\n            ))}\n          </div>\n        </section>\n      )}\n    </div>\n  )\n}",
+      "verificationCriteria": "1) /images/img-001 접속 시 산 위의 일출 이미지 표시 2) user-001 기준 img-001은 구매자이므로 메타데이터 표시 3) img-002는 미구매이므로 잠금 UI 표시 4) 존재하지 않는 id 접속 시 404 페이지 5) 태그 클릭 시 /search?q=태그 이동 6) 관련 이미지 갤러리 표시 7) 빌드 성공",
+      "analysisResult": "Task 008: 이미지 상세 페이지 UI 구현. Next.js 15 App Router + TailwindCSS v4 + shadcn/ui 기반. 핵심 정책: 메타데이터(이미지 코드·해상도·파일 크기·촬영 연월·색상 태그)는 COMPLETED 상태 구매자에게만 표시. 더미 세션 DEMO_USER_ID='user-001'. 기존 재사용: SizeSelector, LicenseSelector, ProtectedImage, ImageCard, useCartStore, calculatePrice, formatPrice. LocalCartItem.imageName 필드명 주의.",
+      "summary": "이미지 상세 페이지 Server Component 완전 구현. Next.js 15 params await, notFound() 처리, DEMO_USER_ID TODO 주석, isPurchased 서버 사이드 판단, 2컬럼 레이아웃(lg:grid-cols-[1fr_360px]), ProtectedImage 워터마크, MetadataSection+PurchasePanel 조합, 태그→/search?q=, 관련 이미지 갤러리(최대 8장), 빌드 성공.",
+      "completedAt": "2026-03-10T16:57:17.605Z"
+    },
+    {
+      "id": "bdaba8c6-040e-4dc9-b35b-9ffdb777bdc0",
+      "name": "CartItemRow 컴포넌트 구현",
+      "description": "장바구니 개별 아이템 행 컴포넌트를 구현한다. 썸네일, 이미지명, 크기/라이선스 Select 드롭다운, 가격, 삭제 Dialog를 포함한다.\n\n컴포넌트 인터페이스:\n- 파일: src/components/cart/cart-item-row.tsx\n- 'use client' 선언 필수\n- Props: { item: LocalCartItem; onRemove: (id: string) => void; onUpdate: (id: string, size: ImageSize, licenseType: LicenseType, basePrice: number) => void }\n\n구현 요소:\n1. 레이아웃: flex items-start gap-4 py-4\n2. 썸네일: next/image (width=80, height=80, object-cover rounded)\n3. 중앙 영역: 이미지명(font-medium), 크기 Select, 라이선스 Select\n4. 우측: formatPrice(item.price), Trash2 아이콘 버튼\n5. 삭제 Dialog: 'src/components/ui/dialog.tsx' 사용, 확인/취소 버튼\n\nbasePrice 조회:\n- dummyImages.find(i => i.id === item.imageId)?.basePrice ?? item.price\n- 크기 변경 시: onUpdate(item.id, newSize, item.licenseType, basePrice)\n- 라이선스 변경 시: onUpdate(item.id, item.size, newLicense, basePrice)\n\nSelect 옵션:\n- 크기: XL(원본)/L(대)/M(중)/S(소) — getSizeLabel(size) 활용\n- 라이선스: STANDARD(스탠다드)/EXTENDED(확장 라이선스)",
+      "notes": "alert-dialog.tsx가 설치되어 있지 않으므로 dialog.tsx를 사용. ProtectedImage 대신 next/image 직접 사용(우클릭 방지 불필요한 썸네일). getSizeLabel은 src/lib/price.ts에서 import.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2026-03-10T17:09:30.812Z",
+      "updatedAt": "2026-03-10T17:11:28.690Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/cart/cart-item-row.tsx",
+          "type": "CREATE",
+          "description": "신규 생성할 아이템 행 컴포넌트"
         },
         {
-          "path": "src/components/layout/container.tsx",
-          "type": "DEPENDENCY",
-          "description": "Container"
+          "path": "src/stores/cart-store.ts",
+          "type": "REFERENCE",
+          "description": "CartStore 인터페이스 참조",
+          "lineStart": 1,
+          "lineEnd": 83
         },
         {
-          "path": "src/components/ui/badge.tsx",
+          "path": "src/types/cart.ts",
           "type": "DEPENDENCY",
-          "description": "Badge"
+          "description": "LocalCartItem 타입"
+        },
+        {
+          "path": "src/types/enums.ts",
+          "type": "DEPENDENCY",
+          "description": "ImageSize, LicenseType 타입"
+        },
+        {
+          "path": "src/lib/price.ts",
+          "type": "DEPENDENCY",
+          "description": "formatPrice, getSizeLabel"
+        },
+        {
+          "path": "src/lib/dummy/images.ts",
+          "type": "DEPENDENCY",
+          "description": "dummyImages (basePrice 조회)"
+        },
+        {
+          "path": "src/components/ui/dialog.tsx",
+          "type": "DEPENDENCY",
+          "description": "삭제 확인 Dialog"
+        },
+        {
+          "path": "src/components/ui/select.tsx",
+          "type": "DEPENDENCY",
+          "description": "크기/라이선스 드롭다운"
+        },
+        {
+          "path": "src/components/image-detail/purchase-panel.tsx",
+          "type": "REFERENCE",
+          "description": "useCartStore + shadcn 사용 패턴 레퍼런스",
+          "lineStart": 1,
+          "lineEnd": 120
+        }
+      ],
+      "implementationGuide": "// pseudocode\n'use client'\nimport { useState } from 'react'\nimport Image from 'next/image'\nimport { Trash2 } from 'lucide-react'\nimport { Dialog, DialogContent, DialogHeader, DialogFooter } from '@/components/ui/dialog'\nimport { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'\nimport { Button } from '@/components/ui/button'\nimport { formatPrice, getSizeLabel } from '@/lib/price'\nimport { dummyImages } from '@/lib/dummy/images'\nimport type { LocalCartItem } from '@/types/cart'\nimport type { ImageSize, LicenseType } from '@/types/enums'\n\nexport function CartItemRow({ item, onRemove, onUpdate }):\n  [deleteOpen, setDeleteOpen] = useState(false)\n\n  getBasePrice():\n    return dummyImages.find(i => i.id === item.imageId)?.basePrice ?? item.price\n\n  handleSizeChange(newSize: ImageSize):\n    onUpdate(item.id, newSize, item.licenseType, getBasePrice())\n\n  handleLicenseChange(newLicense: LicenseType):\n    onUpdate(item.id, item.size, newLicense, getBasePrice())\n\n  handleDeleteConfirm():\n    onRemove(item.id)\n    setDeleteOpen(false)\n\n  return:\n    div(flex items-start gap-4 py-4):\n      Image(src=item.thumbnailUrl, width=80, height=80, className='rounded object-cover')\n      div(flex-1 space-y-2):\n        p(font-medium text-sm): item.imageName\n        div(flex gap-2):\n          Select(value=item.size, onValueChange=handleSizeChange):\n            SelectTrigger(w-32): SelectValue\n            SelectContent: XL/L/M/S SelectItem\n          Select(value=item.licenseType, onValueChange=handleLicenseChange):\n            SelectTrigger(w-40): SelectValue\n            SelectContent: STANDARD/EXTENDED SelectItem\n      div(flex flex-col items-end gap-2):\n        span(font-semibold): formatPrice(item.price)\n        Button(variant=ghost, size=icon, onClick=setDeleteOpen(true)):\n          Trash2(h-4 w-4 text-muted-foreground)\n    Dialog(open=deleteOpen, onOpenChange=setDeleteOpen):\n      DialogContent:\n        DialogHeader: '아이템 삭제'\n        p: '장바구니에서 삭제하시겠습니까?'\n        DialogFooter:\n          Button(variant=outline, onClick=setDeleteOpen(false)): '취소'\n          Button(variant=destructive, onClick=handleDeleteConfirm): '삭제'",
+      "verificationCriteria": "1. TypeScript 컴파일 에러 없음\n2. 크기 Select 변경 시 부모의 onUpdate 호출됨\n3. 라이선스 Select 변경 시 부모의 onUpdate 호출됨\n4. 삭제 버튼 클릭 시 Dialog 열림\n5. Dialog 확인 클릭 시 onRemove 호출\n6. Dialog 취소 클릭 시 Dialog만 닫힘\n7. formatPrice로 가격이 올바르게 표시됨",
+      "analysisResult": "Task 009 장바구니 페이지 UI 구현. Zustand CartStore(items/removeItem/updateItem/totalAmount) + 더미 데이터(dummyImages) 활용. shadcn/ui Select + Dialog 컴포넌트 사용. 'use client' + mounted state Hydration 안전 처리. 반응형 2컬럼 레이아웃(lg:grid-cols-[1fr_340px]).",
+      "summary": "CartItemRow 컴포넌트 구현 완료. 'use client' 선언, LocalCartItem props 인터페이스, next/image fill 방식 썸네일(80x80), shadcn Select로 크기/라이선스 드롭다운, dummyImages에서 basePrice 조회 후 onUpdate 호출, Dialog(dialog.tsx)로 삭제 확인 UI 구현. SIZE_OPTIONS/LICENSE_OPTIONS 상수로 매직 리터럴 제거. TypeScript 타입 안전 처리(as ImageSize, as LicenseType).",
+      "completedAt": "2026-03-10T17:11:28.664Z"
+    },
+    {
+      "id": "ce89a1f3-bf32-4c1a-a600-d4217b97e501",
+      "name": "CartSummary 컴포넌트 구현",
+      "description": "장바구니 주문 요약 패널 컴포넌트를 구현한다. 아이템별 가격 목록, 총 결제 금액, 결제하기 버튼, 쇼핑 계속하기 링크를 포함한다.\n\n컴포넌트 인터페이스:\n- 파일: src/components/cart/cart-summary.tsx\n- Server Component (use client 불필요)\n- Props: { items: LocalCartItem[]; totalAmount: number }\n\n구현 요소:\n1. sticky top-8 h-fit 카드 패널\n2. '주문 요약' 헤더\n3. 아이템별 요약 라인: imageName + getSizeLabel(size) + formatPrice(price)\n4. Separator 구분선\n5. '총 결제 금액' + formatPrice(totalAmount) (bold 강조)\n6. Button '결제하기' -> /checkout (Link asChild, full-width)\n7. Link '쇼핑 계속하기' -> /search (text-sm text-muted-foreground, 중앙 정렬)",
+      "notes": "Server Component로 구현. use client 불필요. getSizeLabel은 src/lib/price.ts에서 import.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2026-03-10T17:09:30.812Z",
+      "updatedAt": "2026-03-10T17:11:32.493Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/cart/cart-summary.tsx",
+          "type": "CREATE",
+          "description": "신규 생성할 주문 요약 패널 컴포넌트"
+        },
+        {
+          "path": "src/types/cart.ts",
+          "type": "DEPENDENCY",
+          "description": "LocalCartItem 타입"
+        },
+        {
+          "path": "src/lib/price.ts",
+          "type": "DEPENDENCY",
+          "description": "formatPrice, getSizeLabel"
         },
         {
           "path": "src/components/ui/button.tsx",
           "type": "DEPENDENCY",
-          "description": "Button"
+          "description": "Button 컴포넌트"
+        },
+        {
+          "path": "src/components/ui/separator.tsx",
+          "type": "DEPENDENCY",
+          "description": "Separator 구분선"
         }
       ],
-      "implementationGuide": "서버 컴포넌트 유지(use client 없음).\n\nTRENDING_TAGS 상수: ['자연','비즈니스','여행','음식','건축','인물','기술','도시']\n\nfunction HeroSection() ~25줄:\n  return div(relative min-h-[70vh] flex items-center justify-center overflow-hidden)\n    div(absolute inset-0, style={{backgroundImage:'url(https://picsum.photos/seed/hero/1920/1080)',backgroundSize:'cover',backgroundPosition:'center'}})\n    div(absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70)\n    div(relative z-10 text-center px-4 w-full max-w-4xl mx-auto)\n      h1(text-white text-4xl md:text-6xl font-bold leading-tight) '완벽한 이미지를 찾아보세요'\n      p(text-white/80 mt-4 text-lg md:text-xl) '수백만 장의 고품질 스톡 이미지'\n      HeroSearch className='mt-8 mx-auto'\n      div(mt-6 flex flex-wrap gap-2 justify-center)\n        트렌딩: 라벨p(text-white/60 text-sm mr-1)+'트렌딩:'\n        TRENDING_TAGS.map(tag=>Link(/search?tag=encodeURIComponent(tag))>Badge(variant=outline, className=text-white border-white/50 hover:bg-white/20 cursor-pointer))\n\nfunction CategorySection({ categories }) ~25줄:\n  SEEDS=[10,20,30,40,50,60]\n  return section(py-16 bg-muted/30)\n    Container\n      div(mb-8) h2(text-2xl md:text-3xl font-bold) '카테고리별 탐색'\n      div(grid grid-cols-2 md:grid-cols-3 gap-4)\n        categories.map((cat,i)=>Link(/search?category=cat.slug)\n          div(group relative overflow-hidden rounded-xl aspect-[4/3])\n            div(absolute inset-0 transition-transform duration-500 group-hover:scale-110, style bgImage picsum seed SEEDS[i])\n            div(absolute inset-0 bg-black/40 group-hover:bg-black/25 transition-colors duration-300)\n            div(absolute inset-0 flex items-end p-4)\n              p(text-white font-semibold text-lg drop-shadow) cat.name\n\nfunction GallerySection({ title, images, showWishlist=false }) ~15줄:\n  return section(py-16)\n    Container\n      div(mb-8 flex items-center justify-between)\n        h2(text-2xl md:text-3xl font-bold) title\n        Link(/search) Button(variant=outline size=sm) '더 보기'\n      ImageGrid images showWishlist\n\nexport default function HomePage():\n  newImages = [...dummyImages].sort((a,b)=>b.createdAt.getTime()-a.createdAt.getTime()).slice(0,12)\n  bestImages = [...dummyImages].sort((a,b)=>b.salesCount-a.salesCount).slice(0,12)\n  return main\n    HeroSection\n    CategorySection categories=dummyCategories\n    GallerySection title='최신 이미지' images=newImages showWishlist\n    GallerySection title='베스트셀러' images=bestImages",
-      "verificationCriteria": "1. 히어로 섹션: 배경이미지+오버레이+검색창+트렌딩태그 8개\n2. 카테고리 6개 카드 표시\n3. 신규 12장 갤러리 표시\n4. 베스트셀러 12장 갤러리 표시\n5. TypeScript 에러 없음\n6. 서버 컴포넌트 유지",
-      "analysisResult": "Task 006: 랜딩 페이지 UI 구현. Shutterstock/Getty Images 스타일. 서버 컴포넌트 기반(page.tsx), SearchInput 래퍼(hero-search.tsx, use client) 분리. 4개 섹션: 히어로(배경이미지+오버레이+검색창+트렌딩태그) + 카테고리퀵링크(6개 이미지카드) + 신규갤러리(createdAt 내림차순 12장) + 베스트셀러(salesCount 내림차순 12장). ImageGrid/ImageCard/SearchInput/dummyData 재사용.",
-      "summary": "src/app/(buyer)/page.tsx 완전한 랜딩 페이지로 구현 완료. 서버 컴포넌트 유지. HeroSection(배경이미지+오버레이+HeroSearch+트렌딩태그8개), CategorySection(6개카드 hover 애니메이션), GallerySection x2(신규12장/베스트셀러12장). TypeScript에러 없음, ESLint 0 errors, Prettier 통과.",
-      "completedAt": "2026-03-10T15:59:59.737Z"
+      "implementationGuide": "// pseudocode\nimport Link from 'next/link'\nimport { Button } from '@/components/ui/button'\nimport { Separator } from '@/components/ui/separator'\nimport { formatPrice, getSizeLabel } from '@/lib/price'\nimport type { LocalCartItem } from '@/types/cart'\n\ninterface CartSummaryProps:\n  items: LocalCartItem[]\n  totalAmount: number\n\nexport function CartSummary({ items, totalAmount }):\n  return:\n    div(sticky top-8 h-fit rounded-lg border p-6 space-y-4):\n      h2(font-semibold text-lg): '주문 요약'\n      div(space-y-2):\n        for item in items:\n          div(flex justify-between text-sm):\n            span(text-muted-foreground truncate max-w-[180px]):\n              item.imageName + ' · ' + getSizeLabel(item.size)\n            span(font-medium): formatPrice(item.price)\n      Separator\n      div(flex justify-between font-semibold):\n        span: '총 결제 금액'\n        span(text-lg): formatPrice(totalAmount)\n      Button(asChild, className='w-full', size='lg'):\n        Link(href='/checkout'): '결제하기'\n      div(text-center):\n        Link(href='/search', className='text-sm text-muted-foreground hover:underline'):\n          '쇼핑 계속하기'",
+      "verificationCriteria": "1. TypeScript 컴파일 에러 없음\n2. 아이템별 이름과 가격이 목록으로 표시됨\n3. 총 결제 금액이 formatPrice로 올바르게 표시됨\n4. '결제하기' 버튼이 /checkout 링크로 연결됨\n5. '쇼핑 계속하기' 링크가 /search로 연결됨",
+      "analysisResult": "Task 009 장바구니 페이지 UI 구현. Zustand CartStore(items/removeItem/updateItem/totalAmount) + 더미 데이터(dummyImages) 활용. shadcn/ui Select + Dialog 컴포넌트 사용. 'use client' + mounted state Hydration 안전 처리. 반응형 2컬럼 레이아웃(lg:grid-cols-[1fr_340px]).",
+      "summary": "CartSummary 컴포넌트 구현 완료. Server Component(use client 불필요), sticky top-8 h-fit 카드 패널, 아이템별 imageName+getSizeLabel+formatPrice 요약 라인, Separator 구분선, 총 결제 금액 bold 강조, Button asChild로 /checkout 링크, 쇼핑 계속하기 /search 링크 구현.",
+      "completedAt": "2026-03-10T17:11:32.478Z"
     },
     {
-      "id": "d51554c8-1374-41c9-8e5a-69646c54a00d",
-      "name": "최종 검증 및 완료 처리",
-      "description": "npm run check-all 통과 확인, tasks/006 완료 처리, ROADMAP.md Task 006 완료 표시.",
-      "notes": "npm run check-all 실패시 에러 메시지 보고 해당 파일 수정.",
+      "id": "b773a523-c9b7-4085-a4bb-54d1e7bb6c98",
+      "name": "장바구니 페이지(cart/page.tsx) 구현",
+      "description": "src/app/(buyer)/cart/page.tsx를 'use client' 컴포넌트로 전면 재구현한다. Zustand CartStore를 구독하고 CartItemRow, CartSummary를 조합하여 완성된 장바구니 페이지를 렌더링한다.\n\n핵심 처리:\n1. 'use client' 선언 + metadata export 제거 (공존 불가)\n2. mounted state로 Hydration 안전 처리 (localStorage persist 스토어)\n3. items.length === 0 → EmptyState 표시\n4. items 있을 때 → 2컬럼 레이아웃\n\n레이아웃 구조:\n- container mx-auto px-4 py-8\n- h1: '장바구니 (N건)'\n- grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-8\n  - 좌측: div divide-y → items.map(CartItemRow)\n  - 우측: CartSummary(items, totalAmount())",
+      "notes": "metadata export를 제거해야 'use client'와 공존 가능. useCartStore 셀렉터를 3개로 분리(items/removeItem/updateItem)하여 불필요한 리렌더링 방지. totalAmount는 함수이므로 totalAmount() 호출 필요.",
       "status": "completed",
       "dependencies": [
         {
-          "taskId": "8441a60a-be73-4a58-87fa-a38041288e39"
+          "taskId": "bdaba8c6-040e-4dc9-b35b-9ffdb777bdc0"
+        },
+        {
+          "taskId": "ce89a1f3-bf32-4c1a-a600-d4217b97e501"
         }
       ],
-      "createdAt": "2026-03-10T15:47:49.965Z",
-      "updatedAt": "2026-03-10T16:00:48.685Z",
+      "createdAt": "2026-03-10T17:09:30.812Z",
+      "updatedAt": "2026-03-10T17:13:34.350Z",
       "relatedFiles": [
         {
-          "path": "src/app/(buyer)/page.tsx",
-          "type": "REFERENCE",
-          "description": "검증 대상"
-        },
-        {
-          "path": "src/components/landing/hero-search.tsx",
-          "type": "REFERENCE",
-          "description": "검증 대상"
-        },
-        {
-          "path": "tasks/006-landing-page.md",
+          "path": "src/app/(buyer)/cart/page.tsx",
           "type": "TO_MODIFY",
-          "description": "완료 처리"
+          "description": "장바구니 페이지 전면 재구현",
+          "lineStart": 1,
+          "lineEnd": 17
         },
         {
-          "path": "docs/ROADMAP.md",
-          "type": "TO_MODIFY",
-          "description": "Task 006 완료 표시"
+          "path": "src/components/cart/cart-item-row.tsx",
+          "type": "DEPENDENCY",
+          "description": "아이템 행 컴포넌트"
+        },
+        {
+          "path": "src/components/cart/cart-summary.tsx",
+          "type": "DEPENDENCY",
+          "description": "주문 요약 패널 컴포넌트"
+        },
+        {
+          "path": "src/stores/cart-store.ts",
+          "type": "DEPENDENCY",
+          "description": "useCartStore"
+        },
+        {
+          "path": "src/components/common/empty-state.tsx",
+          "type": "DEPENDENCY",
+          "description": "빈 장바구니 EmptyState"
+        },
+        {
+          "path": "src/components/ui/skeleton.tsx",
+          "type": "DEPENDENCY",
+          "description": "Hydration 중 스켈레톤 UI"
         }
       ],
-      "implementationGuide": "1. npm run check-all 실행\n2. Prettier 오류: npx prettier --write 해당파일로 수정\n3. TypeScript/ESLint 오류: 원인 파악 후 수정\n4. tasks/006-landing-page.md 모든 체크박스 체크 + 변경사항 요약 작성\n5. docs/ROADMAP.md Task 006 항목 [x] 완료 표시 및 서브태스크 [x] 체크",
-      "verificationCriteria": "npm run check-all 통과, tasks/006 완료, ROADMAP [x]",
-      "analysisResult": "Task 006: 랜딩 페이지 UI 구현. Shutterstock/Getty Images 스타일. 서버 컴포넌트 기반(page.tsx), SearchInput 래퍼(hero-search.tsx, use client) 분리. 4개 섹션: 히어로(배경이미지+오버레이+검색창+트렌딩태그) + 카테고리퀵링크(6개 이미지카드) + 신규갤러리(createdAt 내림차순 12장) + 베스트셀러(salesCount 내림차순 12장). ImageGrid/ImageCard/SearchInput/dummyData 재사용.",
-      "summary": "npm run check-all 통과 확인 (0 errors). tasks/006-landing-page.md 모든 체크박스 완료 처리 및 변경사항 요약 작성. docs/ROADMAP.md Task 006 [x] 완료 표시 및 서브태스크 전체 [x] 체크 완료.",
-      "completedAt": "2026-03-10T16:00:48.682Z"
+      "implementationGuide": "// pseudocode\n'use client'\nimport { useState, useEffect } from 'react'\nimport { ShoppingCart } from 'lucide-react'\nimport { useCartStore } from '@/stores/cart-store'\nimport { CartItemRow } from '@/components/cart/cart-item-row'\nimport { CartSummary } from '@/components/cart/cart-summary'\nimport { EmptyState } from '@/components/common/empty-state'\nimport { Skeleton } from '@/components/ui/skeleton'\n\nexport default function CartPage():\n  items = useCartStore(s => s.items)\n  removeItem = useCartStore(s => s.removeItem)\n  updateItem = useCartStore(s => s.updateItem)\n  totalAmount = useCartStore(s => s.totalAmount)\n  [mounted, setMounted] = useState(false)\n\n  useEffect(() => setMounted(true), [])\n\n  if !mounted:\n    return div(container mx-auto px-4 py-8):\n      Skeleton(h-8 w-48 mb-8)\n      div(grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-8):\n        div(space-y-4): [1..3].map: Skeleton(h-24 w-full)\n        Skeleton(h-64 w-full)\n\n  if items.length === 0:\n    return div(container mx-auto px-4 py-8):\n      EmptyState(\n        icon=ShoppingCart,\n        title='장바구니가 비어 있습니다',\n        description='마음에 드는 이미지를 찾아 장바구니에 담아보세요',\n        action={ label: '이미지 검색하기', href: '/search' }\n      )\n\n  return:\n    div(container mx-auto px-4 py-8):\n      h1(text-2xl font-bold mb-6): '장바구니 (' + items.length + '건)'\n      div(grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-8):\n        div(divide-y):\n          items.map(item =>\n            CartItemRow(\n              key=item.id,\n              item=item,\n              onRemove=removeItem,\n              onUpdate=updateItem\n            )\n          )\n        CartSummary(items=items, totalAmount=totalAmount())",
+      "verificationCriteria": "1. TypeScript 컴파일 에러 없음\n2. ESLint 오류 없음\n3. npm run build 성공\n4. 장바구니 비어있을 때 EmptyState + '이미지 검색하기' 버튼 표시\n5. 아이템 있을 때 CartItemRow 목록 + CartSummary 패널 표시\n6. 크기/라이선스 변경 시 가격 즉시 반영\n7. 삭제 후 아이템 목록에서 제거됨\n8. 총 결제 금액이 변경 내역 반영\n9. 모바일(1컬럼) 및 데스크탑(2컬럼) 레이아웃 정상 동작",
+      "analysisResult": "Task 009 장바구니 페이지 UI 구현. Zustand CartStore(items/removeItem/updateItem/totalAmount) + 더미 데이터(dummyImages) 활용. shadcn/ui Select + Dialog 컴포넌트 사용. 'use client' + mounted state Hydration 안전 처리. 반응형 2컬럼 레이아웃(lg:grid-cols-[1fr_340px]).",
+      "summary": "장바구니 페이지(cart/page.tsx) 구현 완료. 'use client' 선언 + metadata export 제거. useEffect+setState 대신 useSyncExternalStore 기반 useIsClient 훅으로 ESLint react-hooks/set-state-in-effect 규칙 통과하며 Hydration 안전 처리. items.length===0일 때 EmptyState, 아이템 있을 때 lg:grid-cols-[1fr_340px] 2컬럼 레이아웃으로 CartItemRow+CartSummary 조합. TypeScript 에러 없음, ESLint 통과, npm run build 성공.",
+      "completedAt": "2026-03-10T17:13:34.347Z"
     }
   ]
 }

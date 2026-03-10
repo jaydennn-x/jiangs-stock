@@ -1,0 +1,141 @@
+{
+  "tasks": [
+    {
+      "id": "bbc54142-7dae-43e9-bee7-9e3dd17bb62d",
+      "name": "SearchFilters 컴포넌트 구현",
+      "description": "검색 필터 사이드바/모바일 Sheet 컴포넌트를 구현한다. 카테고리 체크박스(6개), orientation 라디오(3개), 가격 범위 입력(min/max)을 포함하며, URL searchParams를 통해 필터 상태를 관리한다.",
+      "notes": "category는 복수 선택 지원: URL에 ?category=nature-landscape&category=food 형식. useSearchParams().getAll('category')로 읽기. onBlur에서 가격 업데이트. 활성 필터 개수 뱃지 표시(선택사항). 모바일 Sheet는 SearchHeader 컴포넌트에서 MobileFilterSheet를 포함하여 렌더링.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2026-03-10T16:41:47.142Z",
+      "updatedAt": "2026-03-10T16:43:16.297Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/search/search-filters.tsx",
+          "type": "CREATE",
+          "description": "새로 생성할 필터 컴포넌트"
+        },
+        {
+          "path": "src/components/ui/checkbox.tsx",
+          "type": "DEPENDENCY",
+          "description": "shadcn Checkbox"
+        },
+        {
+          "path": "src/components/ui/sheet.tsx",
+          "type": "DEPENDENCY",
+          "description": "shadcn Sheet (모바일 필터)"
+        },
+        {
+          "path": "src/components/ui/separator.tsx",
+          "type": "DEPENDENCY",
+          "description": "섹션 구분선"
+        },
+        {
+          "path": "src/lib/dummy/categories.ts",
+          "type": "REFERENCE",
+          "description": "카테고리 데이터 참조"
+        }
+      ],
+      "implementationGuide": "파일: src/components/search/search-filters.tsx\n\n'use client'\nimport { useRouter, useSearchParams } from 'next/navigation'\nimport { Checkbox } from '@/components/ui/checkbox'\nimport { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'\nimport { Button } from '@/components/ui/button'\nimport { Label } from '@/components/ui/label'\nimport { Separator } from '@/components/ui/separator'\nimport { SlidersHorizontal } from 'lucide-react'\n\nconst CATEGORIES = [\n  { id: 'cat-001', name: '자연/풍경', slug: 'nature-landscape' },\n  { id: 'cat-002', name: '인물', slug: 'people' },\n  { id: 'cat-003', name: '비즈니스', slug: 'business' },\n  { id: 'cat-004', name: '음식', slug: 'food' },\n  { id: 'cat-005', name: '건축', slug: 'architecture' },\n  { id: 'cat-006', name: '기타', slug: 'other' },\n]\n\nconst ORIENTATIONS = [\n  { value: 'LANDSCAPE', label: '가로형' },\n  { value: 'PORTRAIT', label: '세로형' },\n  { value: 'SQUARE', label: '정사각형' },\n]\n\ninterface SearchFiltersProps {\n  selectedCategories: string[]\n  selectedOrientation: string\n  minPrice: string\n  maxPrice: string\n}\n\nexport function SearchFilters(props) {\n  const router = useRouter()\n  const searchParams = useSearchParams()\n\n  function updateParam(key, value, multi=false) {\n    // URLSearchParams 복사 후 업데이트\n    // multi=true이면 getAll + toggle 방식\n    // router.push('/search?' + params.toString())\n  }\n\n  function clearAllFilters() {\n    // q 파라미터만 유지하고 나머지 초기화\n  }\n\n  const filterContent = (\n    <div className=\"w-full space-y-6\">\n      {/* 카테고리 섹션 */}\n      {/* orientation 섹션 - native radio input 스타일링 */}\n      {/* 가격 범위 - Input 두 개 */}\n      {/* 초기화 버튼 */}\n    </div>\n  )\n\n  return (\n    <>\n      {/* 모바일: Sheet trigger 버튼만 - 실제 Sheet는 SearchHeader에서 관리 */}\n      {/* 데스크톱: 고정 사이드바 */}\n      <aside className=\"hidden lg:block w-56 shrink-0\">\n        <div className=\"sticky top-4\">\n          <div className=\"flex items-center justify-between mb-4\">\n            <span className=\"text-sm font-semibold text-gray-900\">필터</span>\n            <button onClick={clearAllFilters} className=\"text-xs text-gray-500 hover:text-gray-900\">초기화</button>\n          </div>\n          {filterContent}\n        </div>\n      </aside>\n    </>\n  )\n}\n\nexport function MobileFilterSheet(props) {\n  // Sheet 컴포넌트 안에 filterContent 렌더링\n  // SheetTrigger: 필터 버튼\n}",
+      "verificationCriteria": "1) 카테고리 체크박스 클릭 시 URL의 category 파라미터가 토글됨 2) orientation 선택 시 URL 업데이트 3) 가격 입력 후 blur 시 URL 업데이트 4) 초기화 버튼으로 q 제외 모든 필터 제거 5) 데스크톱(lg 이상)에서 사이드바 표시, 모바일에서 숨김",
+      "analysisResult": "Task 007: 검색 결과 페이지 UI 구현. Next.js 15 App Router + TailwindCSS v4 + shadcn/ui 기반. 더미 데이터(dummyImages 30개, dummyCategories 6개) 사용. URL searchParams(q, category, orientation, sort, minPrice, maxPrice) 기반 필터링. 기존 ImageCard, ImageGrid, EmptyState 컴포넌트 재사용. shadcn/ui 중 Checkbox, Select, Sheet, Badge, Input, Button, Label 이미 설치됨. RadioGroup, Slider 미설치 → 네이티브 radio + Input[number]로 대체.",
+      "summary": "SearchFilters + MobileFilterSheet 컴포넌트 완전 구현. 카테고리 Checkbox 6개(복수 선택 URL 토글), orientation 네이티브 radio 4개(전체 포함), 가격 범위 onBlur Input, 초기화 버튼(q 유지). 데스크톱 sticky 사이드바, 모바일 Sheet(활성 필터 카운트 뱃지). FilterContent를 공유 컴포넌트로 분리하여 데스크톱/모바일 양쪽에서 재사용.",
+      "completedAt": "2026-03-10T16:43:16.293Z"
+    },
+    {
+      "id": "7c07b77d-4704-4b31-bc07-2b1e56288bee",
+      "name": "SearchHeader 컴포넌트 구현",
+      "description": "검색 결과 헤더 컴포넌트를 구현한다. 검색어와 결과 수 표시, 정렬 Select, 모바일 필터 Sheet 트리거를 포함한다.",
+      "notes": "MobileFilterSheet를 search-filters.tsx에서 export하여 여기서 import. totalCount는 서버에서 필터링된 결과수를 props로 전달받음.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "bbc54142-7dae-43e9-bee7-9e3dd17bb62d"
+        }
+      ],
+      "createdAt": "2026-03-10T16:41:47.142Z",
+      "updatedAt": "2026-03-10T16:43:40.464Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/search/search-header.tsx",
+          "type": "CREATE",
+          "description": "새로 생성할 헤더 컴포넌트"
+        },
+        {
+          "path": "src/components/search/search-filters.tsx",
+          "type": "DEPENDENCY",
+          "description": "MobileFilterSheet import 대상"
+        },
+        {
+          "path": "src/components/ui/select.tsx",
+          "type": "DEPENDENCY",
+          "description": "shadcn Select"
+        }
+      ],
+      "implementationGuide": "파일: src/components/search/search-header.tsx\n\n'use client'\nimport { useRouter, useSearchParams } from 'next/navigation'\nimport { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'\nimport { MobileFilterSheet } from './search-filters'\n\nconst SORT_OPTIONS = [\n  { value: 'relevant', label: '관련도순' },\n  { value: 'newest', label: '최신순' },\n  { value: 'popular', label: '인기순' },\n]\n\ninterface SearchHeaderProps {\n  query: string\n  totalCount: number\n  currentSort: string\n  selectedCategories: string[]\n  selectedOrientation: string\n  minPrice: string\n  maxPrice: string\n}\n\nexport function SearchHeader(props) {\n  const router = useRouter()\n  const searchParams = useSearchParams()\n\n  function handleSortChange(value) {\n    // 현재 params 복사 후 sort 업데이트\n    // router.push('/search?' + params.toString())\n  }\n\n  return (\n    <div className=\"flex items-center justify-between py-4 border-b border-gray-100 mb-6\">\n      <div>\n        {/* query가 있으면: '\"자연\" 검색 결과 30개' */}\n        {/* query 없으면: '전체 이미지 30개' */}\n        <h1 className=\"text-lg font-semibold text-gray-900\">...</h1>\n      </div>\n      <div className=\"flex items-center gap-3\">\n        {/* 모바일 필터 버튼 (lg 미만에서만 표시) */}\n        <div className=\"lg:hidden\">\n          <MobileFilterSheet ... />\n        </div>\n        {/* 정렬 Select */}\n        <Select value={currentSort || 'relevant'} onValueChange={handleSortChange}>\n          <SelectTrigger className=\"w-32 h-9 text-sm\">\n            <SelectValue />\n          </SelectTrigger>\n          <SelectContent>\n            {SORT_OPTIONS.map(opt => (\n              <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>\n            ))}\n          </SelectContent>\n        </Select>\n      </div>\n    </div>\n  )\n}",
+      "verificationCriteria": "1) 검색어 있을 때 '\"자연\" 검색 결과 N개' 표시 2) 검색어 없을 때 '전체 이미지 N개' 표시 3) 정렬 변경 시 URL sort 파라미터 업데이트 4) 모바일(lg 미만)에서 필터 버튼 표시",
+      "analysisResult": "Task 007: 검색 결과 페이지 UI 구현. Next.js 15 App Router + TailwindCSS v4 + shadcn/ui 기반. 더미 데이터(dummyImages 30개, dummyCategories 6개) 사용. URL searchParams(q, category, orientation, sort, minPrice, maxPrice) 기반 필터링. 기존 ImageCard, ImageGrid, EmptyState 컴포넌트 재사용. shadcn/ui 중 Checkbox, Select, Sheet, Badge, Input, Button, Label 이미 설치됨. RadioGroup, Slider 미설치 → 네이티브 radio + Input[number]로 대체.",
+      "summary": "SearchHeader 컴포넌트 완전 구현. 검색어 유무에 따라 제목 분기(q 있으면 따옴표+검색결과N개, 없으면 전체이미지N개), 정렬 Select(관련도/최신/인기, URL sort 파라미터 업데이트), 모바일 lg:hidden 영역에 MobileFilterSheet 배치. SearchFiltersProps 동일 인터페이스로 MobileFilterSheet에 props 전달.",
+      "completedAt": "2026-03-10T16:43:40.461Z"
+    },
+    {
+      "id": "f189f43c-e393-463e-9662-f871011ee4fa",
+      "name": "검색 페이지 서버 컴포넌트 및 필터링 로직 구현",
+      "description": "src/app/(buyer)/search/page.tsx를 Next.js 15 Server Component로 구현한다. searchParams를 await하여 더미 데이터를 필터링하고, SearchFilters + SearchHeader + ImageGrid를 조합한 레이아웃을 완성한다.",
+      "notes": "Next.js 15에서 searchParams는 반드시 await 해야 함. Array.isArray로 category 단수/복수 모두 처리. filtered 배열 sort는 원본 dummyImages 배열을 오염시키지 않도록 filter()가 이미 새 배열을 반환하므로 .sort() 직접 호출 가능.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "bbc54142-7dae-43e9-bee7-9e3dd17bb62d"
+        },
+        {
+          "taskId": "7c07b77d-4704-4b31-bc07-2b1e56288bee"
+        }
+      ],
+      "createdAt": "2026-03-10T16:41:47.142Z",
+      "updatedAt": "2026-03-10T16:44:29.616Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/(buyer)/search/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "TODO 플레이스홀더를 완전한 구현으로 교체"
+        },
+        {
+          "path": "src/lib/dummy/images.ts",
+          "type": "DEPENDENCY",
+          "description": "더미 이미지 데이터"
+        },
+        {
+          "path": "src/lib/dummy/categories.ts",
+          "type": "DEPENDENCY",
+          "description": "카테고리 slug→id 매핑"
+        },
+        {
+          "path": "src/components/common/image-grid.tsx",
+          "type": "DEPENDENCY",
+          "description": "기존 ImageGrid 재사용"
+        },
+        {
+          "path": "src/components/common/empty-state.tsx",
+          "type": "DEPENDENCY",
+          "description": "결과 없을 때 EmptyState"
+        },
+        {
+          "path": "src/components/search/search-filters.tsx",
+          "type": "DEPENDENCY",
+          "description": "SearchFilters 컴포넌트"
+        },
+        {
+          "path": "src/components/search/search-header.tsx",
+          "type": "DEPENDENCY",
+          "description": "SearchHeader 컴포넌트"
+        }
+      ],
+      "implementationGuide": "파일: src/app/(buyer)/search/page.tsx\n\nimport type { Metadata } from 'next'\nimport { dummyImages } from '@/lib/dummy/images'\nimport { dummyCategories } from '@/lib/dummy/categories'\nimport { ImageGrid } from '@/components/common/image-grid'\nimport { EmptyState } from '@/components/common/empty-state'\nimport { SearchFilters } from '@/components/search/search-filters'\nimport { SearchHeader } from '@/components/search/search-header'\nimport { SearchX } from 'lucide-react'\n\ntype SearchParams = { q?: string; category?: string | string[]; orientation?: string; sort?: string; minPrice?: string; maxPrice?: string }\n\nexport async function generateMetadata({ searchParams }) {\n  const params = await searchParams\n  const q = params.q ?? ''\n  return { title: q ? `\"${q}\" 검색 결과 | JiangsStock` : '이미지 검색 | JiangsStock' }\n}\n\nexport default async function SearchPage({ searchParams }) {\n  const params = await searchParams\n  const q = params.q ?? ''\n  const categories = Array.isArray(params.category) ? params.category : params.category ? [params.category] : []\n  const orientation = params.orientation ?? ''\n  const sort = params.sort ?? 'relevant'\n  const minPrice = params.minPrice ? Number(params.minPrice) : 0\n  const maxPrice = params.maxPrice ? Number(params.maxPrice) : Infinity\n\n  let filtered = dummyImages.filter(img => img.isActive)\n\n  if (q) {\n    const lq = q.toLowerCase()\n    filtered = filtered.filter(img =>\n      img.name.toLowerCase().includes(lq) ||\n      img.tags.some(t => t.toLowerCase().includes(lq)) ||\n      (img.description ?? '').toLowerCase().includes(lq)\n    )\n  }\n\n  if (categories.length > 0) {\n    const catIds = dummyCategories.filter(c => categories.includes(c.slug)).map(c => c.id)\n    filtered = filtered.filter(img => catIds.includes(img.categoryId))\n  }\n\n  if (orientation) {\n    filtered = filtered.filter(img => img.orientation === orientation)\n  }\n\n  if (minPrice > 0) filtered = filtered.filter(img => img.basePrice >= minPrice)\n  if (maxPrice < Infinity) filtered = filtered.filter(img => img.basePrice <= maxPrice)\n\n  if (sort === 'newest') filtered.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())\n  else if (sort === 'popular') filtered.sort((a, b) => b.salesCount - a.salesCount)\n  else filtered.sort((a, b) => b.salesCount - a.salesCount)\n\n  return (\n    <div className=\"min-h-screen bg-white\">\n      <div className=\"mx-auto max-w-screen-xl px-4 py-8 md:px-8\">\n        <div className=\"flex gap-8\">\n          <SearchFilters\n            selectedCategories={categories}\n            selectedOrientation={orientation}\n            minPrice={params.minPrice ?? ''}\n            maxPrice={params.maxPrice ?? ''}\n          />\n          <div className=\"flex-1 min-w-0\">\n            <SearchHeader\n              query={q}\n              totalCount={filtered.length}\n              currentSort={sort}\n              selectedCategories={categories}\n              selectedOrientation={orientation}\n              minPrice={params.minPrice ?? ''}\n              maxPrice={params.maxPrice ?? ''}\n            />\n            {filtered.length > 0 ? (\n              <ImageGrid images={filtered} showWishlist={true} />\n            ) : (\n              <EmptyState\n                icon={SearchX}\n                title=\"검색 결과가 없습니다\"\n                description={q ? `\"${q}\"에 대한 이미지를 찾을 수 없습니다.` : '조건에 맞는 이미지가 없습니다.'}\n                action={{ label: '전체 이미지 보기', href: '/search' }}\n              />\n            )}\n          </div>\n        </div>\n      </div>\n    </div>\n  )\n}",
+      "verificationCriteria": "1) /search 접속 시 전체 30개 이미지 표시 2) ?q=자연 으로 검색 시 관련 이미지만 필터링 3) ?category=food 로 음식 카테고리만 표시 4) ?orientation=PORTRAIT 로 세로형만 표시 5) ?sort=newest 로 최신순 정렬 6) 결과 없을 때 EmptyState 표시 7) generateMetadata에서 검색어 포함 타이틀 생성",
+      "analysisResult": "Task 007: 검색 결과 페이지 UI 구현. Next.js 15 App Router + TailwindCSS v4 + shadcn/ui 기반. 더미 데이터(dummyImages 30개, dummyCategories 6개) 사용. URL searchParams(q, category, orientation, sort, minPrice, maxPrice) 기반 필터링. 기존 ImageCard, ImageGrid, EmptyState 컴포넌트 재사용. shadcn/ui 중 Checkbox, Select, Sheet, Badge, Input, Button, Label 이미 설치됨. RadioGroup, Slider 미설치 → 네이티브 radio + Input[number]로 대체.",
+      "summary": "검색 페이지 Server Component 완전 구현. Next.js 15 searchParams Promise 타입 await 처리, 더미 데이터 클라이언트 필터링(q/category/orientation/minPrice/maxPrice/sort), generateMetadata 동적 타이틀, SearchFilters+SearchHeader+ImageGrid 조합 레이아웃, EmptyState 결과 없음 처리. 빌드 성공 및 /search Dynamic 라우트 확인.",
+      "completedAt": "2026-03-10T16:44:29.610Z"
+    }
+  ]
+}

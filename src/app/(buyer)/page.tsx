@@ -21,18 +21,8 @@ const HERO_TABS = ['이미지', '비디오', '에디토리얼']
 
 const HERO_MOSAIC_SEEDS = [10, 20, 30, 40, 50, 60, 70, 80]
 
-// 풀블리드 그리드용 시드 (3컬럼 × n행, 다양한 비율)
-const GRID_IMAGES = [
-  { seed: 'g1', aspect: 'aspect-[4/3]' },
-  { seed: 'g2', aspect: 'aspect-[3/4]' },
-  { seed: 'g3', aspect: 'aspect-square' },
-  { seed: 'g4', aspect: 'aspect-[3/4]' },
-  { seed: 'g5', aspect: 'aspect-[4/3]' },
-  { seed: 'g6', aspect: 'aspect-[4/3]' },
-  { seed: 'g7', aspect: 'aspect-square' },
-  { seed: 'g8', aspect: 'aspect-[4/3]' },
-  { seed: 'g9', aspect: 'aspect-[3/4]' },
-]
+// 풀블리드 그리드 행 높이 (px)
+const GRID_ROW_HEIGHTS = [280, 380, 300]
 
 function HeroSection() {
   return (
@@ -121,10 +111,13 @@ function FullBleedGrid({ images }: { images: Image[] }) {
       </div>
 
       {/* 풀블리드 3컬럼 균등 그리드 */}
-      <div className="grid grid-cols-3 gap-px bg-gray-100">
+      <div className="grid grid-cols-1 gap-px bg-gray-200 sm:grid-cols-2 lg:grid-cols-3">
         {images.slice(0, 9).map((image, i) => (
           <Link key={image.id} href={`/images/${image.id}`} className="group block">
-            <div className={GRID_IMAGES[i % GRID_IMAGES.length].aspect + ' relative overflow-hidden'}>
+            <div
+              className="relative overflow-hidden"
+              style={{ height: GRID_ROW_HEIGHTS[Math.floor(i / 3) % GRID_ROW_HEIGHTS.length] }}
+            >
               <div
                 className="absolute inset-0 transition-transform duration-500 group-hover:scale-105"
                 style={{
@@ -173,10 +166,13 @@ function NewImagesGrid({ images }: { images: Image[] }) {
         </Link>
       </div>
 
-      <div className="grid grid-cols-3 gap-px bg-gray-100">
+      <div className="grid grid-cols-1 gap-px bg-gray-200 sm:grid-cols-2 lg:grid-cols-3">
         {images.slice(0, 9).map((image, i) => (
           <Link key={image.id} href={`/images/${image.id}`} className="group block">
-            <div className={GRID_IMAGES[i % GRID_IMAGES.length].aspect + ' relative overflow-hidden'}>
+            <div
+              className="relative overflow-hidden"
+              style={{ height: GRID_ROW_HEIGHTS[Math.floor(i / 3) % GRID_ROW_HEIGHTS.length] }}
+            >
               <div
                 className="absolute inset-0 transition-transform duration-500 group-hover:scale-105"
                 style={{

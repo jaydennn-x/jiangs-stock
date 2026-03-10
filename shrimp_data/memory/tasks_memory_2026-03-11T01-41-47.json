@@ -1,0 +1,328 @@
+{
+  "tasks": [
+    {
+      "id": "f47ac10b-58cc-4372-a567-0e02b2c3d001",
+      "name": "작업 파일 생성 및 ROADMAP 업데이트",
+      "description": "tasks/005-buyer-header-footer-nav.md 작업 파일 생성 및 docs/ROADMAP.md Task 005 진행 중 표시",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2026-03-11T00:00:00.000Z",
+      "updatedAt": "2026-03-11T00:01:00.000Z",
+      "implementationGuide": "1. tasks/000-sample.md 구조 참고하여 tasks/005-buyer-header-footer-nav.md 신규 생성 (빈 체크박스)\n2. 관련 파일: header.tsx, footer.tsx, sheet.tsx, search-input.tsx, cart-store.ts, categories.ts\n3. 수락기준, 구현단계 모두 빈 체크박스로 초기 상태",
+      "notes": "000-sample.md 템플릿 구조 동일하게 유지. 빈 체크박스로 초기 상태.",
+      "relatedFiles": [
+        {
+          "path": "tasks/005-buyer-header-footer-nav.md",
+          "type": "CREATE",
+          "description": "Task 005 작업 파일"
+        },
+        {
+          "path": "tasks/000-sample.md",
+          "type": "REFERENCE",
+          "description": "작업 파일 템플릿"
+        },
+        {
+          "path": "docs/ROADMAP.md",
+          "type": "REFERENCE",
+          "description": "로드맵 파일"
+        }
+      ],
+      "verificationCriteria": "tasks/005-buyer-header-footer-nav.md 파일 존재, 빈 체크박스 구조",
+      "summary": "tasks/005-buyer-header-footer-nav.md 파일 생성 완료. 000-sample.md 템플릿 구조 준수, 빈 체크박스 초기 상태.",
+      "completedAt": "2026-03-11T00:01:00.000Z"
+    },
+    {
+      "id": "f47ac10b-58cc-4372-a567-0e02b2c3d002",
+      "name": "헤더 컴포넌트 UI 완성",
+      "description": "src/components/layout/header.tsx 개선: 검색창 통합, 카테고리 드롭다운, 장바구니 수량 배지, 더미 인증 메뉴, 모바일 Sheet 개선",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "f47ac10b-58cc-4372-a567-0e02b2c3d001"
+        }
+      ],
+      "createdAt": "2026-03-11T00:00:00.000Z",
+      "updatedAt": "2026-03-10T15:37:41.770Z",
+      "implementationGuide": "'use client' 유지. 내부 함수 4개로 분리:\nCartButton(): useCartStore().items.length로 count. relative div + ShoppingCart Button + count>0시 Badge(absolute -top-1 -right-1 h-4 w-4 p-0 destructive)\nCategoryNav(): dummyCategories import. NavigationMenu>List>Item. Trigger('카테고리')+Content>map(cat=>NavigationMenuLink asChild>Link '/search?category='+cat.slug)\nAuthMenu({isLoggedIn,onLogin,onLogout}): false->Link /login Button(outline sm)+Link /signup Button(sm). true->DropdownMenu(Avatar AvatarFallback '유')+Content(위시리스트/구매내역/내정보/Separator/로그아웃)\nMobileMenu({isLoggedIn,onLogout}): Sheet+SheetHeader+SheetTitle('JiangsStock')+SearchInput+카테고리링크+인증링크\nHeader(): [isLoggedIn,setIsLoggedIn]=useState(false). isMobile=useMediaQuery('(max-width: 768px)'). sticky z-50 backdrop-blur > Container > flex h-16",
+      "notes": "SheetHeader/SheetTitle 반드시 포함. NavigationMenuLink asChild로 Next.js Link 조합.",
+      "relatedFiles": [
+        {
+          "path": "src/components/layout/header.tsx",
+          "type": "TO_MODIFY",
+          "description": "헤더 컴포넌트"
+        },
+        {
+          "path": "src/components/search/search-input.tsx",
+          "type": "DEPENDENCY",
+          "description": "검색창"
+        },
+        {
+          "path": "src/stores/cart-store.ts",
+          "type": "DEPENDENCY",
+          "description": "장바구니 스토어"
+        },
+        {
+          "path": "src/lib/dummy/categories.ts",
+          "type": "DEPENDENCY",
+          "description": "카테고리 더미"
+        },
+        {
+          "path": "src/components/ui/navigation-menu.tsx",
+          "type": "DEPENDENCY",
+          "description": "NavigationMenu"
+        },
+        {
+          "path": "src/components/ui/dropdown-menu.tsx",
+          "type": "DEPENDENCY",
+          "description": "DropdownMenu"
+        },
+        {
+          "path": "src/components/ui/avatar.tsx",
+          "type": "DEPENDENCY",
+          "description": "Avatar"
+        },
+        {
+          "path": "src/components/ui/badge.tsx",
+          "type": "DEPENDENCY",
+          "description": "Badge"
+        },
+        {
+          "path": "src/components/ui/sheet.tsx",
+          "type": "DEPENDENCY",
+          "description": "Sheet"
+        }
+      ],
+      "verificationCriteria": "1. TypeScript 에러 없음\n2. 카테고리드롭다운+검색창+배지+인증메뉴\n3. 모바일 Sheet에 검색창+카테고리 포함\n4. 카테고리 클릭시 /search?category=슬러그 이동\n5. 장바구니 0개시 배지 숨김",
+      "summary": "header.tsx 완전히 재구현. CartButton(장바구니 수량 배지), CategoryNav(NavigationMenu 카테고리 드롭다운), AuthMenu(더미 인증 메뉴), MobileMenu(Sheet+검색창+카테고리) 4개 내부 함수로 분리. SheetHeader/SheetTitle 포함. NavigationMenuLink asChild+Link 조합. useCartStore 연동. 모든 요구사항 충족.",
+      "completedAt": "2026-03-10T15:37:41.766Z"
+    },
+    {
+      "id": "f47ac10b-58cc-4372-a567-0e02b2c3d003",
+      "name": "푸터 컴포넌트 디자인 개선",
+      "description": "src/components/layout/footer.tsx: 브랜드 설명 추가, 2단 레이아웃, 기존 링크 3개 유지",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "f47ac10b-58cc-4372-a567-0e02b2c3d001"
+        }
+      ],
+      "createdAt": "2026-03-11T00:00:00.000Z",
+      "updatedAt": "2026-03-10T15:37:58.364Z",
+      "implementationGuide": "서버 컴포넌트 유지('use client' 추가 금지).\nfooter(border-t) > Container > div(py-10):\n상단(mb-6): Link href='/' > span(text-lg font-bold) 'JiangsStock' + p(text-muted-foreground text-sm mt-1) '고품질 스톡 이미지를 합리적인 가격에 제공합니다.'\n하단(mt-6 flex flex-col sm:flex-row sm:justify-between items-center gap-4): 저작권p + nav(이용약관/개인정보처리방침/라이선스 링크 3개)",
+      "notes": "서버 컴포넌트 유지. 기존 링크 3개 반드시 유지.",
+      "relatedFiles": [
+        {
+          "path": "src/components/layout/footer.tsx",
+          "type": "TO_MODIFY",
+          "description": "푸터 컴포넌트"
+        },
+        {
+          "path": "src/components/layout/container.tsx",
+          "type": "DEPENDENCY",
+          "description": "Container"
+        }
+      ],
+      "verificationCriteria": "1. 브랜드명+설명 표시\n2. 이용약관/개인정보처리방침/라이선스 링크 유지\n3. 서버 컴포넌트 유지\n4. TypeScript 에러 없음",
+      "summary": "footer.tsx 개선 완료. 서버 컴포넌트 유지. 상단 브랜드명+설명, 하단 저작권+이용약관/개인정보처리방침/라이선스 링크 3개 모두 유지. 2단 반응형 레이아웃 적용.",
+      "completedAt": "2026-03-10T15:37:58.360Z"
+    },
+    {
+      "id": "f47ac10b-58cc-4372-a567-0e02b2c3d004",
+      "name": "Sheet 확인 및 최종 검증",
+      "description": "sheet.tsx SheetHeader/SheetTitle export 확인 및 추가, npm run check-all 통과, 작업 파일 및 ROADMAP 완료 처리",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "f47ac10b-58cc-4372-a567-0e02b2c3d002"
+        },
+        {
+          "taskId": "f47ac10b-58cc-4372-a567-0e02b2c3d003"
+        }
+      ],
+      "createdAt": "2026-03-11T00:00:00.000Z",
+      "updatedAt": "2026-03-10T15:40:25.915Z",
+      "implementationGuide": "1. src/components/ui/sheet.tsx 읽어서 SheetHeader/SheetTitle export 확인\n2. 없으면 추가: SheetHeader(div data-slot='sheet-header' className='flex flex-col gap-1.5 p-6'), SheetTitle(SheetPrimitive.Title)\n3. npm run check-all 실행\n4. 에러 수정\n5. tasks/005-buyer-header-footer-nav.md 완료 처리\n6. docs/ROADMAP.md Task 005 [x] 완료 표시",
+      "notes": "반드시 파일 읽어서 확인 후 처리. npm run check-all 실패시 에러 수정.",
+      "relatedFiles": [
+        {
+          "path": "src/components/ui/sheet.tsx",
+          "type": "TO_MODIFY",
+          "description": "SheetHeader/SheetTitle 확인"
+        },
+        {
+          "path": "tasks/005-buyer-header-footer-nav.md",
+          "type": "TO_MODIFY",
+          "description": "완료 처리"
+        },
+        {
+          "path": "docs/ROADMAP.md",
+          "type": "TO_MODIFY",
+          "description": "Task 005 완료 표시"
+        }
+      ],
+      "verificationCriteria": "1. npm run check-all 통과\n2. tasks/005 완료 상태\n3. ROADMAP.md Task 005 [x] 완료",
+      "summary": "sheet.tsx SheetHeader/SheetTitle 이미 export 확인. npm run check-all 통과 (0 errors, warnings는 기존 파일). tasks/005 완료 처리. ROADMAP.md Task 005 [x] 완료 표시. 모든 검증 기준 충족.",
+      "completedAt": "2026-03-10T15:40:25.873Z"
+    },
+    {
+      "id": "3d8dc895-6505-4e4d-a00c-c6afce26fa5c",
+      "name": "Task006 작업 파일 생성",
+      "description": "tasks/006-landing-page.md 작업 파일을 생성한다. tasks/000-sample.md 템플릿 구조 준수, 빈 체크박스 초기 상태.",
+      "notes": "빈 체크박스. 변경사항 요약 섹션 비워둠.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2026-03-10T15:47:49.965Z",
+      "updatedAt": "2026-03-10T15:58:19.728Z",
+      "relatedFiles": [
+        {
+          "path": "tasks/006-landing-page.md",
+          "type": "CREATE",
+          "description": "Task 006 작업 파일"
+        },
+        {
+          "path": "tasks/000-sample.md",
+          "type": "REFERENCE",
+          "description": "템플릿"
+        }
+      ],
+      "implementationGuide": "tasks/000-sample.md 참고하여 tasks/006-landing-page.md 신규 생성.\n상태: 대기\n설명: 랜딩 페이지 UI 구현 (히어로+카테고리+신규갤러리+베스트셀러)\n관련파일: page.tsx, hero-search.tsx, image-grid.tsx, dummy/images.ts, dummy/categories.ts\n수락기준/구현단계: 모두 빈 체크박스",
+      "verificationCriteria": "tasks/006-landing-page.md 파일 존재, 빈 체크박스 구조",
+      "analysisResult": "Task 006: 랜딩 페이지 UI 구현. Shutterstock/Getty Images 스타일. 서버 컴포넌트 기반(page.tsx), SearchInput 래퍼(hero-search.tsx, use client) 분리. 4개 섹션: 히어로(배경이미지+오버레이+검색창+트렌딩태그) + 카테고리퀵링크(6개 이미지카드) + 신규갤러리(createdAt 내림차순 12장) + 베스트셀러(salesCount 내림차순 12장). ImageGrid/ImageCard/SearchInput/dummyData 재사용.",
+      "summary": "tasks/006-landing-page.md 파일 생성 완료. 000-sample.md 템플릿 구조 준수, 빈 체크박스 초기 상태. 히어로섹션/카테고리/신규갤러리/베스트셀러 4개 섹션 수락 기준 및 구현 단계 포함. 변경 사항 요약 섹션 비워둠.",
+      "completedAt": "2026-03-10T15:58:19.725Z"
+    },
+    {
+      "id": "a8cc587f-168a-498e-89de-b48eebb2a52c",
+      "name": "HeroSearch 클라이언트 컴포넌트 생성",
+      "description": "src/components/landing/hero-search.tsx 생성. SearchInput을 서버 컴포넌트(page.tsx)에서 사용하기 위한 'use client' 래퍼 컴포넌트.",
+      "notes": "SearchInput은 이미 src/components/search/search-input.tsx에 구현됨. 단순 래퍼만 생성.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "3d8dc895-6505-4e4d-a00c-c6afce26fa5c"
+        }
+      ],
+      "createdAt": "2026-03-10T15:47:49.965Z",
+      "updatedAt": "2026-03-10T15:58:38.145Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/landing/hero-search.tsx",
+          "type": "CREATE",
+          "description": "히어로 검색창 클라이언트 래퍼"
+        },
+        {
+          "path": "src/components/search/search-input.tsx",
+          "type": "DEPENDENCY",
+          "description": "재사용할 SearchInput"
+        }
+      ],
+      "implementationGuide": "'use client'\nsrc/components/landing/ 디렉토리 생성 후 hero-search.tsx 생성.\nSearchInput 컴포넌트를 흰색 배경, max-w-2xl w-full, shadow-lg 스타일로 래핑.\nHeroSearch({ className?: string }) 함수 export.\nSearchInput placeholder='이미지를 검색해보세요... (예: 자연, 비즈니스, 여행)' 전달.",
+      "verificationCriteria": "hero-search.tsx 생성, use client 지시어, SearchInput 래핑, TypeScript 에러 없음",
+      "analysisResult": "Task 006: 랜딩 페이지 UI 구현. Shutterstock/Getty Images 스타일. 서버 컴포넌트 기반(page.tsx), SearchInput 래퍼(hero-search.tsx, use client) 분리. 4개 섹션: 히어로(배경이미지+오버레이+검색창+트렌딩태그) + 카테고리퀵링크(6개 이미지카드) + 신규갤러리(createdAt 내림차순 12장) + 베스트셀러(salesCount 내림차순 12장). ImageGrid/ImageCard/SearchInput/dummyData 재사용.",
+      "summary": "src/components/landing/hero-search.tsx 생성 완료. use client 지시어 포함, SearchInput 래퍼 컴포넌트 구현. 흰색 배경, max-w-2xl, shadow-lg 스타일 적용. placeholder 텍스트 설정 완료.",
+      "completedAt": "2026-03-10T15:58:38.139Z"
+    },
+    {
+      "id": "8441a60a-be73-4a58-87fa-a38041288e39",
+      "name": "랜딩 페이지 메인 구현",
+      "description": "src/app/(buyer)/page.tsx를 완전한 랜딩 페이지로 구현. 히어로섹션, 카테고리섹션, 신규이미지갤러리, 베스트셀러갤러리 4개 섹션.",
+      "notes": "CSS backgroundImage inline style 사용 (next/image fill 대신). 카테고리 카드 hover는 group/group-hover 패턴. Container는 src/components/layout/container.tsx에서 import.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "a8cc587f-168a-498e-89de-b48eebb2a52c"
+        }
+      ],
+      "createdAt": "2026-03-10T15:47:49.965Z",
+      "updatedAt": "2026-03-10T15:59:59.739Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/(buyer)/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "랜딩 페이지 메인"
+        },
+        {
+          "path": "src/components/landing/hero-search.tsx",
+          "type": "DEPENDENCY",
+          "description": "히어로 검색창"
+        },
+        {
+          "path": "src/components/common/image-grid.tsx",
+          "type": "DEPENDENCY",
+          "description": "ImageGrid"
+        },
+        {
+          "path": "src/lib/dummy/images.ts",
+          "type": "DEPENDENCY",
+          "description": "dummyImages"
+        },
+        {
+          "path": "src/lib/dummy/categories.ts",
+          "type": "DEPENDENCY",
+          "description": "dummyCategories"
+        },
+        {
+          "path": "src/components/layout/container.tsx",
+          "type": "DEPENDENCY",
+          "description": "Container"
+        },
+        {
+          "path": "src/components/ui/badge.tsx",
+          "type": "DEPENDENCY",
+          "description": "Badge"
+        },
+        {
+          "path": "src/components/ui/button.tsx",
+          "type": "DEPENDENCY",
+          "description": "Button"
+        }
+      ],
+      "implementationGuide": "서버 컴포넌트 유지(use client 없음).\n\nTRENDING_TAGS 상수: ['자연','비즈니스','여행','음식','건축','인물','기술','도시']\n\nfunction HeroSection() ~25줄:\n  return div(relative min-h-[70vh] flex items-center justify-center overflow-hidden)\n    div(absolute inset-0, style={{backgroundImage:'url(https://picsum.photos/seed/hero/1920/1080)',backgroundSize:'cover',backgroundPosition:'center'}})\n    div(absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70)\n    div(relative z-10 text-center px-4 w-full max-w-4xl mx-auto)\n      h1(text-white text-4xl md:text-6xl font-bold leading-tight) '완벽한 이미지를 찾아보세요'\n      p(text-white/80 mt-4 text-lg md:text-xl) '수백만 장의 고품질 스톡 이미지'\n      HeroSearch className='mt-8 mx-auto'\n      div(mt-6 flex flex-wrap gap-2 justify-center)\n        트렌딩: 라벨p(text-white/60 text-sm mr-1)+'트렌딩:'\n        TRENDING_TAGS.map(tag=>Link(/search?tag=encodeURIComponent(tag))>Badge(variant=outline, className=text-white border-white/50 hover:bg-white/20 cursor-pointer))\n\nfunction CategorySection({ categories }) ~25줄:\n  SEEDS=[10,20,30,40,50,60]\n  return section(py-16 bg-muted/30)\n    Container\n      div(mb-8) h2(text-2xl md:text-3xl font-bold) '카테고리별 탐색'\n      div(grid grid-cols-2 md:grid-cols-3 gap-4)\n        categories.map((cat,i)=>Link(/search?category=cat.slug)\n          div(group relative overflow-hidden rounded-xl aspect-[4/3])\n            div(absolute inset-0 transition-transform duration-500 group-hover:scale-110, style bgImage picsum seed SEEDS[i])\n            div(absolute inset-0 bg-black/40 group-hover:bg-black/25 transition-colors duration-300)\n            div(absolute inset-0 flex items-end p-4)\n              p(text-white font-semibold text-lg drop-shadow) cat.name\n\nfunction GallerySection({ title, images, showWishlist=false }) ~15줄:\n  return section(py-16)\n    Container\n      div(mb-8 flex items-center justify-between)\n        h2(text-2xl md:text-3xl font-bold) title\n        Link(/search) Button(variant=outline size=sm) '더 보기'\n      ImageGrid images showWishlist\n\nexport default function HomePage():\n  newImages = [...dummyImages].sort((a,b)=>b.createdAt.getTime()-a.createdAt.getTime()).slice(0,12)\n  bestImages = [...dummyImages].sort((a,b)=>b.salesCount-a.salesCount).slice(0,12)\n  return main\n    HeroSection\n    CategorySection categories=dummyCategories\n    GallerySection title='최신 이미지' images=newImages showWishlist\n    GallerySection title='베스트셀러' images=bestImages",
+      "verificationCriteria": "1. 히어로 섹션: 배경이미지+오버레이+검색창+트렌딩태그 8개\n2. 카테고리 6개 카드 표시\n3. 신규 12장 갤러리 표시\n4. 베스트셀러 12장 갤러리 표시\n5. TypeScript 에러 없음\n6. 서버 컴포넌트 유지",
+      "analysisResult": "Task 006: 랜딩 페이지 UI 구현. Shutterstock/Getty Images 스타일. 서버 컴포넌트 기반(page.tsx), SearchInput 래퍼(hero-search.tsx, use client) 분리. 4개 섹션: 히어로(배경이미지+오버레이+검색창+트렌딩태그) + 카테고리퀵링크(6개 이미지카드) + 신규갤러리(createdAt 내림차순 12장) + 베스트셀러(salesCount 내림차순 12장). ImageGrid/ImageCard/SearchInput/dummyData 재사용.",
+      "summary": "src/app/(buyer)/page.tsx 완전한 랜딩 페이지로 구현 완료. 서버 컴포넌트 유지. HeroSection(배경이미지+오버레이+HeroSearch+트렌딩태그8개), CategorySection(6개카드 hover 애니메이션), GallerySection x2(신규12장/베스트셀러12장). TypeScript에러 없음, ESLint 0 errors, Prettier 통과.",
+      "completedAt": "2026-03-10T15:59:59.737Z"
+    },
+    {
+      "id": "d51554c8-1374-41c9-8e5a-69646c54a00d",
+      "name": "최종 검증 및 완료 처리",
+      "description": "npm run check-all 통과 확인, tasks/006 완료 처리, ROADMAP.md Task 006 완료 표시.",
+      "notes": "npm run check-all 실패시 에러 메시지 보고 해당 파일 수정.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "8441a60a-be73-4a58-87fa-a38041288e39"
+        }
+      ],
+      "createdAt": "2026-03-10T15:47:49.965Z",
+      "updatedAt": "2026-03-10T16:00:48.685Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/(buyer)/page.tsx",
+          "type": "REFERENCE",
+          "description": "검증 대상"
+        },
+        {
+          "path": "src/components/landing/hero-search.tsx",
+          "type": "REFERENCE",
+          "description": "검증 대상"
+        },
+        {
+          "path": "tasks/006-landing-page.md",
+          "type": "TO_MODIFY",
+          "description": "완료 처리"
+        },
+        {
+          "path": "docs/ROADMAP.md",
+          "type": "TO_MODIFY",
+          "description": "Task 006 완료 표시"
+        }
+      ],
+      "implementationGuide": "1. npm run check-all 실행\n2. Prettier 오류: npx prettier --write 해당파일로 수정\n3. TypeScript/ESLint 오류: 원인 파악 후 수정\n4. tasks/006-landing-page.md 모든 체크박스 체크 + 변경사항 요약 작성\n5. docs/ROADMAP.md Task 006 항목 [x] 완료 표시 및 서브태스크 [x] 체크",
+      "verificationCriteria": "npm run check-all 통과, tasks/006 완료, ROADMAP [x]",
+      "analysisResult": "Task 006: 랜딩 페이지 UI 구현. Shutterstock/Getty Images 스타일. 서버 컴포넌트 기반(page.tsx), SearchInput 래퍼(hero-search.tsx, use client) 분리. 4개 섹션: 히어로(배경이미지+오버레이+검색창+트렌딩태그) + 카테고리퀵링크(6개 이미지카드) + 신규갤러리(createdAt 내림차순 12장) + 베스트셀러(salesCount 내림차순 12장). ImageGrid/ImageCard/SearchInput/dummyData 재사용.",
+      "summary": "npm run check-all 통과 확인 (0 errors). tasks/006-landing-page.md 모든 체크박스 완료 처리 및 변경사항 요약 작성. docs/ROADMAP.md Task 006 [x] 완료 표시 및 서브태스크 전체 [x] 체크 완료.",
+      "completedAt": "2026-03-10T16:00:48.682Z"
+    }
+  ]
+}
