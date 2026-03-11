@@ -204,18 +204,17 @@ JiangsStock은 블로그/웹사이트/마케팅 자료용 고품질 이미지를
 
 > NextAuth.js 인증 시스템을 구현하여 실제 로그인/회원가입 기반 동작을 완성한다.
 
-- **Task 019: NextAuth.js v5 인증 시스템 구현** - 우선순위
-  - NextAuth.js v5 (Auth.js) 설치 및 설정
-  - @auth/prisma-adapter 연동
-  - Credentials Provider 구현: 이메일/비밀번호 인증 (bcryptjs saltRounds 12)
-  - JWT 세션 전략 설정 (httpOnly + secure + sameSite=strict 쿠키)
-  - 구매자 회원가입 Server Action 구현 (Zod 스키마 검증)
-  - 구매자 로그인/로그아웃 Server Action 구현
-  - 관리자 인증 분리: /admin 경로 전용 인증 로직 (ADMIN 역할 검증)
-  - 관리자 IP 화이트리스트: ADMIN_ALLOWED_IPS 환경변수 기반 CIDR 검증
-  - 미들웨어 인증 설정: 보호 경로 (/mypage, /wishlist, /checkout, /admin) 리디렉션
-  - 다중 레이어 인증: Server Action/API Route 내부에서도 세션/권한 재검증
-  - Playwright MCP를 활용한 인증 플로우 E2E 테스트
+- [x] **Task 019: NextAuth.js v5 인증 시스템 구현** - 완료
+  - [x] NextAuth.js v5 (Auth.js) 설치 및 설정
+  - [x] Credentials Provider 구현: 이메일/비밀번호 인증 (bcryptjs saltRounds 12)
+  - [x] JWT 세션 전략 설정 (httpOnly + secure + sameSite=strict 쿠키)
+  - [x] 구매자 회원가입 Server Action 구현 (Zod 스키마 검증)
+  - [x] 구매자 로그인/로그아웃 Server Action 구현
+  - [x] 관리자 인증 분리: /admin 경로 전용 인증 로직 (ADMIN 역할 검증)
+  - [x] 관리자 IP 화이트리스트: ADMIN_ALLOWED_IPS 환경변수 기반 CIDR 검증
+  - [x] 미들웨어 인증 설정: 보호 경로 (/mypage, /wishlist, /checkout, /admin) 리디렉션
+  - [x] 다중 레이어 인증: Server Action/API Route 내부에서도 세션/권한 재검증
+  - [x] Playwright MCP를 활용한 인증 플로우 E2E 테스트
 
 ---
 

@@ -1,12 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import Link from 'next/link'
 import { EyeIcon, EyeOffIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { signupSchema } from '@/types/forms'
+import { signupAction } from '@/lib/actions/auth'
 
 type SignupFormData = {
   email: string
@@ -51,7 +52,18 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 
-const COUNTRIES = ['한국', '미국', '일본', '중국', '영국', '독일', '프랑스', '캐나다', '호주', '기타']
+const COUNTRIES = [
+  '한국',
+  '미국',
+  '일본',
+  '중국',
+  '영국',
+  '독일',
+  '프랑스',
+  '캐나다',
+  '호주',
+  '기타',
+]
 const CURRENT_YEAR = new Date().getFullYear()
 const BIRTH_YEARS = Array.from(
   { length: CURRENT_YEAR - 14 - 1950 + 1 },
@@ -82,7 +94,7 @@ function PasswordStrengthBar({ password }: PasswordStrengthBarProps) {
 export function SignupForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false)
-  const [emailAvailable, setEmailAvailable] = useState<boolean | null>(null)
+  const [isPending, startTransition] = useTransition()
 
   const form = useForm<SignupFormData>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -101,14 +113,18 @@ export function SignupForm() {
   const passwordValue = form.watch('password') ?? ''
 
   function onSubmit(data: SignupFormData) {
-    console.log('회원가입:', data)
-  }
-
-  function handleEmailBlur() {
-    const email = form.getValues('email')
-    if (email && /\S+@\S+\.\S+/.test(email)) {
-      setEmailAvailable(true)
-    }
+    startTransition(async () => {
+      const result = await signupAction(
+        data as Parameters<typeof signupAction>[0]
+      )
+      if (!result.success) {
+        if (result.field === 'email') {
+          form.setError('email', { message: result.error })
+        } else {
+          form.setError('root', { message: result.error })
+        }
+      }
+    })
   }
 
   return (
@@ -132,17 +148,8 @@ export function SignupForm() {
                       type="email"
                       placeholder="your@email.com"
                       {...field}
-                      onBlur={() => {
-                        field.onBlur()
-                        handleEmailBlur()
-                      }}
                     />
                   </FormControl>
-                  {emailAvailable === true && (
-                    <p className="text-xs font-medium text-green-600">
-                      사용 가능한 이메일입니다
-                    </p>
-                  )}
                   <FormMessage />
                 </FormItem>
               )}
@@ -297,16 +304,21 @@ export function SignupForm() {
               control={form.control}
               name="agreedTerms"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-2 space-y-0">
+                <FormItem className="flex flex-row items-start space-y-0 space-x-2">
                   <FormControl>
                     <Checkbox
                       checked={field.value === true}
-                      onCheckedChange={checked => field.onChange(checked === true ? true : undefined)}
+                      onCheckedChange={checked =>
+                        field.onChange(checked === true ? true : undefined)
+                      }
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <FormLabel className="cursor-pointer font-normal">
-                      <Link href="/terms" className="text-primary underline-offset-4 hover:underline">
+                      <Link
+                        href="/terms"
+                        className="text-primary underline-offset-4 hover:underline"
+                      >
                         이용약관
                       </Link>
                       에 동의합니다 *
@@ -322,16 +334,21 @@ export function SignupForm() {
               control={form.control}
               name="agreedPrivacy"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-2 space-y-0">
+                <FormItem className="flex flex-row items-start space-y-0 space-x-2">
                   <FormControl>
                     <Checkbox
                       checked={field.value === true}
-                      onCheckedChange={checked => field.onChange(checked === true ? true : undefined)}
+                      onCheckedChange={checked =>
+                        field.onChange(checked === true ? true : undefined)
+                      }
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <FormLabel className="cursor-pointer font-normal">
-                      <Link href="/privacy" className="text-primary underline-offset-4 hover:underline">
+                      <Link
+                        href="/privacy"
+                        className="text-primary underline-offset-4 hover:underline"
+                      >
                         개인정보처리방침
                       </Link>
                       에 동의합니다 *
@@ -342,8 +359,14 @@ export function SignupForm() {
               )}
             />
 
-            <Button type="submit" className="w-full">
-              회원가입하기
+            {form.formState.errors.root && (
+              <p className="text-destructive text-sm">
+                {form.formState.errors.root.message}
+              </p>
+            )}
+
+            <Button type="submit" className="w-full" disabled={isPending}>
+              {isPending ? '가입 중...' : '회원가입하기'}
             </Button>
           </form>
         </Form>
@@ -351,7 +374,10 @@ export function SignupForm() {
         <div className="mt-6 text-center">
           <p className="text-muted-foreground text-sm">
             이미 계정이 있으신가요?{' '}
-            <Link href="/login" className="text-primary underline-offset-4 hover:underline">
+            <Link
+              href="/login"
+              className="text-primary underline-offset-4 hover:underline"
+            >
               로그인
             </Link>
           </p>

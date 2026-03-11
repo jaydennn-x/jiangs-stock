@@ -1,12 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useTransition } from 'react'
 import Link from 'next/link'
 import { EyeIcon, EyeOffIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useState } from 'react'
 
 import { loginSchema, type LoginFormData } from '@/types/forms'
+import { loginAction } from '@/lib/actions/auth'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -28,6 +30,7 @@ import {
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
+  const [isPending, startTransition] = useTransition()
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -35,7 +38,12 @@ export function LoginForm() {
   })
 
   function onSubmit(data: LoginFormData) {
-    console.log('로그인:', data)
+    startTransition(async () => {
+      const result = await loginAction(data)
+      if (!result.success) {
+        form.setError('root', { message: result.error })
+      }
+    })
   }
 
   return (
@@ -56,7 +64,11 @@ export function LoginForm() {
                 <FormItem>
                   <FormLabel>이메일</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="your@email.com" {...field} />
+                    <Input
+                      type="email"
+                      placeholder="your@email.com"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -101,11 +113,13 @@ export function LoginForm() {
               control={form.control}
               name="rememberMe"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center space-x-2 space-y-0">
+                <FormItem className="flex flex-row items-center space-y-0 space-x-2">
                   <FormControl>
                     <Checkbox
                       checked={field.value as boolean}
-                      onCheckedChange={checked => field.onChange(checked === true)}
+                      onCheckedChange={checked =>
+                        field.onChange(checked === true)
+                      }
                     />
                   </FormControl>
                   <FormLabel className="cursor-pointer font-normal">
@@ -115,8 +129,14 @@ export function LoginForm() {
               )}
             />
 
-            <Button type="submit" className="w-full">
-              로그인하기
+            {form.formState.errors.root && (
+              <p className="text-destructive text-sm">
+                {form.formState.errors.root.message}
+              </p>
+            )}
+
+            <Button type="submit" className="w-full" disabled={isPending}>
+              {isPending ? '로그인 중...' : '로그인하기'}
             </Button>
           </form>
         </Form>

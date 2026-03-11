@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { EyeIcon, EyeOffIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { adminLoginAction } from '@/lib/actions/admin-auth'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -27,14 +28,22 @@ type AdminLoginFormData = z.infer<typeof adminLoginSchema>
 export function AdminLoginForm() {
   const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
+  const [isPending, startTransition] = useTransition()
 
   const form = useForm<AdminLoginFormData>({
     resolver: zodResolver(adminLoginSchema),
     defaultValues: { email: '', password: '' },
   })
 
-  function onSubmit(_data: AdminLoginFormData) {
-    router.push('/admin/dashboard')
+  function onSubmit(data: AdminLoginFormData) {
+    startTransition(async () => {
+      const result = await adminLoginAction(data)
+      if (!result.success) {
+        form.setError('root', { message: result.error })
+      } else {
+        router.push('/admin/dashboard')
+      }
+    })
   }
 
   return (
@@ -93,11 +102,18 @@ export function AdminLoginForm() {
           )}
         />
 
+        {form.formState.errors.root && (
+          <p className="text-sm text-red-400">
+            {form.formState.errors.root.message}
+          </p>
+        )}
+
         <Button
           type="submit"
           className="w-full bg-slate-100 text-slate-900 hover:bg-white"
+          disabled={isPending}
         >
-          관리자 로그인
+          {isPending ? '로그인 중...' : '관리자 로그인'}
         </Button>
       </form>
     </Form>
