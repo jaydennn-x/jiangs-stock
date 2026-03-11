@@ -33,6 +33,7 @@ export function ProtectedImage({
       sizes={sizes}
       className={cn('select-none', className)}
       draggable={false}
+      unoptimized={src.startsWith('/api/')}
       onContextMenu={e => e.preventDefault()}
       onDragStart={e => e.preventDefault()}
     />

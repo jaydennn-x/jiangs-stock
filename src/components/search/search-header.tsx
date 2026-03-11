@@ -12,14 +12,14 @@ import {
 import { MobileFilterSheet } from './search-filters'
 
 const SORT_OPTIONS = [
-  { value: 'relevant', label: '관련도순' },
-  { value: 'newest', label: '최신순' },
-  { value: 'popular', label: '인기순' },
+  { value: 'popular', label: '관련도순' },
+  { value: 'latest', label: '최신순' },
+  { value: 'price_asc', label: '가격 낮은순' },
+  { value: 'price_desc', label: '가격 높은순' },
 ]
 
 interface SearchHeaderProps {
   query: string
-  totalCount: number
   currentSort: string
   selectedCategories: string[]
   selectedOrientation: string
@@ -29,7 +29,6 @@ interface SearchHeaderProps {
 
 export function SearchHeader({
   query,
-  totalCount,
   currentSort,
   selectedCategories,
   selectedOrientation,
@@ -41,7 +40,7 @@ export function SearchHeader({
 
   function handleSortChange(value: string) {
     const params = new URLSearchParams(searchParams.toString())
-    if (value && value !== 'relevant') {
+    if (value && value !== 'popular') {
       params.set('sort', value)
     } else {
       params.delete('sort')
@@ -49,9 +48,7 @@ export function SearchHeader({
     router.push('/search?' + params.toString())
   }
 
-  const title = query
-    ? `"${query}" 검색 결과 ${totalCount.toLocaleString()}개`
-    : `전체 이미지 ${totalCount.toLocaleString()}개`
+  const title = query ? `"${query}" 검색 결과` : '전체 이미지'
 
   return (
     <div className="mb-6 flex items-center justify-between border-b border-gray-100 py-4">
@@ -70,10 +67,10 @@ export function SearchHeader({
 
         {/* 정렬 */}
         <Select
-          value={currentSort || 'relevant'}
+          value={currentSort || 'popular'}
           onValueChange={handleSortChange}
         >
-          <SelectTrigger className="h-9 w-28 text-sm">
+          <SelectTrigger className="h-9 w-32 text-sm">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

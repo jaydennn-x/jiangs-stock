@@ -1,10 +1,11 @@
 import Link from 'next/link'
 
-import { ImageGrid } from '@/components/common/image-grid'
+import { prisma } from '@/lib/prisma'
 import { HeroSearch } from '@/components/landing/hero-search'
 import { EditorialSlider } from '@/components/landing/editorial-slider'
-import { dummyImages } from '@/lib/dummy/images'
 import type { Image } from '@/types/models'
+
+export const dynamic = 'force-dynamic'
 
 const TRENDING_TAGS = [
   '일몰',
@@ -21,13 +22,11 @@ const HERO_TABS = ['이미지', '비디오', '에디토리얼']
 
 const HERO_MOSAIC_SEEDS = [10, 20, 30, 40, 50, 60, 70, 80]
 
-// 풀블리드 그리드 행 높이 (px)
 const GRID_ROW_HEIGHTS = [280, 380, 300]
 
 function HeroSection() {
   return (
     <div className="relative flex min-h-[88vh] items-center justify-center overflow-hidden bg-black">
-      {/* 배경: 이미지 모자이크 그리드 */}
       <div className="absolute inset-0 grid grid-cols-4 grid-rows-2 gap-px opacity-60">
         {HERO_MOSAIC_SEEDS.map(seed => (
           <div
@@ -42,10 +41,8 @@ function HeroSection() {
         ))}
       </div>
 
-      {/* 어두운 오버레이 */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/55 to-black/75" />
 
-      {/* 콘텐츠 */}
       <div className="relative z-10 mx-auto w-full max-w-4xl px-4 text-center">
         <h1 className="text-4xl leading-tight font-bold tracking-tight text-white md:text-6xl">
           위대한 작품이 시작되는 곳
@@ -54,7 +51,6 @@ function HeroSection() {
           수백만 장의 프리미엄 스톡 이미지
         </p>
 
-        {/* 탭 */}
         <div className="mt-7 flex items-center justify-center gap-0">
           {HERO_TABS.map((tab, i) => (
             <button
@@ -71,12 +67,10 @@ function HeroSection() {
           ))}
         </div>
 
-        {/* 검색바 */}
         <div className="mt-3">
           <HeroSearch className="mx-auto" />
         </div>
 
-        {/* 트렌딩 태그 */}
         <div className="mt-5 flex flex-wrap items-center justify-center gap-x-2 gap-y-1.5">
           <span className="text-xs text-white/45">트렌딩:</span>
           {TRENDING_TAGS.map(tag => (
@@ -97,26 +91,31 @@ function HeroSection() {
 function FullBleedGrid({ images }: { images: Image[] }) {
   return (
     <section className="border-t border-gray-100">
-      {/* 섹션 헤더 */}
       <div className="flex items-center justify-between px-6 py-6 md:px-10">
         <h2 className="text-lg font-semibold tracking-tight text-gray-900">
           베스트셀러
         </h2>
         <Link
-          href="/search?sort=best"
+          href="/search?sort=popular"
           className="text-sm text-gray-500 transition-colors hover:text-gray-900"
         >
           전체 보기 →
         </Link>
       </div>
 
-      {/* 풀블리드 3컬럼 균등 그리드 */}
       <div className="grid grid-cols-1 gap-px bg-gray-200 sm:grid-cols-2 lg:grid-cols-3">
         {images.slice(0, 9).map((image, i) => (
-          <Link key={image.id} href={`/images/${image.id}`} className="group block">
+          <Link
+            key={image.id}
+            href={`/images/${image.id}`}
+            className="group block"
+          >
             <div
               className="relative overflow-hidden"
-              style={{ height: GRID_ROW_HEIGHTS[Math.floor(i / 3) % GRID_ROW_HEIGHTS.length] }}
+              style={{
+                height:
+                  GRID_ROW_HEIGHTS[Math.floor(i / 3) % GRID_ROW_HEIGHTS.length],
+              }}
             >
               <div
                 className="absolute inset-0 transition-transform duration-500 group-hover:scale-105"
@@ -126,7 +125,6 @@ function FullBleedGrid({ images }: { images: Image[] }) {
                   backgroundPosition: 'center',
                 }}
               />
-              {/* 호버 오버레이 */}
               <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/25" />
               <div className="absolute inset-x-0 bottom-0 translate-y-2 p-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
                 <p className="line-clamp-1 text-sm font-medium text-white drop-shadow">
@@ -138,7 +136,6 @@ function FullBleedGrid({ images }: { images: Image[] }) {
         ))}
       </div>
 
-      {/* 더 보기 버튼 */}
       <div className="flex justify-center py-8">
         <Link
           href="/search"
@@ -159,7 +156,7 @@ function NewImagesGrid({ images }: { images: Image[] }) {
           최신 이미지
         </h2>
         <Link
-          href="/search?sort=new"
+          href="/search?sort=latest"
           className="text-sm text-gray-500 transition-colors hover:text-gray-900"
         >
           전체 보기 →
@@ -168,10 +165,17 @@ function NewImagesGrid({ images }: { images: Image[] }) {
 
       <div className="grid grid-cols-1 gap-px bg-gray-200 sm:grid-cols-2 lg:grid-cols-3">
         {images.slice(0, 9).map((image, i) => (
-          <Link key={image.id} href={`/images/${image.id}`} className="group block">
+          <Link
+            key={image.id}
+            href={`/images/${image.id}`}
+            className="group block"
+          >
             <div
               className="relative overflow-hidden"
-              style={{ height: GRID_ROW_HEIGHTS[Math.floor(i / 3) % GRID_ROW_HEIGHTS.length] }}
+              style={{
+                height:
+                  GRID_ROW_HEIGHTS[Math.floor(i / 3) % GRID_ROW_HEIGHTS.length],
+              }}
             >
               <div
                 className="absolute inset-0 transition-transform duration-500 group-hover:scale-105"
@@ -204,14 +208,41 @@ function NewImagesGrid({ images }: { images: Image[] }) {
   )
 }
 
-export default function HomePage() {
-  const newImages = [...dummyImages]
-    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-    .slice(0, 9)
+async function fetchLandingImages() {
+  try {
+    const [newRaw, bestRaw] = await Promise.all([
+      prisma.image.findMany({
+        where: { isActive: true, processingStatus: 'COMPLETED' },
+        orderBy: { createdAt: 'desc' },
+        take: 9,
+      }),
+      prisma.image.findMany({
+        where: { isActive: true, processingStatus: 'COMPLETED' },
+        orderBy: { salesCount: 'desc' },
+        take: 9,
+      }),
+    ])
 
-  const bestImages = [...dummyImages]
-    .sort((a, b) => b.salesCount - a.salesCount)
-    .slice(0, 9)
+    const toImage = (img: (typeof newRaw)[number]): Image => ({
+      ...img,
+      basePrice: Number(img.basePrice),
+      description: img.description ?? undefined,
+      shootDate: img.shootDate ?? undefined,
+      sizesJson: img.sizesJson as unknown as Image['sizesJson'],
+      fileSizesJson: img.fileSizesJson as unknown as Image['fileSizesJson'],
+    })
+
+    return {
+      newImages: newRaw.map(toImage),
+      bestImages: bestRaw.map(toImage),
+    }
+  } catch {
+    return { newImages: [], bestImages: [] }
+  }
+}
+
+export default async function HomePage() {
+  const { newImages, bestImages } = await fetchLandingImages()
 
   return (
     <main className="bg-white">

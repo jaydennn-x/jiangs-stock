@@ -22,6 +22,15 @@ interface ImageCardProps {
   className?: string
 }
 
+function resolveImageSrc(thumbnailUrl: string, imageId: string): string {
+  try {
+    new URL(thumbnailUrl)
+    return thumbnailUrl
+  } catch {
+    return `/api/images/thumbnail/${imageId}`
+  }
+}
+
 export function ImageCard({
   image,
   showWishlist = false,
@@ -29,13 +38,14 @@ export function ImageCard({
 }: ImageCardProps) {
   const [isWishlisted, setIsWishlisted] = useState(false)
   const aspectClass = ASPECT_MAP[image.orientation] ?? 'aspect-[4/3]'
+  const src = resolveImageSrc(image.thumbnailUrl, image.id)
 
   return (
     <div className={cn('group relative overflow-hidden rounded-sm', className)}>
       <Link href={`/images/${image.id}`}>
         <div className={cn('relative overflow-hidden', aspectClass)}>
           <ProtectedImage
-            src={image.thumbnailUrl}
+            src={src}
             alt={image.name}
             fill
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
@@ -66,7 +76,9 @@ export function ImageCard({
             e.preventDefault()
             setIsWishlisted(prev => !prev)
           }}
-          aria-label={isWishlisted ? '위시리스트에서 제거' : '위시리스트에 추가'}
+          aria-label={
+            isWishlisted ? '위시리스트에서 제거' : '위시리스트에 추가'
+          }
         >
           <Heart
             className={cn(

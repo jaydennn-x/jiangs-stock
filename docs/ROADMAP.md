@@ -222,14 +222,13 @@ JiangsStock은 블로그/웹사이트/마케팅 자료용 고품질 이미지를
 
 > 더미 데이터를 실제 API 호출로 교체하고, 핵심 비즈니스 로직을 완성한다.
 
-- **Task 020: BullMQ 및 Redis 초기 설정**
-  - BullMQ 설치 및 Redis 연결 설정 (Docker Compose의 Redis 인스턴스 활용)
-  - 큐 생성 유틸리티: 이미지 처리 큐, 이메일 발송 큐
-  - 워커 기본 구조: 큐별 워커 팩토리, Graceful Shutdown 공통 로직
-  - 재시도 전략 공통 설정: 최대 3회, 지수 백오프, Dead Letter Queue 구조
-  - BullMQ Dashboard (Bull Board) 개발 환경 설정 (선택)
+- [x] **Task 020: BullMQ 및 Redis 초기 설정** - 완료
+  - [x] BullMQ 설치 및 Redis 연결 설정 (WSL2 Redis 인스턴스 활용)
+  - [x] 큐 생성 유틸리티: 이미지 처리 큐, 이메일 발송 큐
+  - [x] 워커 기본 구조: 큐별 워커 팩토리, Graceful Shutdown 공통 로직
+  - [x] 재시도 전략 공통 설정: 최대 3회, 지수 백오프, Dead Letter Queue 구조
 
-- **Task 021: 이미지 검색 API 구현 (F001)** - 우선순위
+- [x] **Task 021: 이미지 검색 API 구현 (F001)** - 완료
   - 검색 API 엔드포인트: 키워드 (PostgreSQL Full-Text Search + trigram), 태그 필터, 카테고리 필터, 색상 필터, 방향 필터
   - 정렬: 최신순 (createdAt), 인기순 (salesCount), 가격 낮은순/높은순 (basePrice)
   - 커서 기반 무한스크롤 페이지네이션 (limit + cursor)
