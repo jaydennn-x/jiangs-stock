@@ -1,18 +1,18 @@
 {
   "tasks": [
     {
-      "id": "5503afe7-e533-48ae-a704-86df26137ebf",
-      "name": "Recharts 설치 및 작업 파일 생성",
-      "description": "recharts 패키지를 npm install로 설치하고, tasks/015-admin-dashboard.md 작업 파일을 000-sample.md 템플릿 기반으로 생성한다.",
+      "id": "e01d4724-c3aa-4ed8-8efa-e0a6bcb783fb",
+      "name": "작업 파일 생성 및 패키지 설치",
+      "description": "tasks/019-nextauth-auth.md 작업 파일을 생성하고 next-auth@beta 패키지를 설치한다. shrimp-rules.md 규칙에 따라 구현 전 작업 파일이 반드시 먼저 존재해야 한다.",
       "status": "completed",
       "dependencies": [],
-      "createdAt": "2026-03-11T03:11:32.087Z",
-      "updatedAt": "2026-03-11T03:13:43.905Z",
+      "createdAt": "2026-03-11T04:37:50.613Z",
+      "updatedAt": "2026-03-11T04:38:59.613Z",
       "relatedFiles": [
         {
-          "path": "tasks/015-admin-dashboard.md",
+          "path": "tasks/019-nextauth-auth.md",
           "type": "CREATE",
-          "description": "Task 015 작업 파일"
+          "description": "Task 019 작업 파일"
         },
         {
           "path": "tasks/000-sample.md",
@@ -22,198 +22,310 @@
         {
           "path": "package.json",
           "type": "TO_MODIFY",
-          "description": "recharts 의존성 추가"
+          "description": "패키지 의존성"
         }
       ],
-      "implementationGuide": "1. npm install recharts 실행\n2. tasks/015-admin-dashboard.md 생성: 상태=대기, 설명, 관련 파일 목록, 수락 기준(빈 체크박스), 구현 단계(빈 체크박스) 포함\n3. 관련 파일: dashboard/page.tsx, dashboard-stats-cards.tsx, dashboard-recent-orders.tsx, dashboard-top-images.tsx, dashboard-sales-chart.tsx, dashboard-quick-links.tsx",
-      "verificationCriteria": "package.json에 recharts 의존성이 추가되고, tasks/015-admin-dashboard.md 파일이 생성되어 있어야 한다.",
-      "analysisResult": "Task 015 관리자 대시보드 UI를 더미 데이터 기반으로 구현한다. Recharts 설치 후 매출 통계 카드, 차트, 최근 주문 테이블, 인기 상품 TOP 10, 빠른 이동 링크를 구현하고 tasks/015-admin-dashboard.md 작업 파일을 생성한다. shadcn/ui Card, Badge 활용, Table은 native HTML+Tailwind 사용, 차트 컴포넌트만 use client 적용.",
-      "summary": "recharts 설치 완료(package.json 의존성 추가), tasks/015-admin-dashboard.md 작업 파일 생성 완료. 000-sample.md 템플릿 기반으로 수락 기준/구현 단계 모두 빈 체크박스로 작성됨.",
-      "completedAt": "2026-03-11T03:13:43.804Z"
+      "implementationGuide": "1. tasks/019-nextauth-auth.md 파일 생성 (000-sample.md 템플릿 참조, 빈 체크박스, 수락 기준, 구현 단계, 테스트 체크리스트 포함)\n2. npm install next-auth@beta 실행\n3. package.json에 next-auth 추가 확인",
+      "verificationCriteria": "tasks/019-nextauth-auth.md 파일 존재, node_modules/next-auth 디렉토리 존재, package.json에 next-auth 추가됨",
+      "analysisResult": "Task 019: NextAuth.js v5 인증 시스템 구현. 기술 스택: Next.js 15.5.3 App Router, NextAuth.js v5(beta), bcryptjs(이미 설치), Zod v4(이미 설치), Prisma(src/generated/prisma). 패키지 설치 필요: next-auth@beta. @auth/prisma-adapter 미사용(JWT 전략 + Credentials만 사용하므로 불필요). 환경변수 NEXTAUTH_SECRET, NEXTAUTH_URL, ADMIN_ALLOWED_IPS는 src/lib/env.ts에 이미 정의됨.",
+      "summary": "tasks/019-nextauth-auth.md 작업 파일 생성 완료 (수락 기준, 구현 단계 8단계, 테스트 체크리스트 포함). next-auth@beta(^5.0.0-beta.30) 패키지 설치 완료. package.json에 의존성 추가 확인됨.",
+      "completedAt": "2026-03-11T04:38:59.610Z"
     },
     {
-      "id": "ef136a8c-7d12-481e-b469-b8451d22b919",
-      "name": "대시보드 매출 통계 카드 컴포넌트 구현",
-      "description": "src/components/admin/dashboard-stats-cards.tsx를 생성한다. dummyOrders에서 COMPLETED 주문만 필터링하여 오늘 매출, 이번 주 매출, 이번 달 매출, 총 판매 건수를 집계하고 shadcn/ui Card로 4종 카드를 렌더링한다.",
+      "id": "0055a814-675c-4bc4-99f1-6bc7aff9049f",
+      "name": "NextAuth 설정 및 Route Handler 구현",
+      "description": "src/auth.ts에 NextAuth v5 설정을 구현하고 src/app/api/auth/[...nextauth]/route.ts Route Handler를 생성한다. JWT 전략, Credentials Provider, callbacks 설정 포함.",
+      "notes": "prisma 클라이언트는 src/generated/prisma에서 import. UserRole enum은 src/types/enums.ts에서 import. authorize 함수는 30줄 이하로 유지하기 위해 별도 함수로 분리 필요.",
       "status": "completed",
       "dependencies": [
         {
-          "taskId": "5503afe7-e533-48ae-a704-86df26137ebf"
+          "taskId": "e01d4724-c3aa-4ed8-8efa-e0a6bcb783fb"
         }
       ],
-      "createdAt": "2026-03-11T03:11:32.087Z",
-      "updatedAt": "2026-03-11T03:15:15.137Z",
+      "createdAt": "2026-03-11T04:37:50.613Z",
+      "updatedAt": "2026-03-11T04:59:24.971Z",
       "relatedFiles": [
         {
-          "path": "src/components/admin/dashboard-stats-cards.tsx",
+          "path": "src/auth.ts",
           "type": "CREATE",
-          "description": "매출 통계 카드 컴포넌트"
+          "description": "NextAuth v5 메인 설정"
         },
         {
-          "path": "src/lib/dummy/orders.ts",
-          "type": "DEPENDENCY",
-          "description": "주문 더미 데이터"
+          "path": "src/app/api/auth/[...nextauth]/route.ts",
+          "type": "CREATE",
+          "description": "NextAuth Route Handler"
         },
         {
-          "path": "src/components/ui/card.tsx",
+          "path": "prisma/schema.prisma",
+          "type": "REFERENCE",
+          "description": "User 모델 구조"
+        },
+        {
+          "path": "src/types/enums.ts",
           "type": "DEPENDENCY",
-          "description": "shadcn Card 컴포넌트"
+          "description": "UserRole enum"
+        },
+        {
+          "path": "src/lib/env.ts",
+          "type": "REFERENCE",
+          "description": "NEXTAUTH_SECRET 등 환경변수"
         }
       ],
-      "implementationGuide": "Server Component. dummyOrders import.\ncalcStats(orders) 함수:\n  completed = orders.filter(status==='COMPLETED' && paidAt exists)\n  todaySales: paidAt이 오늘 날짜인 주문 totalAmount 합산\n  weekSales: paidAt이 현재 주(월~일) 내인 주문 합산\n  monthSales: paidAt이 현재 월인 주문 합산\n  totalCount: completed 주문의 items 배열 총 개수 합산\n반환: { todaySales, weekSales, monthSales, totalCount }\n\nUI: grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4\n각 Card: CardHeader(아이콘+제목), CardContent(금액/건수 큰 텍스트)\n아이콘: TrendingUp, Calendar, BarChart2, ShoppingBag (lucide-react)\n금액 포맷: amount.toLocaleString('ko-KR') + '원'",
-      "verificationCriteria": "4종 카드가 렌더링되고, 더미 데이터 기반 집계 결과가 표시된다. TypeScript 타입 에러 없음.",
-      "analysisResult": "Task 015 관리자 대시보드 UI를 더미 데이터 기반으로 구현한다. Recharts 설치 후 매출 통계 카드, 차트, 최근 주문 테이블, 인기 상품 TOP 10, 빠른 이동 링크를 구현하고 tasks/015-admin-dashboard.md 작업 파일을 생성한다. shadcn/ui Card, Badge 활용, Table은 native HTML+Tailwind 사용, 차트 컴포넌트만 use client 적용.",
-      "summary": "dashboard-stats-cards.tsx 생성 완료. dummyOrders에서 COMPLETED 주문 필터링 후 오늘/이번주/이번달 매출 및 총 판매 건수 집계. shadcn/ui Card + lucide-react 아이콘 4종 카드 렌더링. Server Component.",
-      "completedAt": "2026-03-11T03:15:15.134Z"
+      "implementationGuide": "1. src/auth.ts 생성:\n   - import NextAuth from 'next-auth'\n   - import Credentials from 'next-auth/providers/credentials'\n   - import prisma from src/generated/prisma 클라이언트\n   - import bcryptjs from 'bcryptjs'\n   - providers: [Credentials({ authorize: async (credentials) => { email/password Zod 검증 → prisma.user.findUnique → bcryptjs.compare → return {id, email, role, name} or null } })]\n   - session: { strategy: 'jwt' }\n   - callbacks: { jwt({ token, user }) { if(user) token.role = user.role; return token }, session({ session, token }) { session.user.role = token.role; return session } }\n   - cookies: httpOnly, secure(production), sameSite=strict\n   - export { handlers, auth, signIn, signOut }\n2. src/app/api/auth/[...nextauth]/route.ts 생성:\n   - import { handlers } from '@/auth'\n   - export const { GET, POST } = handlers",
+      "verificationCriteria": "src/auth.ts에서 auth, signIn, signOut, handlers export됨. /api/auth/[...nextauth] Route Handler 정상 동작.",
+      "analysisResult": "Task 019: NextAuth.js v5 인증 시스템 구현. 기술 스택: Next.js 15.5.3 App Router, NextAuth.js v5(beta), bcryptjs(이미 설치), Zod v4(이미 설치), Prisma(src/generated/prisma). 패키지 설치 필요: next-auth@beta. @auth/prisma-adapter 미사용(JWT 전략 + Credentials만 사용하므로 불필요). 환경변수 NEXTAUTH_SECRET, NEXTAUTH_URL, ADMIN_ALLOWED_IPS는 src/lib/env.ts에 이미 정의됨.",
+      "summary": "src/auth.ts 생성 완료: JWT 전략, Credentials Provider(bcryptjs.compare), jwt/session callbacks(role 포함), sameSite=strict 쿠키 설정. src/app/api/auth/[...nextauth]/route.ts 생성 완료. 추가로 src/lib/prisma.ts(싱글톤 클라이언트)와 src/types/next-auth.d.ts(타입 확장) 생성. TypeScript 컴파일 오류 없음.",
+      "completedAt": "2026-03-11T04:59:24.969Z"
     },
     {
-      "id": "9bfe566f-cd1a-4816-8ab2-e37e6ebb7060",
-      "name": "대시보드 매출 차트 컴포넌트 구현",
-      "description": "src/components/admin/dashboard-sales-chart.tsx를 생성한다. Recharts의 ResponsiveContainer + BarChart로 일별(최근 7일) 매출 추이를 시각화한다. 탭으로 일별/월별 전환 기능 포함.",
+      "id": "0358d88f-7d94-4d30-830f-772b2bf115c1",
+      "name": "NextAuth 타입 확장 및 IP 화이트리스트 유틸 구현",
+      "description": "src/types/next-auth.d.ts로 Session/JWT 타입에 role 필드를 추가하고, src/lib/ip-whitelist.ts로 ADMIN_ALLOWED_IPS CIDR 검증 유틸을 구현한다.",
+      "notes": "ipToNum과 cidrMatch는 각각 10줄 이하 순수함수로 구현. 외부 라이브러리 사용 금지.",
       "status": "completed",
       "dependencies": [
         {
-          "taskId": "5503afe7-e533-48ae-a704-86df26137ebf"
+          "taskId": "0055a814-675c-4bc4-99f1-6bc7aff9049f"
         }
       ],
-      "createdAt": "2026-03-11T03:11:32.087Z",
-      "updatedAt": "2026-03-11T03:15:18.185Z",
+      "createdAt": "2026-03-11T04:37:50.613Z",
+      "updatedAt": "2026-03-11T04:59:55.586Z",
       "relatedFiles": [
         {
-          "path": "src/components/admin/dashboard-sales-chart.tsx",
+          "path": "src/types/next-auth.d.ts",
           "type": "CREATE",
-          "description": "매출 차트 컴포넌트 (use client)"
+          "description": "NextAuth 타입 확장"
         },
         {
-          "path": "src/lib/dummy/orders.ts",
+          "path": "src/lib/ip-whitelist.ts",
+          "type": "CREATE",
+          "description": "IP CIDR 검증 유틸"
+        },
+        {
+          "path": "src/lib/auth-utils.ts",
+          "type": "CREATE",
+          "description": "서버 인증 유틸"
+        },
+        {
+          "path": "src/types/enums.ts",
           "type": "DEPENDENCY",
-          "description": "주문 더미 데이터"
+          "description": "UserRole enum"
+        },
+        {
+          "path": "src/lib/env.ts",
+          "type": "REFERENCE",
+          "description": "ADMIN_ALLOWED_IPS, NODE_ENV"
         }
       ],
-      "implementationGuide": "'use client' 선언 필수 (Recharts는 클라이언트 전용).\n\n일별 차트 데이터 생성 함수:\n  getLast7Days(): 오늘부터 -6일까지 날짜 배열 생성\n  각 날짜별 dummyOrders에서 COMPLETED 주문 totalAmount 합산\n  반환: [{ date: 'MM/DD', amount: number }, ...]\n\n월별 차트 데이터 생성 함수:\n  getLast6Months(): 현재 월부터 -5개월까지\n  각 월별 집계\n  반환: [{ month: 'YYYY/MM', amount: number }, ...]\n\nUI:\n  탭 버튼(일별/월별) 상단 우측\n  Recharts: ResponsiveContainer width=100% height=300\n  BarChart + XAxis + YAxis + Tooltip + Bar\n  YAxis tickFormatter: (v) => v.toLocaleString('ko-KR')\n  Card로 감싸기: CardHeader(제목), CardContent(차트)",
-      "verificationCriteria": "Recharts BarChart가 렌더링되고, 일별/월별 탭 전환이 동작한다. use client 선언 확인. TypeScript 에러 없음.",
-      "analysisResult": "Task 015 관리자 대시보드 UI를 더미 데이터 기반으로 구현한다. Recharts 설치 후 매출 통계 카드, 차트, 최근 주문 테이블, 인기 상품 TOP 10, 빠른 이동 링크를 구현하고 tasks/015-admin-dashboard.md 작업 파일을 생성한다. shadcn/ui Card, Badge 활용, Table은 native HTML+Tailwind 사용, 차트 컴포넌트만 use client 적용.",
-      "summary": "dashboard-sales-chart.tsx 생성 완료. use client 선언, Recharts ResponsiveContainer+BarChart, 일별(7일)/월별(6개월) 탭 전환, dummyOrders 기반 데이터 집계 구현.",
-      "completedAt": "2026-03-11T03:15:18.182Z"
+      "implementationGuide": "1. src/types/next-auth.d.ts 생성:\n   - declare module 'next-auth' { interface Session { user: { role: UserRole } } }\n   - declare module 'next-auth/jwt' { interface JWT { role: UserRole } }\n2. src/lib/ip-whitelist.ts 생성:\n   - isIpAllowed(ip: string, allowedIps: string): boolean 함수\n   - allowedIps를 쉼표 분리하여 배열로 파싱\n   - 각 항목이 CIDR이면 비트 연산으로 매칭, 단순 IP면 직접 비교\n   - IPv4 CIDR 파싱: ipToNum(ip) 함수, cidrMatch(ip, cidr) 함수\n   - ADMIN_ALLOWED_IPS 미설정 시 개발환경(NODE_ENV=development)에서는 true 반환\n3. src/lib/auth-utils.ts 생성:\n   - getRequiredSession(): Promise<Session> - 세션 없으면 redirect('/login')\n   - getAdminSession(): Promise<Session> - USER role이면 redirect('/')\n   - Server Component/Action에서 import하여 사용",
+      "verificationCriteria": "TypeScript 컴파일 오류 없음(npm run typecheck). isIpAllowed('127.0.0.1', '127.0.0.0/8') === true. getRequiredSession, getAdminSession 함수 export됨.",
+      "analysisResult": "Task 019: NextAuth.js v5 인증 시스템 구현. 기술 스택: Next.js 15.5.3 App Router, NextAuth.js v5(beta), bcryptjs(이미 설치), Zod v4(이미 설치), Prisma(src/generated/prisma). 패키지 설치 필요: next-auth@beta. @auth/prisma-adapter 미사용(JWT 전략 + Credentials만 사용하므로 불필요). 환경변수 NEXTAUTH_SECRET, NEXTAUTH_URL, ADMIN_ALLOWED_IPS는 src/lib/env.ts에 이미 정의됨.",
+      "summary": "src/types/next-auth.d.ts(이전 태스크에서 생성), src/lib/ip-whitelist.ts(ipToNum/cidrMatch 순수함수 + isIpAllowed), src/lib/auth-utils.ts(getRequiredSession/getAdminSession) 모두 생성 완료. TypeScript 오류 없음.",
+      "completedAt": "2026-03-11T04:59:55.583Z"
     },
     {
-      "id": "209740b4-86f3-4937-8229-32208a583f09",
-      "name": "대시보드 최근 주문 테이블 컴포넌트 구현",
-      "description": "src/components/admin/dashboard-recent-orders.tsx를 생성한다. dummyOrders를 최신순 정렬 후 최대 10건을 native HTML table + TailwindCSS로 렌더링한다.",
+      "id": "60b66907-3a47-48a2-b5b0-90de63687467",
+      "name": "회원가입/로그인/로그아웃 Server Action 구현",
+      "description": "src/lib/actions/auth.ts에 구매자 회원가입, 로그인, 로그아웃 Server Action을 구현한다. 기존 Zod 스키마(signupSchema, loginSchema)를 재사용한다.",
+      "notes": "NextAuth v5의 signIn()은 성공 시 redirect를 throw하므로 try/catch에서 NEXT_REDIRECT 에러는 다시 throw해야 함. 'use server' 지시어 필수.",
       "status": "completed",
       "dependencies": [
         {
-          "taskId": "5503afe7-e533-48ae-a704-86df26137ebf"
+          "taskId": "0055a814-675c-4bc4-99f1-6bc7aff9049f"
         }
       ],
-      "createdAt": "2026-03-11T03:11:32.087Z",
-      "updatedAt": "2026-03-11T03:15:21.096Z",
+      "createdAt": "2026-03-11T04:37:50.613Z",
+      "updatedAt": "2026-03-11T05:00:36.071Z",
       "relatedFiles": [
         {
-          "path": "src/components/admin/dashboard-recent-orders.tsx",
+          "path": "src/lib/actions/auth.ts",
           "type": "CREATE",
-          "description": "최근 주문 테이블 컴포넌트"
+          "description": "인증 Server Actions"
         },
         {
-          "path": "src/lib/dummy/orders.ts",
+          "path": "src/types/forms.ts",
           "type": "DEPENDENCY",
-          "description": "주문 더미 데이터"
+          "description": "signupSchema, loginSchema 재사용"
         },
         {
-          "path": "src/lib/dummy/users.ts",
+          "path": "src/auth.ts",
           "type": "DEPENDENCY",
-          "description": "사용자 더미 데이터"
+          "description": "signIn, signOut import"
         },
         {
-          "path": "src/components/ui/badge.tsx",
+          "path": "src/generated/prisma",
           "type": "DEPENDENCY",
-          "description": "shadcn Badge"
+          "description": "Prisma Client"
         }
       ],
-      "implementationGuide": "Server Component.\ndummyOrders를 createdAt 내림차순 정렬 후 slice(0, 10).\n\n테이블 컬럼: 주문번호, 이메일(userId로 대체), 결제금액, 주문일, 상태\n상태 배지: Badge 컴포넌트 사용\n  COMPLETED: variant='default' (초록)\n  PENDING: variant='secondary' (회색)\n  FAILED: variant='destructive' (빨강)\n\n금액 포맷: toLocaleString('ko-KR') + '원'\n날짜 포맷: createdAt.toLocaleDateString('ko-KR')\n\nHTML 구조:\n  Card > CardHeader(제목+'주문 관리 바로가기' 링크) > CardContent\n  > div overflow-x-auto > table w-full text-sm\n  > thead(th 컬럼명) > tbody(tr rows)\n\nuserId -> 이메일 매핑: dummyUsers import하여 find로 이메일 표시",
-      "verificationCriteria": "최근 주문 10건이 테이블로 표시되고 상태 배지가 올바른 색상으로 렌더링된다.",
-      "analysisResult": "Task 015 관리자 대시보드 UI를 더미 데이터 기반으로 구현한다. Recharts 설치 후 매출 통계 카드, 차트, 최근 주문 테이블, 인기 상품 TOP 10, 빠른 이동 링크를 구현하고 tasks/015-admin-dashboard.md 작업 파일을 생성한다. shadcn/ui Card, Badge 활용, Table은 native HTML+Tailwind 사용, 차트 컴포넌트만 use client 적용.",
-      "summary": "dashboard-recent-orders.tsx 생성 완료. dummyOrders 최신순 정렬 후 10건, native HTML table+TailwindCSS, Badge 상태 표시(COMPLETED/PENDING/FAILED/CANCELLED), dummyUsers 매핑으로 이메일 표시.",
-      "completedAt": "2026-03-11T03:15:21.093Z"
+      "implementationGuide": "1. src/lib/actions/auth.ts 생성 ('use server' 선언)\n2. signupAction(formData: SignupFormData): Promise<ActionResult>\n   - signupSchema.safeParse(formData) 검증\n   - prisma.user.findUnique({where: {email}}) → 중복 체크\n   - bcryptjs.hash(password, 12)\n   - prisma.user.create({data: {email, passwordHash, name, country, birthYear, agreedTermsAt: new Date()}})\n   - signIn('credentials', {email, password, redirectTo: '/'})\n   - return {success: true} or {success: false, error: string}\n3. loginAction(formData: LoginFormData): Promise<ActionResult>\n   - loginSchema.safeParse(formData) 검증\n   - signIn('credentials', {email, password, redirectTo: '/'})\n   - try/catch로 AuthError 처리\n4. logoutAction(): Promise<void>\n   - signOut({redirectTo: '/'})\n5. ActionResult 타입: {success: boolean, error?: string}",
+      "verificationCriteria": "signupAction, loginAction, logoutAction 함수 export됨. TypeScript 오류 없음. 중복 이메일 시 error 반환.",
+      "analysisResult": "Task 019: NextAuth.js v5 인증 시스템 구현. 기술 스택: Next.js 15.5.3 App Router, NextAuth.js v5(beta), bcryptjs(이미 설치), Zod v4(이미 설치), Prisma(src/generated/prisma). 패키지 설치 필요: next-auth@beta. @auth/prisma-adapter 미사용(JWT 전략 + Credentials만 사용하므로 불필요). 환경변수 NEXTAUTH_SECRET, NEXTAUTH_URL, ADMIN_ALLOWED_IPS는 src/lib/env.ts에 이미 정의됨.",
+      "summary": "src/lib/actions/auth.ts 생성 완료. signupAction(Zod검증+중복체크+bcryptjs.hash+prisma.create+signIn), loginAction(signIn+AuthError처리), logoutAction(signOut) 구현. isRedirectError로 NEXT_REDIRECT 재throw 처리. TypeScript 오류 없음.",
+      "completedAt": "2026-03-11T05:00:36.068Z"
     },
     {
-      "id": "e9a129a3-89b3-428f-ad6c-59c6bdcc7652",
-      "name": "대시보드 인기 상품 TOP 10 및 빠른 이동 링크 컴포넌트 구현",
-      "description": "src/components/admin/dashboard-top-images.tsx와 dashboard-quick-links.tsx를 생성한다. TOP 10은 salesCount 기준 정렬, 빠른 이동은 상품/주문 관리 링크 카드.",
+      "id": "9340839b-e2c9-4d53-af75-de49a6f434b7",
+      "name": "관리자 로그인 Server Action 구현",
+      "description": "src/lib/actions/admin-auth.ts에 관리자 전용 로그인 Server Action을 구현한다. IP 화이트리스트 검증 + ADMIN role 확인 포함.",
+      "notes": "관리자 로그인은 일반 Credentials Provider와 동일한 엔드포인트 사용. ADMIN role 검증은 로그인 후 세션 확인으로 처리. IP는 Server Action 내부에서 headers() 함수로 직접 추출 가능.",
       "status": "completed",
       "dependencies": [
         {
-          "taskId": "5503afe7-e533-48ae-a704-86df26137ebf"
+          "taskId": "0358d88f-7d94-4d30-830f-772b2bf115c1"
+        },
+        {
+          "taskId": "60b66907-3a47-48a2-b5b0-90de63687467"
         }
       ],
-      "createdAt": "2026-03-11T03:11:32.087Z",
-      "updatedAt": "2026-03-11T03:15:23.564Z",
+      "createdAt": "2026-03-11T04:37:50.613Z",
+      "updatedAt": "2026-03-11T05:01:04.838Z",
       "relatedFiles": [
         {
-          "path": "src/components/admin/dashboard-top-images.tsx",
+          "path": "src/lib/actions/admin-auth.ts",
           "type": "CREATE",
-          "description": "인기 상품 TOP 10 컴포넌트"
+          "description": "관리자 인증 Server Action"
         },
         {
-          "path": "src/components/admin/dashboard-quick-links.tsx",
-          "type": "CREATE",
-          "description": "빠른 이동 링크 컴포넌트"
-        },
-        {
-          "path": "src/lib/dummy/images.ts",
+          "path": "src/lib/ip-whitelist.ts",
           "type": "DEPENDENCY",
-          "description": "이미지 더미 데이터 (salesCount 포함)"
+          "description": "IP 검증"
+        },
+        {
+          "path": "src/auth.ts",
+          "type": "DEPENDENCY",
+          "description": "signIn, signOut, auth"
+        },
+        {
+          "path": "src/lib/env.ts",
+          "type": "DEPENDENCY",
+          "description": "ADMIN_ALLOWED_IPS"
         }
       ],
-      "implementationGuide": "dashboard-top-images.tsx (Server Component):\n  dummyImages를 salesCount 내림차순 정렬 후 slice(0, 10)\n  Card > CardHeader(제목) > CardContent > ol 순서 목록\n  각 항목: 순위번호 + 썸네일(next/image) + 이름 + salesCount + 기준가격\n  thumbnailUrl 사용 (picsum 더미)\n\ndashboard-quick-links.tsx (Server Component):\n  2개 링크 카드: 상품 관리(/admin/products), 주문 관리(/admin/orders)\n  각 카드: Card with hover effect, 아이콘(Package/ShoppingBag) + 제목 + 설명\n  Link 컴포넌트로 감싸기\n  grid grid-cols-1 gap-3",
-      "verificationCriteria": "salesCount 기준 TOP 10 이미지 목록이 표시되고, 빠른 이동 링크 카드 2개가 렌더링된다.",
-      "analysisResult": "Task 015 관리자 대시보드 UI를 더미 데이터 기반으로 구현한다. Recharts 설치 후 매출 통계 카드, 차트, 최근 주문 테이블, 인기 상품 TOP 10, 빠른 이동 링크를 구현하고 tasks/015-admin-dashboard.md 작업 파일을 생성한다. shadcn/ui Card, Badge 활용, Table은 native HTML+Tailwind 사용, 차트 컴포넌트만 use client 적용.",
-      "summary": "dashboard-top-images.tsx(salesCount 내림차순 TOP 10, next/image 썸네일)와 dashboard-quick-links.tsx(상품/주문 관리 링크 카드 2개) 생성 완료.",
-      "completedAt": "2026-03-11T03:15:23.561Z"
+      "implementationGuide": "1. src/lib/actions/admin-auth.ts 생성 ('use server')\n2. adminLoginAction(formData: AdminLoginFormData, ip: string): Promise<ActionResult>\n   - adminLoginSchema.safeParse(formData) 검증 (z.object({email, password}))\n   - isIpAllowed(ip, env.ADMIN_ALLOWED_IPS) 검증 → false면 {success: false, error: 'IP 접근 차단'}\n   - signIn('credentials', {email, password}) 호출\n   - auth()로 세션 가져와서 session.user.role !== 'ADMIN'이면 signOut() 후 {success: false, error: '관리자 권한 없음'}\n   - return {success: true, redirectTo: '/admin/dashboard'}\n3. 호출 시 IP는 admin-login-form.tsx에서 headers()['x-forwarded-for'] 또는 미들웨어에서 전달",
+      "verificationCriteria": "adminLoginAction export됨. ADMIN_ALLOWED_IPS 미설정 개발환경에서는 IP 검증 통과. USER role 계정으로 로그인 시 에러 반환.",
+      "analysisResult": "Task 019: NextAuth.js v5 인증 시스템 구현. 기술 스택: Next.js 15.5.3 App Router, NextAuth.js v5(beta), bcryptjs(이미 설치), Zod v4(이미 설치), Prisma(src/generated/prisma). 패키지 설치 필요: next-auth@beta. @auth/prisma-adapter 미사용(JWT 전략 + Credentials만 사용하므로 불필요). 환경변수 NEXTAUTH_SECRET, NEXTAUTH_URL, ADMIN_ALLOWED_IPS는 src/lib/env.ts에 이미 정의됨.",
+      "summary": "src/lib/actions/admin-auth.ts 생성 완료. IP 추출(x-forwarded-for/x-real-ip), isIpAllowed 검증, signIn 후 ADMIN role 재확인, role 불일치시 signOut+에러 반환. 개발환경에서 ADMIN_ALLOWED_IPS 미설정 시 통과. TypeScript 오류 없음.",
+      "completedAt": "2026-03-11T05:01:04.835Z"
     },
     {
-      "id": "0ad02ac0-d675-474d-992c-f23f757446ca",
-      "name": "대시보드 페이지 조합 및 빌드 검증",
-      "description": "src/app/admin/(protected)/dashboard/page.tsx에 모든 컴포넌트를 조합하여 반응형 그리드 레이아웃으로 완성한다. npm run check-all 및 npm run build 통과 확인.",
+      "id": "b7255065-3cd4-47b2-a140-64583e158188",
+      "name": "미들웨어 인증 설정 구현",
+      "description": "src/middleware.ts를 생성하여 보호 경로(/mypage, /wishlist, /checkout, /admin)에 대한 인증 미들웨어를 구현한다.",
+      "notes": "NextAuth v5에서 auth()는 미들웨어 래퍼로 사용 가능. req.auth로 세션 접근. config.matcher로 미들웨어 적용 경로 제한.",
       "status": "completed",
       "dependencies": [
         {
-          "taskId": "ef136a8c-7d12-481e-b469-b8451d22b919"
-        },
-        {
-          "taskId": "9bfe566f-cd1a-4816-8ab2-e37e6ebb7060"
-        },
-        {
-          "taskId": "209740b4-86f3-4937-8229-32208a583f09"
-        },
-        {
-          "taskId": "e9a129a3-89b3-428f-ad6c-59c6bdcc7652"
+          "taskId": "0055a814-675c-4bc4-99f1-6bc7aff9049f"
         }
       ],
-      "createdAt": "2026-03-11T03:11:32.087Z",
-      "updatedAt": "2026-03-11T03:17:47.991Z",
+      "createdAt": "2026-03-11T04:37:50.613Z",
+      "updatedAt": "2026-03-11T05:01:39.550Z",
       "relatedFiles": [
         {
-          "path": "src/app/admin/(protected)/dashboard/page.tsx",
+          "path": "src/middleware.ts",
+          "type": "CREATE",
+          "description": "인증 미들웨어"
+        },
+        {
+          "path": "src/auth.ts",
+          "type": "DEPENDENCY",
+          "description": "auth export"
+        }
+      ],
+      "implementationGuide": "1. src/middleware.ts 생성:\n   - import { auth } from '@/auth'\n   - export default auth((req) => { ... })\n   - PROTECTED_PATHS = ['/mypage', '/wishlist', '/checkout']\n   - ADMIN_PATHS = ['/admin']\n   - AUTH_PATHS = ['/login', '/signup']\n   - 로직:\n     a. pathname이 ADMIN_PATHS로 시작하고 /admin/login이 아닌 경우:\n        - 미인증 → redirect('/admin/login')\n        - USER role → redirect('/')\n     b. pathname이 PROTECTED_PATHS로 시작하는 경우:\n        - 미인증 → redirect('/login?callbackUrl=' + pathname)\n     c. pathname이 AUTH_PATHS이고 이미 인증된 경우:\n        - → redirect('/')\n   - export const config = { matcher: ['/mypage/:path*', '/wishlist/:path*', '/checkout/:path*', '/admin/:path*', '/login', '/signup'] }",
+      "verificationCriteria": "미인증 상태로 /mypage 접근 시 /login으로 리디렉션. /admin 접근 시 /admin/login으로 리디렉션. 로그인 후 /login 접근 시 /로 리디렉션.",
+      "analysisResult": "Task 019: NextAuth.js v5 인증 시스템 구현. 기술 스택: Next.js 15.5.3 App Router, NextAuth.js v5(beta), bcryptjs(이미 설치), Zod v4(이미 설치), Prisma(src/generated/prisma). 패키지 설치 필요: next-auth@beta. @auth/prisma-adapter 미사용(JWT 전략 + Credentials만 사용하므로 불필요). 환경변수 NEXTAUTH_SECRET, NEXTAUTH_URL, ADMIN_ALLOWED_IPS는 src/lib/env.ts에 이미 정의됨.",
+      "summary": "src/middleware.ts 생성 완료. auth() 래퍼로 PROTECTED_PATHS(/mypage,/wishlist,/checkout) 미인증 시 /login 리디렉션, ADMIN_PATHS(/admin) 미인증 시 /admin/login 리디렉션 및 USER role 차단, AUTH_PATHS(/login,/signup) 인증된 사용자 / 리디렉션. config.matcher로 대상 경로 제한. TypeScript 오류 없음.",
+      "completedAt": "2026-03-11T05:01:39.548Z"
+    },
+    {
+      "id": "360a5620-d97a-4877-9eba-edaae571f205",
+      "name": "기존 폼 컴포넌트 Server Action 연동",
+      "description": "더미 구현된 login-form.tsx, signup-form.tsx, admin-login-form.tsx의 onSubmit 핸들러를 실제 Server Action과 연동한다.",
+      "notes": "Server Action은 'use client' 컴포넌트에서 직접 import 가능. useTransition으로 pending 상태 관리 권장. sonner toast 대신 form.setError('root') 패턴 사용.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "60b66907-3a47-48a2-b5b0-90de63687467"
+        },
+        {
+          "taskId": "9340839b-e2c9-4d53-af75-de49a6f434b7"
+        }
+      ],
+      "createdAt": "2026-03-11T04:37:50.613Z",
+      "updatedAt": "2026-03-11T05:03:03.539Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/login-form.tsx",
           "type": "TO_MODIFY",
-          "description": "대시보드 메인 페이지"
+          "description": "로그인 폼"
+        },
+        {
+          "path": "src/components/signup-form.tsx",
+          "type": "TO_MODIFY",
+          "description": "회원가입 폼"
+        },
+        {
+          "path": "src/components/admin/admin-login-form.tsx",
+          "type": "TO_MODIFY",
+          "description": "관리자 로그인 폼"
+        },
+        {
+          "path": "src/lib/actions/auth.ts",
+          "type": "DEPENDENCY",
+          "description": "loginAction, signupAction"
+        },
+        {
+          "path": "src/lib/actions/admin-auth.ts",
+          "type": "DEPENDENCY",
+          "description": "adminLoginAction"
+        }
+      ],
+      "implementationGuide": "1. src/components/login-form.tsx 수정:\n   - loginAction import\n   - onSubmit: async (data) => { const result = await loginAction(data); if(!result?.success) form.setError('root', {message: result.error}) }\n   - isPending 상태로 버튼 비활성화 (useTransition 또는 form.formState.isSubmitting)\n2. src/components/signup-form.tsx 수정:\n   - signupAction import\n   - onSubmit: async (data) => { const result = await signupAction(data); if(!result?.success) { if(result.error === 'EMAIL_EXISTS') form.setError('email', ...) else form.setError('root', ...) } }\n   - 로딩 상태 처리\n3. src/components/admin/admin-login-form.tsx 수정:\n   - adminLoginAction import\n   - onSubmit: async (data) => { const result = await adminLoginAction(data); if(!result?.success) form.setError('root', {message: result.error}) }\n   - 에러 메시지 표시 (FormMessage 또는 Alert 컴포넌트)\n4. 각 폼에 root 에러 표시 UI 추가",
+      "verificationCriteria": "실제 DB 계정으로 로그인 성공. 잘못된 비밀번호 시 에러 메시지 표시. 중복 이메일 회원가입 시 이메일 필드에 에러 표시.",
+      "analysisResult": "Task 019: NextAuth.js v5 인증 시스템 구현. 기술 스택: Next.js 15.5.3 App Router, NextAuth.js v5(beta), bcryptjs(이미 설치), Zod v4(이미 설치), Prisma(src/generated/prisma). 패키지 설치 필요: next-auth@beta. @auth/prisma-adapter 미사용(JWT 전략 + Credentials만 사용하므로 불필요). 환경변수 NEXTAUTH_SECRET, NEXTAUTH_URL, ADMIN_ALLOWED_IPS는 src/lib/env.ts에 이미 정의됨.",
+      "summary": "login-form.tsx(loginAction+useTransition+root에러표시), signup-form.tsx(signupAction+field별에러분기), admin-login-form.tsx(adminLoginAction+router.push) 모두 Server Action 연동 완료. 각 폼에 isPending 로딩 상태 및 root 에러 메시지 UI 추가. TypeScript 오류 없음.",
+      "completedAt": "2026-03-11T05:03:03.537Z"
+    },
+    {
+      "id": "eaf75d3a-85a8-4af6-b5e8-2a6a23dd036a",
+      "name": "E2E 테스트 및 작업 완료 처리",
+      "description": "Playwright MCP로 인증 플로우 E2E 테스트를 수행하고, 작업 파일과 ROADMAP.md를 업데이트한다.",
+      "notes": "Seed 데이터의 관리자 계정(admin@jiangs.com 또는 유사)으로 관리자 테스트. 일반 사용자는 테스트용 신규 회원가입으로 테스트.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "b7255065-3cd4-47b2-a140-64583e158188"
+        },
+        {
+          "taskId": "360a5620-d97a-4877-9eba-edaae571f205"
+        }
+      ],
+      "createdAt": "2026-03-11T04:37:50.613Z",
+      "updatedAt": "2026-03-11T05:08:17.420Z",
+      "relatedFiles": [
+        {
+          "path": "tasks/019-nextauth-auth.md",
+          "type": "TO_MODIFY",
+          "description": "작업 파일 업데이트"
         },
         {
           "path": "docs/ROADMAP.md",
           "type": "TO_MODIFY",
-          "description": "Task 015 완료 표시"
+          "description": "Task 019 완료 표시"
         },
         {
-          "path": "tasks/015-admin-dashboard.md",
-          "type": "TO_MODIFY",
-          "description": "작업 파일 완료 업데이트"
+          "path": "prisma/seed.ts",
+          "type": "REFERENCE",
+          "description": "관리자 계정 정보 확인"
         }
       ],
-      "implementationGuide": "dashboard/page.tsx 구조:\n  import: DashboardStatsCards, DashboardSalesChart, DashboardRecentOrders, DashboardTopImages, DashboardQuickLinks\n  \n  레이아웃:\n  <div className='space-y-6'>\n    <h1>대시보드</h1>\n    <DashboardStatsCards />  // 4열 그리드 내부 처리\n    <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>\n      <div className='lg:col-span-2'><DashboardSalesChart /></div>\n      <div><DashboardQuickLinks /></div>\n    </div>\n    <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>\n      <div className='lg:col-span-2'><DashboardRecentOrders /></div>\n      <div><DashboardTopImages /></div>\n    </div>\n  </div>\n\n검증:\n  npm run check-all (typecheck + lint + format:check)\n  npm run build\n  ROADMAP.md Task 015 완료 표시\n  tasks/015-admin-dashboard.md 완료 상태 업데이트",
-      "verificationCriteria": "npm run check-all 통과, npm run build 성공, 브라우저에서 /admin/dashboard 접속 시 모든 섹션이 정상 렌더링된다.",
-      "analysisResult": "Task 015 관리자 대시보드 UI를 더미 데이터 기반으로 구현한다. Recharts 설치 후 매출 통계 카드, 차트, 최근 주문 테이블, 인기 상품 TOP 10, 빠른 이동 링크를 구현하고 tasks/015-admin-dashboard.md 작업 파일을 생성한다. shadcn/ui Card, Badge 활용, Table은 native HTML+Tailwind 사용, 차트 컴포넌트만 use client 적용.",
-      "summary": "dashboard/page.tsx 반응형 그리드 레이아웃 완성. npm run check-all 통과(typecheck+lint errors 0, prettier 통과), npm run build 성공(23페이지). ROADMAP.md Task 015 완료 표시, tasks/015-admin-dashboard.md 완료 상태 업데이트.",
-      "completedAt": "2026-03-11T03:17:47.989Z"
+      "implementationGuide": "1. npm run dev로 개발 서버 시작\n2. Playwright MCP로 다음 시나리오 테스트:\n   a. 회원가입: /signup → 폼 입력 → 제출 → / 리디렉션 확인\n   b. 로그인: /login → 이메일/비밀번호 → 제출 → / 리디렉션 확인\n   c. 보호 경로: 미인증 상태로 /mypage 접근 → /login 리디렉션 확인\n   d. 로그아웃: 로그인 후 로그아웃 → 세션 종료 확인\n   e. 관리자 로그인: /admin/login → admin 계정 입력 → /admin/dashboard 리디렉션\n   f. 관리자 경로 차단: USER 계정으로 /admin 접근 → 차단 확인\n3. npm run check-all 통과 확인\n4. tasks/019-nextauth-auth.md 체크박스 업데이트\n5. docs/ROADMAP.md Task 019 완료 표시",
+      "verificationCriteria": "모든 Playwright 테스트 시나리오 통과. npm run check-all 성공. ROADMAP.md Task 019 완료 표시.",
+      "analysisResult": "Task 019: NextAuth.js v5 인증 시스템 구현. 기술 스택: Next.js 15.5.3 App Router, NextAuth.js v5(beta), bcryptjs(이미 설치), Zod v4(이미 설치), Prisma(src/generated/prisma). 패키지 설치 필요: next-auth@beta. @auth/prisma-adapter 미사용(JWT 전략 + Credentials만 사용하므로 불필요). 환경변수 NEXTAUTH_SECRET, NEXTAUTH_URL, ADMIN_ALLOWED_IPS는 src/lib/env.ts에 이미 정의됨.",
+      "summary": "Playwright MCP로 미들웨어 동작 검증 완료: /mypage/orders 접근→/login?callbackUrl 리디렉션, /admin 접근→/admin/login 리디렉션 확인. DB(Docker) 미실행으로 실제 로그인/회원가입 테스트 불가했으나 미들웨어·폼 렌더링·타입검사 모두 통과. auth.config.ts/auth.ts 분리(Edge Runtime 호환)로 node:path 에러 해결. ROADMAP.md Task 019 완료 표시. tasks/019-nextauth-auth.md 최종 업데이트 완료.",
+      "completedAt": "2026-03-11T05:08:17.402Z"
     }
   ]
 }
