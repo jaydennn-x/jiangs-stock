@@ -5,11 +5,12 @@ import { formatPrice, getSizeLabel } from '@/lib/price'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import type { OrderItem } from '@/types/models'
-import type { Image as ImageType } from '@/types/models'
+
+type ImageSummary = { name: string; thumbnailUrl: string }
 
 interface CompleteOrderItemProps {
   orderItem: OrderItem
-  image: ImageType | undefined
+  image: ImageSummary | undefined
   onDownload: (token: string) => void
 }
 
@@ -27,7 +28,7 @@ export function CompleteOrderItem({
       <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-md border">
         {image ? (
           <Image
-            src={image.thumbnailUrl}
+            src={image.thumbnailUrl.startsWith('/') ? image.thumbnailUrl : `/${image.thumbnailUrl}`}
             alt={image.name}
             fill
             className="object-cover"

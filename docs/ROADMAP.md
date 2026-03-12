@@ -229,53 +229,53 @@ JiangsStock은 블로그/웹사이트/마케팅 자료용 고품질 이미지를
   - [x] 재시도 전략 공통 설정: 최대 3회, 지수 백오프, Dead Letter Queue 구조
 
 - [x] **Task 021: 이미지 검색 API 구현 (F001)** - 완료
-  - 검색 API 엔드포인트: 키워드 (PostgreSQL Full-Text Search + trigram), 태그 필터, 카테고리 필터, 색상 필터, 방향 필터
-  - 정렬: 최신순 (createdAt), 인기순 (salesCount), 가격 낮은순/높은순 (basePrice)
-  - 커서 기반 무한스크롤 페이지네이션 (limit + cursor)
-  - 검색 결과 건수 반환
-  - isActive=true, processingStatus=COMPLETED 필터 적용
-  - TanStack Query로 검색 결과 캐싱 및 무한 쿼리 연동
-  - 더미 데이터를 실제 API 호출로 교체 (검색 결과 페이지, 랜딩 페이지 갤러리)
-  - Playwright MCP를 활용한 검색 기능 E2E 테스트
+  - [x] 검색 API 엔드포인트: 키워드 (PostgreSQL Full-Text Search + trigram), 태그 필터, 카테고리 필터, 색상 필터, 방향 필터
+  - [x] 정렬: 최신순 (createdAt), 인기순 (salesCount), 가격 낮은순/높은순 (basePrice)
+  - [x] 커서 기반 무한스크롤 페이지네이션 (limit + cursor)
+  - [x] 검색 결과 건수 반환
+  - [x] isActive=true, processingStatus=COMPLETED 필터 적용
+  - [x] TanStack Query로 검색 결과 캐싱 및 무한 쿼리 연동
+  - [x] 더미 데이터를 실제 API 호출로 교체 (검색 결과 페이지, 랜딩 페이지 갤러리)
+  - [x] Playwright MCP를 활용한 검색 기능 E2E 테스트
 
-- **Task 022: 이미지 상세 조회 및 관련 이미지 API 구현 (F002, F003)**
-  - 이미지 상세 조회 API: 메타데이터, 크기별 해상도/파일크기/가격, 라이선스 옵션
-  - 관련 이미지 API: 동일 카테고리/태그 기준 8건 추천
-  - 가격 계산 서버 로직: SystemConfig 기반 크기별 비율/라이선스 배율 적용
-  - 이미지 상세 페이지 더미 데이터를 실제 API로 교체
-  - Playwright MCP를 활용한 이미지 상세 페이지 E2E 테스트
+- [x] **Task 022: 이미지 상세 조회 및 관련 이미지 API 구현 (F002, F003)** - 완료
+  - [x] 이미지 상세 조회 API: 메타데이터, 크기별 해상도/파일크기/가격, 라이선스 옵션
+  - [x] 관련 이미지 API: 동일 카테고리/태그 기준 8건 추천
+  - [x] 가격 계산 서버 로직: SystemConfig 기반 크기별 비율/라이선스 배율 적용
+  - [x] 이미지 상세 페이지 더미 데이터를 실제 API로 교체
+  - [x] Playwright MCP를 활용한 이미지 상세 페이지 E2E 테스트
 
-- **Task 023: 이미지 서빙 API Route 구현 (F017)**
-  - 썸네일 API Route: `/api/images/thumbnail/[imageId]` (인증 불필요, Cache-Control: public, max-age=86400, immutable)
-  - 워터마크 프리뷰 API Route: `/api/images/preview/[imageId]` (인증 불필요, Cache-Control: public, max-age=3600)
-  - 원본 파일 API Route: `/api/admin/images/[imageId]/original` (세션 + ADMIN 역할 검증)
-  - Path Traversal 방어: UUID v4 정규식 검증 + STORAGE_ROOT 경계 확인
-  - 이미지 보호: Referrer-Policy 헤더 적용
-  - 서빙 모드 분기: 로컬 개발은 API Route 직접 스트리밍, 프로덕션은 X-Accel-Redirect 헤더로 Nginx 위임 (환경변수 기반 분기)
-  - Playwright MCP를 활용한 이미지 서빙 테스트
+- [x] **Task 023: 이미지 서빙 API Route 구현 (F017)** - 완료
+  - [x] 썸네일 API Route: `/api/images/thumbnail/[imageId]` (인증 불필요, Cache-Control: public, max-age=86400, immutable)
+  - [x] 워터마크 프리뷰 API Route: `/api/images/preview/[imageId]` (인증 불필요, Cache-Control: public, max-age=3600)
+  - [x] 원본 파일 API Route: `/api/admin/images/[imageId]/original` (세션 + ADMIN 역할 검증)
+  - [x] Path Traversal 방어: DB 경로 조회 + STORAGE_ROOT 경계 확인 (path.normalize)
+  - [x] 이미지 보호: Referrer-Policy: no-referrer 헤더 적용
+  - [x] 서빙 모드 분기: 로컬 개발은 API Route 직접 스트리밍, 프로덕션은 X-Accel-Redirect 헤더로 Nginx 위임 (NODE_ENV 기반 분기)
+  - [x] Playwright MCP를 활용한 이미지 서빙 테스트
 
-- **Task 024: 장바구니 서버 동기화 및 병합 구현 (F004)**
-  - 서버 장바구니 CRUD Server Action: 추가, 삭제, 옵션 변경, 조회
-  - 로그인 시 로컬-서버 장바구니 병합 로직: 동일 imageId+size+licenseType은 로컬 우선, 그 외 합산
-  - 병합 후 서버에서 현재 가격 재계산, 가격 변경 아이템 알림 반환
-  - 병합 완료 후 localStorage 장바구니 초기화
-  - 결제 시 서버에서 가격 재검증 유틸리티
-  - Playwright MCP를 활용한 장바구니 병합 E2E 테스트
+- [x] **Task 024: 장바구니 서버 동기화 및 병합 구현 (F004)** - 완료
+  - [x] 서버 장바구니 CRUD Server Action: 추가, 삭제, 옵션 변경, 조회
+  - [x] 로그인 시 로컬-서버 장바구니 병합 로직: 동일 imageId+size+licenseType은 로컬 우선, 그 외 합산
+  - [x] 병합 후 서버에서 현재 가격 재계산, 가격 변경 아이템 알림 반환
+  - [x] 병합 완료 후 localStorage 장바구니 초기화 (CartSyncProvider)
+  - [x] 결제 시 서버에서 가격 재검증 유틸리티
+  - [x] Playwright MCP를 활용한 장바구니 병합 E2E 테스트
 
-- **Task 025: 위시리스트 API 구현 (F008)**
-  - 위시리스트 토글 Server Action: 추가/제거 (userId+imageId 유니크)
-  - 위시리스트 목록 조회 API (TanStack Query 캐싱)
-  - 위시리스트 페이지 더미 데이터를 실제 API로 교체
-  - 이미지 상세 페이지/검색 결과의 위시리스트 상태 연동
-  - Playwright MCP를 활용한 위시리스트 E2E 테스트
+- [x] **Task 025: 위시리스트 API 구현 (F008)** - 완료
+  - [x] 위시리스트 토글 Server Action: 추가/제거 (userId+imageId 유니크)
+  - [x] 위시리스트 목록 조회 API (TanStack Query 캐싱)
+  - [x] 위시리스트 페이지 더미 데이터를 실제 API로 교체
+  - [x] 이미지 상세 페이지/검색 결과의 위시리스트 상태 연동
+  - [x] Playwright MCP를 활용한 위시리스트 E2E 테스트
 
-- **Task 026: 마이페이지 API 구현 (F011)**
-  - 구매 내역 조회 API: 주문 목록 + 주문 상세 (OrderItem 포함)
-  - 다운로드 링크 상태 조회: 남은 횟수, 만료일, 유효 여부
-  - 비밀번호 변경 Server Action (현재 비밀번호 확인 + bcryptjs)
-  - 프로필 정보 수정 Server Action (이름/국가/출생연도)
-  - 마이페이지 더미 데이터를 실제 API로 교체
-  - Playwright MCP를 활용한 마이페이지 E2E 테스트
+- [x] **Task 026: 마이페이지 API 구현 (F011)** - 완료
+  - [x] 구매 내역 조회 API: 주문 목록 + 주문 상세 (OrderItem 포함)
+  - [x] 다운로드 링크 상태 조회: 남은 횟수, 만료일, 유효 여부
+  - [x] 비밀번호 변경 Server Action (현재 비밀번호 확인 + bcryptjs)
+  - [x] 프로필 정보 수정 Server Action (이름/국가/출생연도)
+  - [x] 마이페이지 더미 데이터를 실제 API로 교체
+  - [x] Playwright MCP를 활용한 마이페이지 E2E 테스트
 
 ---
 

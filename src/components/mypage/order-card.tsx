@@ -10,8 +10,7 @@ import {
 } from '@/components/ui/accordion'
 import { Badge } from '@/components/ui/badge'
 import { CompleteOrderItem } from '@/components/checkout/complete-order-item'
-import type { DummyOrder } from '@/lib/dummy/orders'
-import type { Image } from '@/types/models'
+import type { OrderWithItems } from '@/lib/actions/mypage'
 import type { OrderStatus } from '@/types/enums'
 
 const ORDER_STATUS_CONFIG: Record<
@@ -28,7 +27,8 @@ const ORDER_STATUS_CONFIG: Record<
   },
   FAILED: {
     label: '결제실패',
-    className: 'bg-destructive text-destructive-foreground hover:bg-destructive/80',
+    className:
+      'bg-destructive text-destructive-foreground hover:bg-destructive/80',
   },
   CANCELLED: {
     label: '취소됨',
@@ -37,15 +37,14 @@ const ORDER_STATUS_CONFIG: Record<
 }
 
 interface OrderCardProps {
-  order: DummyOrder
-  images: Image[]
+  order: OrderWithItems
 }
 
-export function OrderCard({ order, images }: OrderCardProps) {
+export function OrderCard({ order }: OrderCardProps) {
   const statusConfig = ORDER_STATUS_CONFIG[order.status]
 
   function handleDownload(token: string) {
-    alert(`다운로드 준비 중입니다. (더미)\n토큰: ${token}`)
+    alert(`다운로드 준비 중입니다.\n토큰: ${token}`)
   }
 
   return (
@@ -69,19 +68,19 @@ export function OrderCard({ order, images }: OrderCardProps) {
         </AccordionTrigger>
         <AccordionContent>
           <div className="divide-y pb-2">
-            {order.items.map(item => (
+            {order.orderItems.map(item => (
               <CompleteOrderItem
                 key={item.id}
                 orderItem={item}
-                image={images.find(img => img.id === item.imageId)}
+                image={item.image}
                 onDownload={handleDownload}
               />
             ))}
           </div>
-          {order.items.length > 0 && (
+          {order.orderItems.length > 0 && (
             <p className="text-muted-foreground mt-2 text-xs">
               다운로드 만료일:{' '}
-              {order.items[0].expiresAt.toLocaleDateString('ko-KR')}까지
+              {order.orderItems[0].expiresAt.toLocaleDateString('ko-KR')}까지
             </p>
           )}
         </AccordionContent>

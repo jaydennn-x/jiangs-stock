@@ -1,9 +1,10 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import { ShoppingBag } from 'lucide-react'
 
-import { dummyOrders } from '@/lib/dummy/orders'
-import { dummyImages } from '@/lib/dummy/images'
+import { auth } from '@/auth'
+import { getMyOrders } from '@/lib/actions/mypage'
 import { OrderCard } from '@/components/mypage/order-card'
 import { EmptyState } from '@/components/common/empty-state'
 import { Separator } from '@/components/ui/separator'
@@ -12,10 +13,14 @@ export const metadata: Metadata = {
   title: '구매 내역 | JiangsStock',
 }
 
-const DUMMY_USER_ID = 'user-001'
+export default async function MyOrdersPage() {
+  const session = await auth()
+  if (!session?.user?.id) {
+    redirect('/login')
+  }
 
-export default function MyOrdersPage() {
-  const userOrders = dummyOrders.filter(o => o.userId === DUMMY_USER_ID)
+  const result = await getMyOrders()
+  const orders = result.success ? result.orders : []
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -23,7 +28,7 @@ export default function MyOrdersPage() {
       <nav className="mb-6 flex gap-1 border-b">
         <Link
           href="/mypage/orders"
-          className="border-b-2 border-foreground px-4 pb-3 text-sm font-semibold"
+          className="border-foreground border-b-2 px-4 pb-3 text-sm font-semibold"
         >
           구매 내역
         </Link>
@@ -36,10 +41,10 @@ export default function MyOrdersPage() {
       </nav>
 
       <h1 className="mb-6 text-2xl font-bold">
-        구매 내역 ({userOrders.length}건)
+        구매 내역 ({orders.length}건)
       </h1>
 
-      {userOrders.length === 0 ? (
+      {orders.length === 0 ? (
         <EmptyState
           icon={ShoppingBag}
           title="구매 내역이 없습니다"
@@ -48,8 +53,8 @@ export default function MyOrdersPage() {
         />
       ) : (
         <div className="space-y-3">
-          {userOrders.map(order => (
-            <OrderCard key={order.id} order={order} images={dummyImages} />
+          {orders.map(order => (
+            <OrderCard key={order.id} order={order} />
           ))}
         </div>
       )}

@@ -26,14 +26,16 @@ export const authConfig: NextAuthConfig = {
   session: { strategy: 'jwt' },
   callbacks: {
     jwt({ token, user }) {
-      if (user && 'role' in user) {
-        token.role = (user as { role: UserRole }).role
+      if (user) {
+        if ('role' in user) token.role = (user as { role: UserRole }).role
+        if (user.id) token.sub = user.id
       }
       return token
     },
     session({ session, token }) {
       if (session.user) {
         session.user.role = token.role as UserRole
+        if (token.sub) session.user.id = token.sub
       }
       return session
     },
