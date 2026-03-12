@@ -65,9 +65,7 @@ export function AdminProductsClient({
   images,
   categories,
 }: AdminProductsClientProps) {
-  const [localImages, setLocalImages] = useState<ImageType[]>(() => [
-    ...images,
-  ])
+  const [localImages, setLocalImages] = useState<ImageType[]>(() => [...images])
   const [categoryFilter, setCategoryFilter] = useState('all')
   const [activeFilter, setActiveFilter] = useState('all')
   const [currentPage, setCurrentPage] = useState(1)
@@ -104,7 +102,9 @@ export function AdminProductsClient({
 
   function handleToggleActive(imageId: string, checked: boolean) {
     setLocalImages(prev =>
-      prev.map(img => (img.id === imageId ? { ...img, isActive: checked } : img))
+      prev.map(img =>
+        img.id === imageId ? { ...img, isActive: checked } : img
+      )
     )
   }
 
@@ -303,7 +303,10 @@ export function AdminProductsClient({
           </Button>
           {pageNumbers.map((page, idx) =>
             page === null ? (
-              <span key={`ellipsis-${idx}`} className="text-muted-foreground px-1 text-sm">
+              <span
+                key={`ellipsis-${idx}`}
+                className="text-muted-foreground px-1 text-sm"
+              >
                 …
               </span>
             ) : (
@@ -337,6 +340,7 @@ export function AdminProductsClient({
 
       {/* 수정 모달 */}
       <ProductEditModal
+        key={editTarget?.id}
         open={editModalOpen}
         onOpenChange={setEditModalOpen}
         image={editTarget}

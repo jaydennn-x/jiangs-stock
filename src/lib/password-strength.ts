@@ -1,6 +1,9 @@
 type StrengthScore = 0 | 1 | 2 | 3 | 4
 
-const STRENGTH_MAP: Record<StrengthScore, { label: string; colorClass: string }> = {
+const STRENGTH_MAP: Record<
+  StrengthScore,
+  { label: string; colorClass: string }
+> = {
   0: { label: '', colorClass: '' },
   1: { label: '약', colorClass: 'text-red-500' },
   2: { label: '보통', colorClass: 'text-orange-500' },
@@ -18,7 +21,10 @@ export function calcPasswordStrength(password: string): StrengthScore {
   return score as StrengthScore
 }
 
-export function getStrengthInfo(score: StrengthScore): { label: string; colorClass: string } {
+export function getStrengthInfo(score: StrengthScore): {
+  label: string
+  colorClass: string
+} {
   return STRENGTH_MAP[score]
 }
 

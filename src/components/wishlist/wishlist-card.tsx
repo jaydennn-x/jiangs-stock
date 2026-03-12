@@ -6,7 +6,7 @@ import { Heart, ShoppingCart } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 import { formatPrice } from '@/lib/price'
-import { useWishlistStore } from '@/stores/wishlist-store'
+import { useToggleWishlist } from '@/lib/hooks/use-wishlist'
 import { Button } from '@/components/ui/button'
 import { ProtectedImage } from '@/components/common/protected-image'
 import { AddToCartModal } from './add-to-cart-modal'
@@ -19,7 +19,7 @@ interface WishlistCardProps {
 
 export function WishlistCard({ image, className }: WishlistCardProps) {
   const [modalOpen, setModalOpen] = useState(false)
-  const removeItem = useWishlistStore(s => s.removeItem)
+  const { mutate, isPending } = useToggleWishlist()
 
   return (
     <div className={cn('group relative overflow-hidden rounded-sm', className)}>
@@ -39,10 +39,11 @@ export function WishlistCard({ image, className }: WishlistCardProps) {
       <Button
         variant="ghost"
         size="icon"
+        disabled={isPending}
         className="absolute top-2 right-2 h-8 w-8 rounded-full bg-black/40 backdrop-blur-sm hover:bg-black/60"
         onClick={e => {
           e.preventDefault()
-          removeItem(image.id)
+          mutate(image.id)
         }}
         aria-label="위시리스트에서 제거"
       >
@@ -51,7 +52,7 @@ export function WishlistCard({ image, className }: WishlistCardProps) {
 
       {/* 하단 정보 */}
       <div className="px-1 pt-2 pb-1">
-        <p className="text-sm font-medium line-clamp-1">{image.name}</p>
+        <p className="line-clamp-1 text-sm font-medium">{image.name}</p>
         <p className="text-muted-foreground mt-0.5 text-xs">
           from {formatPrice(image.basePrice)}
         </p>

@@ -41,7 +41,7 @@ export function HeroSearch({ className }: HeroSearchProps) {
           <button
             type="button"
             onClick={() => setShowDropdown(prev => !prev)}
-            className="flex h-full items-center gap-1.5 border-r border-gray-200 px-4 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 whitespace-nowrap"
+            className="flex h-full items-center gap-1.5 border-r border-gray-200 px-4 text-sm font-medium whitespace-nowrap text-gray-700 transition-colors hover:bg-gray-50"
           >
             <ImageIcon className="h-4 w-4 text-gray-500" />
             <span>{category.label}</span>

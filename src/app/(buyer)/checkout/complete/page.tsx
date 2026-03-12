@@ -19,8 +19,7 @@ export default function CheckoutCompletePage() {
   const searchParams = useSearchParams()
   const orderId = searchParams.get('orderId')
 
-  const order =
-    dummyOrders.find(o => o.id === orderId) ?? dummyOrders[0]
+  const order = dummyOrders.find(o => o.id === orderId) ?? dummyOrders[0]
 
   function handleDownload(token: string) {
     alert(`다운로드 준비 중입니다. (더미)\n토큰: ${token}`)
@@ -34,15 +33,15 @@ export default function CheckoutCompletePage() {
           <h1 className="text-2xl font-bold">결제가 완료되었습니다</h1>
           <p className="text-muted-foreground text-sm">
             주문번호:{' '}
-            <span className="font-mono font-semibold text-foreground">
+            <span className="text-foreground font-mono font-semibold">
               {order.orderNumber}
             </span>
           </p>
         </div>
 
-        <div className="flex items-center justify-center gap-2 rounded-lg bg-muted px-4 py-3">
-          <Mail className="h-4 w-4 text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">
+        <div className="bg-muted flex items-center justify-center gap-2 rounded-lg px-4 py-3">
+          <Mail className="text-muted-foreground h-4 w-4" />
+          <p className="text-muted-foreground text-sm">
             구매 확인 이메일이 발송되었습니다
           </p>
         </div>
@@ -65,15 +64,15 @@ export default function CheckoutCompletePage() {
           </CardContent>
         </Card>
 
-        <div className="flex items-start gap-3 rounded-lg border bg-muted/50 px-4 py-3">
-          <Info className="mt-0.5 h-4 w-4 flex-shrink-0 text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">
+        <div className="bg-muted/50 flex items-start gap-3 rounded-lg border px-4 py-3">
+          <Info className="text-muted-foreground mt-0.5 h-4 w-4 flex-shrink-0" />
+          <p className="text-muted-foreground text-sm">
             다운로드는 구매일로부터{' '}
-            <span className="font-semibold text-foreground">
+            <span className="text-foreground font-semibold">
               {DEFAULT_DOWNLOAD_EXPIRES_DAYS}일
             </span>{' '}
             이내,{' '}
-            <span className="font-semibold text-foreground">
+            <span className="text-foreground font-semibold">
               최대 {DEFAULT_DOWNLOAD_LIMIT}회
             </span>
             까지 가능합니다. 기간 및 횟수 초과 시 다운로드가 불가합니다.

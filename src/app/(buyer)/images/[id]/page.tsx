@@ -2,16 +2,15 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 
-import { dummyImages } from '@/lib/dummy/images'
-import { dummyOrders } from '@/lib/dummy/orders'
+import { auth } from '@/auth'
+import { prisma } from '@/lib/prisma'
 import { ProtectedImage } from '@/components/common/protected-image'
 import { ImageCard } from '@/components/common/image-card'
 import { MetadataSection } from '@/components/image-detail/metadata-section'
 import { PurchasePanel } from '@/components/image-detail/purchase-panel'
+import type { Image } from '@/types/models'
 import type { Orientation } from '@/types/enums'
 
-// TODO: 실제 인증 구현 후 세션에서 userId를 가져오도록 교체
-const DEMO_USER_ID = 'user-001'
 const RELATED_IMAGES_LIMIT = 8
 
 const ASPECT_MAP: Record<Orientation, string> = {
@@ -26,31 +25,66 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params
-  const image = dummyImages.find(img => img.id === id)
+  const image = await prisma.image.findFirst({
+    where: { id, isActive: true, processingStatus: 'COMPLETED' },
+    select: { name: true },
+  })
   if (!image) return { title: '이미지를 찾을 수 없습니다 | JiangsStock' }
   return { title: `${image.name} | JiangsStock` }
 }
 
 export default async function ImageDetailPage({ params }: Props) {
   const { id } = await params
-  const image = dummyImages.find(img => img.id === id)
-  if (!image) notFound()
 
-  const isPurchased = dummyOrders.some(
-    o =>
-      o.userId === DEMO_USER_ID &&
-      o.status === 'COMPLETED' &&
-      o.items.some(i => i.imageId === id)
-  )
+  const session = await auth()
 
-  const relatedImages = dummyImages
-    .filter(
-      img =>
-        img.categoryId === image.categoryId &&
-        img.id !== id &&
-        img.isActive
-    )
-    .slice(0, RELATED_IMAGES_LIMIT)
+  const rawImage = await prisma.image.findFirst({
+    where: { id, isActive: true, processingStatus: 'COMPLETED' },
+    include: { category: true },
+  })
+
+  if (!rawImage) notFound()
+
+  const image: Image = {
+    ...rawImage,
+    description: rawImage.description ?? undefined,
+    shootDate: rawImage.shootDate ?? undefined,
+    basePrice: Number(rawImage.basePrice),
+    sizesJson: rawImage.sizesJson as unknown as Image['sizesJson'],
+    fileSizesJson: rawImage.fileSizesJson as unknown as Image['fileSizesJson'],
+  }
+
+  let isPurchased = false
+  if (session?.user?.id) {
+    const orderItem = await prisma.orderItem.findFirst({
+      where: {
+        imageId: id,
+        order: { userId: session.user.id, status: 'COMPLETED' },
+      },
+      include: { order: true },
+    })
+    isPurchased = !!orderItem
+  }
+
+  const rawRelated = await prisma.image.findMany({
+    where: {
+      categoryId: rawImage.categoryId,
+      id: { not: id },
+      isActive: true,
+      processingStatus: 'COMPLETED',
+    },
+    orderBy: { salesCount: 'desc' },
+    take: RELATED_IMAGES_LIMIT,
+  })
+
+  const relatedImages: Image[] = rawRelated.map(img => ({
+    ...img,
+    description: img.description ?? undefined,
+    shootDate: img.shootDate ?? undefined,
+    basePrice: Number(img.basePrice),
+    sizesJson: img.sizesJson as unknown as Image['sizesJson'],
+    fileSizesJson: img.fileSizesJson as unknown as Image['fileSizesJson'],
+  }))
 
   return (
     <div className="mx-auto max-w-screen-xl px-4 py-10 md:px-8">
@@ -63,7 +97,7 @@ export default async function ImageDetailPage({ params }: Props) {
             className={`${ASPECT_MAP[image.orientation]} relative w-full overflow-hidden rounded-lg bg-gray-100`}
           >
             <ProtectedImage
-              src={image.watermarkUrl}
+              src={`/api/images/preview/${id}`}
               alt={image.name}
               fill
               sizes="(max-width: 1024px) 100vw, calc(100vw - 420px)"
@@ -77,7 +111,7 @@ export default async function ImageDetailPage({ params }: Props) {
           {/* 태그 목록 */}
           {image.tags.length > 0 && (
             <div>
-              <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
+              <p className="mb-3 text-xs font-semibold tracking-wider text-gray-500 uppercase">
                 태그
               </p>
               <div className="flex flex-wrap gap-2">

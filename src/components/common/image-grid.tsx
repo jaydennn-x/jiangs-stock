@@ -14,12 +14,7 @@ export function ImageGrid({
   className,
 }: ImageGridProps) {
   return (
-    <div
-      className={cn(
-        'columns-2 gap-2 md:columns-3 lg:columns-3',
-        className
-      )}
-    >
+    <div className={cn('columns-2 gap-2 md:columns-3 lg:columns-3', className)}>
       {images.map(image => (
         <div key={image.id} className="mb-2 break-inside-avoid">
           <ImageCard image={image} showWishlist={showWishlist} />

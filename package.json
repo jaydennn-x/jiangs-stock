@@ -13,6 +13,8 @@
     "typecheck": "tsc --noEmit",
     "check-all": "npm run typecheck && npm run lint && npm run format:check",
     "metadata:build": "npx tsx scripts/metadata-build.ts",
+    "worker:dev": "tsx --env-file=.env.local -r tsconfig-paths/register src/workers/index.ts",
+    "worker:start": "node -r tsconfig-paths/register dist/workers/index.js",
     "prepare": "husky"
   },
   "dependencies": {
@@ -31,8 +33,10 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@tanstack/react-query": "^5.90.21",
     "bcryptjs": "^3.0.3",
+    "bullmq": "^5.70.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "ioredis": "^5.10.0",
     "lucide-react": "^0.543.0",
     "next": "^16.1.6",
     "next-auth": "^5.0.0-beta.30",
@@ -69,6 +73,8 @@
     "prisma": "^7.4.2",
     "shadcn": "^3.3.1",
     "tailwindcss": "^4",
+    "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.21.0",
     "tw-animate-css": "^1.3.8",
     "typescript": "^5"
   },

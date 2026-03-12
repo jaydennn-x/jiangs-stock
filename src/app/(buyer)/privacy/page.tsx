@@ -55,17 +55,16 @@ export default function PrivacyPage() {
       <Separator className="my-6" />
 
       <p className="text-muted-foreground mb-8 leading-relaxed">
-        JiangsStock(이하 "회사")은 개인정보보호법 및 관련 법령에 따라
-        이용자의 개인정보를 보호하고, 개인정보와 관련한 이용자의 고충을
-        원활하게 처리하기 위하여 다음과 같은 개인정보처리방침을 수립하여
-        공개합니다.
+        JiangsStock(이하 &quot;회사&quot;)은 개인정보보호법 및 관련 법령에 따라
+        이용자의 개인정보를 보호하고, 개인정보와 관련한 이용자의 고충을 원활하게
+        처리하기 위하여 다음과 같은 개인정보처리방침을 수립하여 공개합니다.
       </p>
 
       <div className="space-y-8">
-        {SECTIONS.map((section) => (
+        {SECTIONS.map(section => (
           <section key={section.title}>
             <h2 className="mb-3 text-lg font-semibold">{section.title}</h2>
-            <p className="text-muted-foreground whitespace-pre-line leading-relaxed">
+            <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
               {section.content}
             </p>
           </section>

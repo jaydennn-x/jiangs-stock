@@ -2,10 +2,12 @@ import type { ImageSize, LicenseType } from './enums'
 
 export interface LocalCartItem {
   id: string
+  serverId?: string
   imageId: string
   size: ImageSize
   licenseType: LicenseType
   price: number
+  basePrice?: number
   imageName: string
   thumbnailUrl: string
   addedAt: number

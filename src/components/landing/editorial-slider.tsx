@@ -9,7 +9,8 @@ const SLIDES = [
   {
     seed: 'editorial1',
     title: '에디터 추천 컬렉션',
-    subtitle: '엄선된 고품질 이미지를 한눈에. 전문 에디터가 직접 고른 작품들을 만나보세요.',
+    subtitle:
+      '엄선된 고품질 이미지를 한눈에. 전문 에디터가 직접 고른 작품들을 만나보세요.',
     cta: '컬렉션 둘러보기',
     href: '/search?tag=editorial',
   },
@@ -23,7 +24,8 @@ const SLIDES = [
   {
     seed: 'editorial3',
     title: '자연 & 풍경 특집',
-    subtitle: '장엄한 자연 풍광부터 도심 속 고요한 순간까지, 모든 장면을 담았습니다.',
+    subtitle:
+      '장엄한 자연 풍광부터 도심 속 고요한 순간까지, 모든 장면을 담았습니다.',
     cta: '자연 이미지 탐색',
     href: '/search?category=nature-landscape',
   },

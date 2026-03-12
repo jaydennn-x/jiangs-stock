@@ -5,7 +5,9 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { ShoppingCart, XCircle } from 'lucide-react'
 import Link from 'next/link'
 
+import { toast } from 'sonner'
 import { useCartStore } from '@/stores/cart-store'
+import { validateCartPrices } from '@/lib/actions/cart'
 import { formatPrice } from '@/lib/price'
 import { OrderSummary } from '@/components/checkout/order-summary'
 import { PaymentMethodPlaceholder } from '@/components/checkout/payment-method-placeholder'
@@ -31,6 +33,7 @@ export default function CheckoutPage() {
   const status = searchParams.get('status')
 
   const items = useCartStore(s => s.items)
+  const setItemsFromServer = useCartStore(s => s.setItemsFromServer)
   const totalAmount = useCartStore(s => s.totalAmount)
 
   const [agreed, setAgreed] = useState<AgreeState>({
@@ -48,8 +51,37 @@ export default function CheckoutPage() {
     setAgreed(prev => ({ ...prev, [key]: value }))
   }
 
-  function handlePayment() {
+  async function handlePayment() {
     if (!allAgreed) return
+
+    const result = await validateCartPrices(
+      items.map(i => ({
+        imageId: i.imageId,
+        size: i.size,
+        licenseType: i.licenseType,
+        price: i.price,
+      }))
+    )
+
+    if (!result.success) {
+      toast.error('가격 검증 중 오류가 발생했습니다')
+      return
+    }
+
+    if (!result.valid && result.changedItems.length > 0) {
+      const updatedItems = items.map(item => {
+        const changed = result.changedItems.find(
+          c => c.imageId === item.imageId
+        )
+        return changed ? { ...item, price: changed.newPrice } : item
+      })
+      setItemsFromServer(updatedItems)
+      toast.warning('가격이 변경된 상품이 있습니다', {
+        description: '업데이트된 가격을 확인 후 다시 결제해주세요.',
+      })
+      return
+    }
+
     router.push('/checkout/complete?orderId=dummy-order-001')
   }
 
@@ -57,7 +89,7 @@ export default function CheckoutPage() {
     return (
       <div className="container mx-auto px-4 py-16">
         <div className="mx-auto max-w-md space-y-6 text-center">
-          <XCircle className="mx-auto h-16 w-16 text-destructive" />
+          <XCircle className="text-destructive mx-auto h-16 w-16" />
           <div className="space-y-2">
             <h1 className="text-2xl font-bold">결제에 실패했습니다</h1>
             <p className="text-muted-foreground text-sm">

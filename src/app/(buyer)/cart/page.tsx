@@ -1,13 +1,17 @@
 'use client'
 
 import { useSyncExternalStore } from 'react'
+import { useSession } from 'next-auth/react'
 import { ShoppingCart } from 'lucide-react'
 
 import { useCartStore } from '@/stores/cart-store'
+import { removeFromServerCart, updateServerCartItem } from '@/lib/actions/cart'
+import { calculatePrice } from '@/lib/price'
 import { CartItemRow } from '@/components/cart/cart-item-row'
 import { CartSummary } from '@/components/cart/cart-summary'
 import { EmptyState } from '@/components/common/empty-state'
 import { Skeleton } from '@/components/ui/skeleton'
+import type { ImageSize, LicenseType } from '@/types/enums'
 
 function useIsClient() {
   return useSyncExternalStore(
@@ -19,10 +23,51 @@ function useIsClient() {
 
 export default function CartPage() {
   const isClient = useIsClient()
+  const { data: session } = useSession()
+  const isLoggedIn = !!session?.user
+
   const items = useCartStore(s => s.items)
   const removeItem = useCartStore(s => s.removeItem)
   const updateItem = useCartStore(s => s.updateItem)
+  const setItemsFromServer = useCartStore(s => s.setItemsFromServer)
   const totalAmount = useCartStore(s => s.totalAmount)
+
+  async function handleRemove(id: string) {
+    const item = items.find(i => i.id === id)
+    if (isLoggedIn && item?.serverId) {
+      await removeFromServerCart(item.serverId)
+    }
+    removeItem(id)
+  }
+
+  async function handleUpdate(
+    id: string,
+    size: ImageSize,
+    licenseType: LicenseType,
+    basePrice: number
+  ) {
+    const item = items.find(i => i.id === id)
+    if (isLoggedIn && item?.serverId) {
+      const result = await updateServerCartItem(
+        item.serverId,
+        item.imageId,
+        size,
+        licenseType
+      )
+      if (result.success) {
+        const newPrice = calculatePrice(basePrice, size, licenseType)
+        setItemsFromServer(
+          items.map(i =>
+            i.id === id
+              ? { ...i, size, licenseType, price: newPrice, serverId: undefined }
+              : i
+          )
+        )
+        return
+      }
+    }
+    updateItem(id, size, licenseType, basePrice)
+  }
 
   if (!isClient) {
     return (
@@ -62,8 +107,8 @@ export default function CartPage() {
             <CartItemRow
               key={item.id}
               item={item}
-              onRemove={removeItem}
-              onUpdate={updateItem}
+              onRemove={handleRemove}
+              onUpdate={handleUpdate}
             />
           ))}
         </div>

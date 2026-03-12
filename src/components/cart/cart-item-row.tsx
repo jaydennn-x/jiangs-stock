@@ -5,7 +5,6 @@ import Image from 'next/image'
 import { Trash2 } from 'lucide-react'
 
 import { formatPrice, getSizeLabel } from '@/lib/price'
-import { dummyImages } from '@/lib/dummy/images'
 import {
   Dialog,
   DialogContent,
@@ -51,7 +50,7 @@ export function CartItemRow({ item, onRemove, onUpdate }: CartItemRowProps) {
   const [deleteOpen, setDeleteOpen] = useState(false)
 
   function getBasePrice() {
-    return dummyImages.find(i => i.id === item.imageId)?.basePrice ?? item.price
+    return item.basePrice ?? item.price
   }
 
   function handleSizeChange(newSize: ImageSize) {
@@ -72,7 +71,7 @@ export function CartItemRow({ item, onRemove, onUpdate }: CartItemRowProps) {
       <div className="flex items-start gap-4 py-4">
         <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded">
           <Image
-            src={item.thumbnailUrl}
+            src={`/api/images/thumbnail/${item.imageId}`}
             alt={item.imageName}
             fill
             sizes="80px"
@@ -81,7 +80,7 @@ export function CartItemRow({ item, onRemove, onUpdate }: CartItemRowProps) {
         </div>
 
         <div className="flex-1 space-y-2">
-          <p className="text-sm font-medium leading-tight">{item.imageName}</p>
+          <p className="text-sm leading-tight font-medium">{item.imageName}</p>
           <div className="flex flex-wrap gap-2">
             <Select
               value={item.size}
@@ -105,7 +104,9 @@ export function CartItemRow({ item, onRemove, onUpdate }: CartItemRowProps) {
             >
               <SelectTrigger className="h-8 w-40 text-xs">
                 <SelectValue>
-                  {item.licenseType === 'STANDARD' ? '스탠다드' : '확장 라이선스'}
+                  {item.licenseType === 'STANDARD'
+                    ? '스탠다드'
+                    : '확장 라이선스'}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
@@ -120,7 +121,9 @@ export function CartItemRow({ item, onRemove, onUpdate }: CartItemRowProps) {
         </div>
 
         <div className="flex flex-col items-end gap-2">
-          <span className="text-sm font-semibold">{formatPrice(item.price)}</span>
+          <span className="text-sm font-semibold">
+            {formatPrice(item.price)}
+          </span>
           <Button
             variant="ghost"
             size="icon"
@@ -139,8 +142,10 @@ export function CartItemRow({ item, onRemove, onUpdate }: CartItemRowProps) {
             <DialogTitle>아이템 삭제</DialogTitle>
           </DialogHeader>
           <p className="text-muted-foreground text-sm">
-            <span className="text-foreground font-medium">{item.imageName}</span>을(를)
-            장바구니에서 삭제하시겠습니까?
+            <span className="text-foreground font-medium">
+              {item.imageName}
+            </span>
+            을(를) 장바구니에서 삭제하시겠습니까?
           </p>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteOpen(false)}>

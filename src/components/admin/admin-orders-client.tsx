@@ -69,14 +69,11 @@ export function AdminOrdersClient({
     const orderNumMatch = order.orderNumber
       .toLowerCase()
       .includes(orderNumberQuery.toLowerCase())
-    const emailMatch = email
-      .toLowerCase()
-      .includes(emailQuery.toLowerCase())
+    const emailMatch = email.toLowerCase().includes(emailQuery.toLowerCase())
     const fromMatch =
       !dateFrom || new Date(order.createdAt) >= new Date(dateFrom)
     const toMatch =
-      !dateTo ||
-      new Date(order.createdAt) <= new Date(dateTo + 'T23:59:59')
+      !dateTo || new Date(order.createdAt) <= new Date(dateTo + 'T23:59:59')
     return orderNumMatch && emailMatch && fromMatch && toMatch
   })
 
@@ -121,8 +118,7 @@ export function AdminOrdersClient({
 
   const pageNumbers = getPaginationNumbers(currentPage, totalPages)
 
-  const hasFilter =
-    orderNumberQuery || emailQuery || dateFrom || dateTo
+  const hasFilter = orderNumberQuery || emailQuery || dateFrom || dateTo
 
   return (
     <div className="space-y-4">
@@ -150,9 +146,7 @@ export function AdminOrdersClient({
               <Search className="text-muted-foreground absolute top-1/2 left-2.5 h-3.5 w-3.5 -translate-y-1/2" />
               <Input
                 value={emailQuery}
-                onChange={e =>
-                  handleQueryChange(setEmailQuery, e.target.value)
-                }
+                onChange={e => handleQueryChange(setEmailQuery, e.target.value)}
                 placeholder="이메일 검색"
                 className="pl-8"
               />
@@ -164,9 +158,7 @@ export function AdminOrdersClient({
             <input
               type="date"
               value={dateFrom}
-              onChange={e =>
-                handleQueryChange(setDateFrom, e.target.value)
-              }
+              onChange={e => handleQueryChange(setDateFrom, e.target.value)}
               className="border-input bg-background text-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border px-3 py-1 text-sm shadow-xs focus-visible:ring-1 focus-visible:outline-none"
             />
           </div>
@@ -176,9 +168,7 @@ export function AdminOrdersClient({
             <input
               type="date"
               value={dateTo}
-              onChange={e =>
-                handleQueryChange(setDateTo, e.target.value)
-              }
+              onChange={e => handleQueryChange(setDateTo, e.target.value)}
               className="border-input bg-background text-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border px-3 py-1 text-sm shadow-xs focus-visible:ring-1 focus-visible:outline-none"
             />
           </div>
@@ -193,9 +183,7 @@ export function AdminOrdersClient({
       </Card>
 
       {/* 결과 수 */}
-      <p className="text-muted-foreground text-sm">
-        총 {filtered.length}건
-      </p>
+      <p className="text-muted-foreground text-sm">총 {filtered.length}건</p>
 
       {/* 주문 목록 테이블 */}
       <Card>
@@ -248,9 +236,7 @@ export function AdminOrdersClient({
                         {order.createdAt.toLocaleDateString('ko-KR')}
                       </TableCell>
                       <TableCell>
-                        <Badge
-                          variant={ORDER_STATUS_VARIANT[order.status]}
-                        >
+                        <Badge variant={ORDER_STATUS_VARIANT[order.status]}>
                           {ORDER_STATUS_LABEL[order.status]}
                         </Badge>
                       </TableCell>
@@ -326,6 +312,7 @@ export function AdminOrdersClient({
 
       {/* 주문 상세 모달 */}
       <OrderDetailModal
+        key={detailTarget?.id}
         open={detailModalOpen}
         onOpenChange={setDetailModalOpen}
         order={detailTarget}

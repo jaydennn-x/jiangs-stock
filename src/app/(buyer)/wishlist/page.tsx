@@ -1,29 +1,16 @@
 'use client'
 
-import { useSyncExternalStore } from 'react'
 import { Heart } from 'lucide-react'
 
-import { useWishlistStore } from '@/stores/wishlist-store'
-import { dummyImages } from '@/lib/dummy/images'
+import { useWishlist } from '@/lib/hooks/use-wishlist'
 import { WishlistCard } from '@/components/wishlist/wishlist-card'
 import { EmptyState } from '@/components/common/empty-state'
 import { Skeleton } from '@/components/ui/skeleton'
 
-function useIsClient() {
-  return useSyncExternalStore(
-    () => () => {},
-    () => true,
-    () => false
-  )
-}
-
 export default function WishlistPage() {
-  const isClient = useIsClient()
-  const imageIds = useWishlistStore(s => s.imageIds)
+  const { data: images, isLoading } = useWishlist()
 
-  const wishlistImages = dummyImages.filter(img => imageIds.includes(img.id))
-
-  if (!isClient) {
+  if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
         <Skeleton className="mb-8 h-8 w-48" />
@@ -40,6 +27,8 @@ export default function WishlistPage() {
       </div>
     )
   }
+
+  const wishlistImages = images ?? []
 
   if (wishlistImages.length === 0) {
     return (

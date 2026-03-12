@@ -70,10 +70,10 @@ export default function TermsPage() {
       <Separator className="my-6" />
 
       <div className="space-y-8">
-        {SECTIONS.map((section) => (
+        {SECTIONS.map(section => (
           <section key={section.title}>
             <h2 className="mb-3 text-lg font-semibold">{section.title}</h2>
-            <p className="text-muted-foreground whitespace-pre-line leading-relaxed">
+            <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
               {section.content}
             </p>
           </section>

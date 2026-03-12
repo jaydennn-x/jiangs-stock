@@ -96,7 +96,7 @@ function FilterContent({
     <div className="w-full space-y-5">
       {/* 카테고리 */}
       <div>
-        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
+        <p className="mb-3 text-xs font-semibold tracking-wider text-gray-500 uppercase">
           카테고리
         </p>
         <div className="space-y-2.5">
@@ -122,7 +122,7 @@ function FilterContent({
 
       {/* 방향 */}
       <div>
-        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
+        <p className="mb-3 text-xs font-semibold tracking-wider text-gray-500 uppercase">
           방향
         </p>
         <div className="space-y-2.5">
@@ -139,7 +139,10 @@ function FilterContent({
             <span className="text-sm text-gray-700">전체</span>
           </label>
           {ORIENTATIONS.map(ori => (
-            <label key={ori.value} className="flex cursor-pointer items-center gap-2.5">
+            <label
+              key={ori.value}
+              className="flex cursor-pointer items-center gap-2.5"
+            >
               <input
                 type="radio"
                 name="orientation"
@@ -158,7 +161,7 @@ function FilterContent({
 
       {/* 가격 범위 */}
       <div>
-        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
+        <p className="mb-3 text-xs font-semibold tracking-wider text-gray-500 uppercase">
           가격 범위
         </p>
         <div className="flex items-center gap-2">
@@ -202,7 +205,7 @@ function FilterContent({
 
 export function SearchFilters(props: SearchFiltersProps) {
   return (
-    <aside className="hidden lg:block w-56 shrink-0">
+    <aside className="hidden w-56 shrink-0 lg:block">
       <div className="sticky top-6">
         <p className="mb-4 text-sm font-semibold text-gray-900">필터</p>
         <FilterContent {...props} />

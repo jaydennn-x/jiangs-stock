@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Mail, RefreshCw } from 'lucide-react'
 import {
   Dialog,
@@ -61,11 +61,9 @@ export function OrderDetailModal({
   images,
   onResetDownload,
 }: OrderDetailModalProps) {
-  const [localItems, setLocalItems] = useState<OrderItem[]>([])
-
-  useEffect(() => {
-    setLocalItems(order?.items ? [...order.items] : [])
-  }, [order])
+  const [localItems, setLocalItems] = useState<OrderItem[]>(
+    order?.items ? [...order.items] : []
+  )
 
   if (!order) return null
 
@@ -122,9 +120,7 @@ export function OrderDetailModal({
             <div>
               <dt className="text-muted-foreground">결제일</dt>
               <dd className="mt-0.5">
-                {order.paidAt
-                  ? order.paidAt.toLocaleDateString('ko-KR')
-                  : '-'}
+                {order.paidAt ? order.paidAt.toLocaleDateString('ko-KR') : '-'}
               </dd>
             </div>
             <div>
@@ -149,15 +145,13 @@ export function OrderDetailModal({
                 images.find(img => img.id === item.imageId)?.name ??
                 item.imageId
               return (
-                <div
-                  key={item.id}
-                  className="rounded-lg border p-3 text-sm"
-                >
+                <div key={item.id} className="rounded-lg border p-3 text-sm">
                   <div className="mb-2 flex items-start justify-between gap-2">
                     <div className="min-w-0">
                       <p className="truncate font-medium">{imageName}</p>
                       <p className="text-muted-foreground text-xs">
-                        {SIZE_LABEL[item.size]} · {LICENSE_LABEL[item.licenseType]} ·{' '}
+                        {SIZE_LABEL[item.size]} ·{' '}
+                        {LICENSE_LABEL[item.licenseType]} ·{' '}
                         {item.price.toLocaleString('ko-KR')}원
                       </p>
                     </div>
@@ -178,8 +172,7 @@ export function OrderDetailModal({
                         </span>
                       </p>
                       <p>
-                        만료일:{' '}
-                        {item.expiresAt.toLocaleDateString('ko-KR')}
+                        만료일: {item.expiresAt.toLocaleDateString('ko-KR')}
                       </p>
                     </div>
                     <div className="flex shrink-0 gap-1.5">

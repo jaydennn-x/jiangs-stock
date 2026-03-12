@@ -65,7 +65,7 @@ export function AgreeSection({ agreed, onChange }: AgreeSectionProps) {
             className="cursor-pointer text-sm font-normal"
           >
             (필수){' '}
-            <Link href="/privacy" className="underline hover:text-foreground">
+            <Link href="/privacy" className="hover:text-foreground underline">
               개인정보 수집
             </Link>{' '}
             이용 동의
@@ -83,7 +83,7 @@ export function AgreeSection({ agreed, onChange }: AgreeSectionProps) {
             className="cursor-pointer text-sm font-normal"
           >
             (필수){' '}
-            <Link href="/terms" className="underline hover:text-foreground">
+            <Link href="/terms" className="hover:text-foreground underline">
               이용약관
             </Link>{' '}
             동의

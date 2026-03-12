@@ -65,8 +65,8 @@ Phase 2 두 번째 작업. 구매자용 공통 레이아웃 컴포넌트(헤더,
 
 ## 변경 사항 요약
 
-| 파일 | 변경 |
-| ---- | ---- |
-| `src/components/layout/header.tsx` | 완전 재구현 - CartButton/CategoryNav/AuthMenu/MobileMenu 4개 내부 함수로 분리 |
-| `src/components/layout/footer.tsx` | 브랜드 설명 추가, 2단 레이아웃 개선 |
-| `tasks/004-dummy-data-state-components.md` | Prettier 포맷 수정 |
+| 파일                                       | 변경                                                                          |
+| ------------------------------------------ | ----------------------------------------------------------------------------- |
+| `src/components/layout/header.tsx`         | 완전 재구현 - CartButton/CategoryNav/AuthMenu/MobileMenu 4개 내부 함수로 분리 |
+| `src/components/layout/footer.tsx`         | 브랜드 설명 추가, 2단 레이아웃 개선                                           |
+| `tasks/004-dummy-data-state-components.md` | Prettier 포맷 수정                                                            |

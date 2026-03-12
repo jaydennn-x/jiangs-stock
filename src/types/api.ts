@@ -45,4 +45,5 @@ export interface ImageListResponse {
 export type ImageDetailResponse = Image & {
   category: Category
   priceOptions: PriceOption[]
+  isPurchased: boolean
 }

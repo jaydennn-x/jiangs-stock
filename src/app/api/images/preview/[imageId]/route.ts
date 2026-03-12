@@ -1,9 +1,36 @@
-import { NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
+import path from 'path'
+import { prisma } from '@/lib/prisma'
+import { serveFile, getContentType } from '@/lib/image-serving'
 
-type Params = { params: Promise<{ imageId: string }> }
-
-export async function GET(_request: Request, { params }: Params) {
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: Promise<{ imageId: string }> }
+) {
   const { imageId } = await params
-  // TODO: 워터마크 프리뷰 이미지 서빙 구현 예정 (Task 023)
-  return NextResponse.json({ message: 'TODO', imageId }, { status: 200 })
+
+  try {
+    const image = await prisma.image.findUnique({
+      where: { id: imageId },
+      select: { watermarkUrl: true, format: true },
+    })
+
+    if (!image) {
+      return new Response('Not Found', { status: 404 })
+    }
+
+    const storageRoot = process.env.STORAGE_ROOT ?? ''
+    const absolutePath = path.join(storageRoot, image.watermarkUrl)
+    const contentType = getContentType(image.format)
+
+    return serveFile(
+      absolutePath,
+      image.watermarkUrl,
+      contentType,
+      'public, max-age=3600'
+    )
+  } catch (error) {
+    console.error('[GET /api/images/preview/[imageId]]', error)
+    return new Response('Internal Server Error', { status: 500 })
+  }
 }

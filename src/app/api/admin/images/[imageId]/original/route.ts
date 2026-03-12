@@ -1,9 +1,50 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
+import path from 'path'
+import { auth } from '@/auth'
+import { prisma } from '@/lib/prisma'
+import { serveFile, getContentType } from '@/lib/image-serving'
 
-type Params = { params: Promise<{ imageId: string }> }
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: Promise<{ imageId: string }> }
+) {
+  const session = await auth()
 
-export async function GET(_request: Request, { params }: Params) {
+  if (!session?.user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  if (session.user.role !== 'ADMIN') {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
   const { imageId } = await params
-  // TODO: 관리자 원본 이미지 서빙 구현 예정 (Task 023)
-  return NextResponse.json({ message: 'TODO', imageId }, { status: 200 })
+
+  try {
+    const image = await prisma.image.findUnique({
+      where: { id: imageId },
+      select: { originalUrl: true, format: true },
+    })
+
+    if (!image) {
+      return NextResponse.json({ error: 'Not Found' }, { status: 404 })
+    }
+
+    const storageRoot = process.env.STORAGE_ROOT ?? ''
+    const absolutePath = path.join(storageRoot, image.originalUrl)
+    const contentType = getContentType(image.format)
+
+    return serveFile(
+      absolutePath,
+      image.originalUrl,
+      contentType,
+      'private, no-store'
+    )
+  } catch (error) {
+    console.error('[GET /api/admin/images/[imageId]/original]', error)
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 }
+    )
+  }
 }

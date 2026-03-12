@@ -30,7 +30,8 @@ export function AddToCartModal({
   onOpenChange,
 }: AddToCartModalProps) {
   const [selectedSize, setSelectedSize] = useState<ImageSize>('XL')
-  const [selectedLicense, setSelectedLicense] = useState<LicenseType>('STANDARD')
+  const [selectedLicense, setSelectedLicense] =
+    useState<LicenseType>('STANDARD')
   const addItem = useCartStore(s => s.addItem)
 
   function handleAddToCart() {

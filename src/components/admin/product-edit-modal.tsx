@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { X } from 'lucide-react'
 import {
   Dialog,
@@ -36,27 +36,18 @@ export function ProductEditModal({
   image,
   categories,
 }: ProductEditModalProps) {
-  const [name, setName] = useState('')
-  const [description, setDescription] = useState('')
-  const [categoryId, setCategoryId] = useState('')
-  const [basePrice, setBasePrice] = useState('')
-  const [tags, setTags] = useState<string[]>([])
-  const [colorTags, setColorTags] = useState<string[]>([])
+  const [name, setName] = useState(image?.name ?? '')
+  const [description, setDescription] = useState(image?.description ?? '')
+  const [categoryId, setCategoryId] = useState(image?.categoryId ?? '')
+  const [basePrice, setBasePrice] = useState(
+    image ? String(image.basePrice) : ''
+  )
+  const [tags, setTags] = useState<string[]>(image ? [...image.tags] : [])
+  const [colorTags, setColorTags] = useState<string[]>(
+    image ? [...image.colorTags] : []
+  )
   const [tagInput, setTagInput] = useState('')
   const [colorTagInput, setColorTagInput] = useState('')
-
-  useEffect(() => {
-    if (image) {
-      setName(image.name)
-      setDescription(image.description ?? '')
-      setCategoryId(image.categoryId)
-      setBasePrice(String(image.basePrice))
-      setTags([...image.tags])
-      setColorTags([...image.colorTags])
-      setTagInput('')
-      setColorTagInput('')
-    }
-  }, [image])
 
   function handleClose() {
     onOpenChange(false)

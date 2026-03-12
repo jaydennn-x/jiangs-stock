@@ -128,8 +128,12 @@ export function ProductUploadModal({
             }}
           >
             <UploadCloud className="text-muted-foreground mb-2 h-8 w-8" />
-            <p className="text-sm font-medium">이미지를 드래그하거나 클릭하여 업로드</p>
-            <p className="text-muted-foreground mt-1 text-xs">JPG, PNG, TIFF 허용 · 최대 50MB</p>
+            <p className="text-sm font-medium">
+              이미지를 드래그하거나 클릭하여 업로드
+            </p>
+            <p className="text-muted-foreground mt-1 text-xs">
+              JPG, PNG, TIFF 허용 · 최대 50MB
+            </p>
           </div>
 
           {/* 이름 */}

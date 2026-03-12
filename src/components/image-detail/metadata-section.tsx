@@ -36,7 +36,7 @@ export function MetadataSection({ image, isPurchased }: MetadataSectionProps) {
     return (
       <div className="relative overflow-hidden rounded-lg border border-gray-200 p-5">
         {/* 블러 처리된 더미 플레이스홀더 — 실제 데이터 미포함 */}
-        <div className="pointer-events-none select-none space-y-3 blur-sm">
+        <div className="pointer-events-none space-y-3 blur-sm select-none">
           <p className="text-sm font-semibold text-gray-900">이미지 정보</p>
           <div className="divide-y divide-gray-100">
             {PLACEHOLDER_ROWS.map(row => (
@@ -56,7 +56,9 @@ export function MetadataSection({ image, isPurchased }: MetadataSectionProps) {
         {/* 잠금 오버레이 */}
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/85">
           <Lock className="mb-2 h-7 w-7 text-gray-400" />
-          <p className="text-sm font-semibold text-gray-700">구매 후 확인 가능</p>
+          <p className="text-sm font-semibold text-gray-700">
+            구매 후 확인 가능
+          </p>
           <p className="mt-1 text-center text-xs text-gray-500">
             이 이미지를 구매하면 상세 정보를 확인할 수 있습니다
           </p>

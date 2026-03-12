@@ -16,6 +16,7 @@ interface CartStore {
     basePrice: number
   ) => void
   clearCart: () => void
+  setItemsFromServer: (items: LocalCartItem[]) => void
   totalCount: () => number
   totalAmount: () => number
 }
@@ -69,6 +70,10 @@ export const useCartStore = create<CartStore>()(
 
       clearCart: () => {
         set({ items: [] })
+      },
+
+      setItemsFromServer: items => {
+        set({ items })
       },
 
       totalCount: () => get().items.length,
