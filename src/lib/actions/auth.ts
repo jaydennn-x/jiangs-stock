@@ -65,6 +65,18 @@ export async function loginAction(
 
   const { email, password } = parsed.data
 
+  // 관리자 계정은 일반 로그인 페이지에서 로그인 불가
+  const user = await prisma.user.findUnique({
+    where: { email },
+    select: { role: true },
+  })
+  if (user?.role === 'ADMIN') {
+    return {
+      success: false,
+      error: '이메일 또는 비밀번호가 올바르지 않습니다',
+    }
+  }
+
   try {
     await signIn('credentials', { email, password, redirect: false })
   } catch (error) {
