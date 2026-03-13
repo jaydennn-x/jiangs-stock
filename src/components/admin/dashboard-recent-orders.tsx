@@ -1,10 +1,9 @@
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { dummyOrders, dummyUsers } from '@/lib/dummy'
-import type { Order } from '@/types/models'
+import { getRecentOrders } from '@/lib/actions/admin-dashboard'
 
-type OrderStatus = Order['status']
+type OrderStatus = 'COMPLETED' | 'PENDING' | 'FAILED' | 'CANCELLED'
 
 const STATUS_LABEL: Record<OrderStatus, string> = {
   COMPLETED: '완료',
@@ -23,10 +22,8 @@ const STATUS_VARIANT: Record<
   CANCELLED: 'outline',
 }
 
-export function DashboardRecentOrders() {
-  const recentOrders = [...dummyOrders]
-    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-    .slice(0, 10)
+export async function DashboardRecentOrders() {
+  const recentOrders = await getRecentOrders(10)
 
   return (
     <Card>
@@ -64,30 +61,41 @@ export function DashboardRecentOrders() {
               </tr>
             </thead>
             <tbody>
-              {recentOrders.map(order => {
-                const user = dummyUsers.find(u => u.id === order.userId)
-                return (
-                  <tr key={order.id} className="border-b last:border-0">
-                    <td className="py-2 font-mono text-xs">
-                      {order.orderNumber}
-                    </td>
-                    <td className="text-muted-foreground py-2">
-                      {user?.email ?? order.userId}
-                    </td>
-                    <td className="py-2 text-right font-medium">
-                      {order.totalAmount.toLocaleString('ko-KR')}원
-                    </td>
-                    <td className="text-muted-foreground py-2">
-                      {order.createdAt.toLocaleDateString('ko-KR')}
-                    </td>
-                    <td className="py-2">
-                      <Badge variant={STATUS_VARIANT[order.status]}>
-                        {STATUS_LABEL[order.status]}
-                      </Badge>
-                    </td>
-                  </tr>
-                )
-              })}
+              {recentOrders.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="text-muted-foreground py-8 text-center"
+                  >
+                    주문이 없습니다.
+                  </td>
+                </tr>
+              ) : (
+                recentOrders.map(order => {
+                  const status = order.status as OrderStatus
+                  return (
+                    <tr key={order.id} className="border-b last:border-0">
+                      <td className="py-2 font-mono text-xs">
+                        {order.orderNumber}
+                      </td>
+                      <td className="text-muted-foreground py-2">
+                        {order.user.email}
+                      </td>
+                      <td className="py-2 text-right font-medium">
+                        {order.totalAmount.toLocaleString('ko-KR')}원
+                      </td>
+                      <td className="text-muted-foreground py-2">
+                        {new Date(order.createdAt).toLocaleDateString('ko-KR')}
+                      </td>
+                      <td className="py-2">
+                        <Badge variant={STATUS_VARIANT[status]}>
+                          {STATUS_LABEL[status]}
+                        </Badge>
+                      </td>
+                    </tr>
+                  )
+                })
+              )}
             </tbody>
           </table>
         </div>

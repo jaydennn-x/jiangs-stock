@@ -14,7 +14,7 @@ import type { Orientation } from '@/types/enums'
 const RELATED_IMAGES_LIMIT = 8
 
 const ASPECT_MAP: Record<Orientation, string> = {
-  LANDSCAPE: 'aspect-[4/3]',
+  LANDSCAPE: 'aspect-[16/9]',
   PORTRAIT: 'aspect-[3/4]',
   SQUARE: 'aspect-square',
 }
@@ -92,16 +92,27 @@ export default async function ImageDetailPage({ params }: Props) {
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_360px]">
         {/* 좌측: 프리뷰 + 메타데이터 + 태그 */}
         <div className="space-y-8">
-          {/* 워터마크 프리뷰 */}
+          {/* 워터마크 프리뷰 (블러 백그라운드) */}
           <div
-            className={`${ASPECT_MAP[image.orientation]} relative w-full overflow-hidden rounded-lg bg-gray-100`}
+            className={`${ASPECT_MAP[image.orientation]} relative w-full overflow-hidden rounded-lg`}
           >
+            {/* 블러 배경: 같은 이미지를 확대+블러 처리 */}
+            <ProtectedImage
+              src={`/api/images/preview/${id}`}
+              alt=""
+              fill
+              sizes="(max-width: 1024px) 100vw, calc(100vw - 420px)"
+              quality={30}
+              className="object-cover scale-110 blur-2xl brightness-75"
+            />
+            {/* 실제 이미지: 잘리지 않게 contain */}
             <ProtectedImage
               src={`/api/images/preview/${id}`}
               alt={image.name}
               fill
               sizes="(max-width: 1024px) 100vw, calc(100vw - 420px)"
-              className="object-cover"
+              quality={100}
+              className="object-contain relative z-10"
             />
           </div>
 
@@ -119,7 +130,7 @@ export default async function ImageDetailPage({ params }: Props) {
                   <Link
                     key={tag}
                     href={`/search?q=${encodeURIComponent(tag)}`}
-                    className="rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-600 transition-colors hover:bg-gray-200"
+                    className="rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-600 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                   >
                     {tag}
                   </Link>
@@ -136,7 +147,7 @@ export default async function ImageDetailPage({ params }: Props) {
       {/* 관련 이미지 갤러리 */}
       {relatedImages.length > 0 && (
         <section className="mt-16">
-          <h2 className="mb-6 text-lg font-semibold text-gray-900">
+          <h2 className="mb-6 text-lg font-semibold text-gray-900 dark:text-gray-100">
             관련 이미지
           </h2>
           <div className="columns-2 gap-2 md:columns-3 lg:columns-4">

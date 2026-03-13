@@ -3,6 +3,9 @@ import { PrismaClient } from '../src/generated/prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 import bcrypt from 'bcryptjs'
 import crypto from 'crypto'
+import fs from 'fs/promises'
+import path from 'path'
+import sharp from 'sharp'
 
 const adapter = new PrismaPg({ connectionString: process.env['DATABASE_URL'] })
 const prisma = new PrismaClient({ adapter })
@@ -126,17 +129,50 @@ const DUMMY_COLOR_TAGS = [
   ['다색'],
 ]
 
+// 카테고리별 placeholder 색상
+const CATEGORY_COLORS: Record<string, { r: number; g: number; b: number }> = {
+  'nature-landscape': { r: 76, g: 140, b: 90 },
+  people: { r: 180, g: 120, b: 90 },
+  business: { r: 70, g: 90, b: 140 },
+  food: { r: 190, g: 130, b: 60 },
+  architecture: { r: 100, g: 100, b: 110 },
+  other: { r: 130, g: 130, b: 130 },
+}
+
+async function generatePlaceholderImage(
+  outputPath: string,
+  width: number,
+  height: number,
+  color: { r: number; g: number; b: number },
+  format: 'webp' | 'jpeg' = 'webp'
+): Promise<void> {
+  await fs.mkdir(path.dirname(outputPath), { recursive: true })
+  const img = sharp({
+    create: { width, height, channels: 3, background: color },
+  })
+  if (format === 'webp') {
+    await img.webp({ quality: 80 }).toFile(outputPath)
+  } else {
+    await img.jpeg({ quality: 80 }).toFile(outputPath)
+  }
+}
+
 async function seedDummyImages() {
   console.log('더미 이미지 seed 중...')
   const categories = await prisma.category.findMany({
     orderBy: { sortOrder: 'asc' },
   })
 
+  const storageRoot = process.env['STORAGE_ROOT'] ?? './storage'
+  await fs.mkdir(path.join(storageRoot, 'thumbnails'), { recursive: true })
+  await fs.mkdir(path.join(storageRoot, 'watermarks'), { recursive: true })
+
   for (let i = 1; i <= 30; i++) {
     const catIdx = (i - 1) % categories.length
     const cat = categories[catIdx]
     const code = `IMG-${String(i).padStart(4, '0')}`
-    await prisma.image.upsert({
+
+    const image = await prisma.image.upsert({
       where: { code },
       update: {},
       create: {
@@ -150,14 +186,14 @@ async function seedDummyImages() {
         height: 4000,
         format: 'jpeg',
         basePrice: (5000 + (i % 5) * 1000).toString(),
-        originalUrl: `storage/originals/${code}.jpg`,
-        watermarkUrl: `storage/watermarks/${code}.jpg`,
-        thumbnailUrl: `storage/thumbnails/${code}.jpg`,
+        originalUrl: `originals/${code}.jpg`,
+        watermarkUrl: '', // 아래에서 id 기반으로 업데이트
+        thumbnailUrl: '',
         sizesJson: {
-          XL: { path: `storage/xl/${code}.jpg`, width: 6000, height: 4000 },
-          L: { path: `storage/l/${code}.jpg`, width: 2700, height: 1800 },
-          M: { path: `storage/m/${code}.jpg`, width: 1200, height: 800 },
-          S: { path: `storage/s/${code}.jpg`, width: 420, height: 280 },
+          XL: { path: `downloads/${code}/XL.jpg`, width: 6000, height: 4000 },
+          L: { path: `downloads/${code}/L.jpg`, width: 2700, height: 1800 },
+          M: { path: `downloads/${code}/M.jpg`, width: 1200, height: 800 },
+          S: { path: `downloads/${code}/S.jpg`, width: 420, height: 280 },
         },
         fileSizesJson: { XL: 8500000, L: 3200000, M: 900000, S: 180000 },
         tags: DUMMY_TAGS[catIdx] ?? ['기타'],
@@ -166,8 +202,35 @@ async function seedDummyImages() {
         isActive: true,
       },
     })
+
+    // URL을 id 기반으로 업데이트 (실제 업로드 시스템과 동일한 형식)
+    const thumbnailRelPath = `thumbnails/${image.id}.webp`
+    const watermarkRelPath = `watermarks/${image.id}.jpg`
+
+    await prisma.image.update({
+      where: { id: image.id },
+      data: {
+        thumbnailUrl: thumbnailRelPath,
+        watermarkUrl: watermarkRelPath,
+      },
+    })
+
+    // 실제 placeholder 파일 생성
+    const color = CATEGORY_COLORS[cat.slug] ?? { r: 130, g: 130, b: 130 }
+    const thumbnailPath = path.join(storageRoot, thumbnailRelPath)
+    const watermarkPath = path.join(storageRoot, watermarkRelPath)
+
+    // 이미 파일이 있으면 스킵
+    const thumbnailExists = await fs.stat(thumbnailPath).catch(() => null)
+    if (!thumbnailExists) {
+      await generatePlaceholderImage(thumbnailPath, 400, 300, color, 'webp')
+    }
+    const watermarkExists = await fs.stat(watermarkPath).catch(() => null)
+    if (!watermarkExists) {
+      await generatePlaceholderImage(watermarkPath, 800, 600, color, 'jpeg')
+    }
   }
-  console.log('더미 이미지 30건 완료')
+  console.log('더미 이미지 30건 완료 (placeholder 파일 생성 포함)')
 }
 
 async function seedDummyOrders() {

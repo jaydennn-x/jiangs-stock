@@ -66,9 +66,8 @@ export async function loginAction(
   const { email, password } = parsed.data
 
   try {
-    await signIn('credentials', { email, password, redirectTo: '/' })
+    await signIn('credentials', { email, password, redirect: false })
   } catch (error) {
-    if (isRedirectError(error)) throw error
     if (error instanceof AuthError) {
       return {
         success: false,

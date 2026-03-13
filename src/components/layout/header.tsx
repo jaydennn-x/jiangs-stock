@@ -1,13 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { useMediaQuery } from 'usehooks-ts'
-import { Menu, ShoppingCart, Heart, Receipt, User, LogOut } from 'lucide-react'
+import { Menu, ShoppingCart, Heart, Receipt, User, LogOut, LayoutDashboard } from 'lucide-react'
 import Link from 'next/link'
+import { useSession, signOut } from 'next-auth/react'
 
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
   Sheet,
   SheetContent,
@@ -31,6 +30,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { SearchInput } from '@/components/search/search-input'
+import { ThemeToggle } from '@/components/theme-toggle'
 import { useCartStore } from '@/stores/cart-store'
 import { dummyCategories } from '@/lib/dummy/categories'
 import { Container } from './container'
@@ -88,36 +88,38 @@ function CategoryNav() {
   )
 }
 
-interface AuthMenuProps {
-  isLoggedIn: boolean
-  onLogin: () => void
-  onLogout: () => void
-}
+function AuthMenu({ userName, userRole }: { userName?: string | null; userRole?: string }) {
+  const handleLogout = () => signOut({ callbackUrl: '/' })
+  const isAdmin = userRole === 'ADMIN'
 
-function AuthMenu({ isLoggedIn, onLogin, onLogout }: AuthMenuProps) {
-  if (!isLoggedIn) {
+  if (!userName) {
     return (
-      <div className="flex items-center gap-2">
-        <Button variant="outline" size="sm" onClick={onLogin}>
-          로그인
-        </Button>
-        <Link href="/signup">
-          <Button size="sm">회원가입</Button>
-        </Link>
-      </div>
+      <Button variant="outline" size="sm" asChild>
+        <Link href="/login">로그인</Link>
+      </Button>
     )
   }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="rounded-full">
-          <Avatar className="h-8 w-8">
-            <AvatarFallback className="text-xs">유</AvatarFallback>
-          </Avatar>
-        </Button>
+        <button className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm font-medium transition-colors hover:bg-accent">
+          <User className="h-4 w-4" />
+          {userName}
+        </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-40">
+        {isAdmin && (
+          <>
+            <DropdownMenuItem asChild>
+              <Link href="/admin" className="flex items-center gap-2">
+                <LayoutDashboard className="h-4 w-4" />
+                관리자 대시보드
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+          </>
+        )}
         <DropdownMenuItem asChild>
           <Link href="/wishlist" className="flex items-center gap-2">
             <Heart className="h-4 w-4" />
@@ -137,7 +139,7 @@ function AuthMenu({ isLoggedIn, onLogin, onLogout }: AuthMenuProps) {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onClick={onLogout}
+          onClick={handleLogout}
           className="flex items-center gap-2 text-red-600"
         >
           <LogOut className="h-4 w-4" />
@@ -148,15 +150,14 @@ function AuthMenu({ isLoggedIn, onLogin, onLogout }: AuthMenuProps) {
   )
 }
 
-interface MobileMenuProps {
-  isLoggedIn: boolean
-  onLogout: () => void
-}
-
-function MobileMenu({ isLoggedIn, onLogout }: MobileMenuProps) {
+function MobileMenu({ userName, userRole }: { userName?: string | null; userRole?: string }) {
   const [open, setOpen] = useState(false)
-
   const close = () => setOpen(false)
+  const isAdmin = userRole === 'ADMIN'
+  const handleLogout = () => {
+    signOut({ callbackUrl: '/' })
+    close()
+  }
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -190,8 +191,24 @@ function MobileMenu({ isLoggedIn, onLogout }: MobileMenuProps) {
             </nav>
           </div>
           <div className="border-t pt-4">
-            {isLoggedIn ? (
+            {userName ? (
               <nav className="flex flex-col gap-1">
+                <div className="flex items-center gap-2 px-2 py-2 text-sm font-medium">
+                  <User className="h-4 w-4" />
+                  {userName}
+                </div>
+                {isAdmin && (
+                  <Link
+                    href="/admin"
+                    onClick={close}
+                    className="hover:bg-accent rounded-sm px-2 py-2 text-sm transition-colors"
+                  >
+                    <span className="flex items-center gap-2">
+                      <LayoutDashboard className="h-4 w-4" />
+                      관리자 대시보드
+                    </span>
+                  </Link>
+                )}
                 <Link
                   href="/wishlist"
                   onClick={close}
@@ -214,10 +231,7 @@ function MobileMenu({ isLoggedIn, onLogout }: MobileMenuProps) {
                   내 정보
                 </Link>
                 <button
-                  onClick={() => {
-                    onLogout()
-                    close()
-                  }}
+                  onClick={handleLogout}
                   className="hover:bg-accent rounded-sm px-2 py-2 text-left text-sm text-red-600 transition-colors"
                 >
                   로그아웃
@@ -230,9 +244,6 @@ function MobileMenu({ isLoggedIn, onLogout }: MobileMenuProps) {
                     로그인
                   </Button>
                 </Link>
-                <Link href="/signup" onClick={close}>
-                  <Button className="w-full">회원가입</Button>
-                </Link>
               </nav>
             )}
           </div>
@@ -243,8 +254,9 @@ function MobileMenu({ isLoggedIn, onLogout }: MobileMenuProps) {
 }
 
 export function Header() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const isMobile = useMediaQuery('(max-width: 768px)')
+  const { data: session } = useSession()
+  const userName = session?.user?.name || session?.user?.email?.split('@')[0]
+  const userRole = session?.user?.role
 
   return (
     <header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur">
@@ -254,30 +266,31 @@ export function Header() {
             <span className="text-xl font-bold">JiangsStock</span>
           </Link>
 
-          {!isMobile && <CategoryNav />}
-
-          {!isMobile && (
+          {/* 데스크톱 전용: 카테고리 + 검색 */}
+          <div className="hidden md:contents">
+            <CategoryNav />
             <SearchInput
               className="max-w-sm flex-1"
               placeholder="이미지 검색..."
             />
-          )}
+          </div>
 
           <div className="ml-auto flex items-center gap-2">
             <CartButton />
-            {!isMobile && (
-              <AuthMenu
-                isLoggedIn={isLoggedIn}
-                onLogin={() => setIsLoggedIn(true)}
-                onLogout={() => setIsLoggedIn(false)}
-              />
-            )}
-            {isMobile && (
-              <MobileMenu
-                isLoggedIn={isLoggedIn}
-                onLogout={() => setIsLoggedIn(false)}
-              />
-            )}
+            <Link href="/wishlist">
+              <Button variant="ghost" size="icon" aria-label="위시리스트">
+                <Heart className="h-5 w-5" />
+              </Button>
+            </Link>
+            {/* 데스크톱 전용: 인증 메뉴 */}
+            <div className="hidden md:flex md:items-center md:gap-2">
+              <AuthMenu userName={userName} userRole={userRole} />
+            </div>
+            <ThemeToggle />
+            {/* 모바일 전용: 햄버거 메뉴 */}
+            <div className="md:hidden">
+              <MobileMenu userName={userName} userRole={userRole} />
+            </div>
           </div>
         </div>
       </Container>

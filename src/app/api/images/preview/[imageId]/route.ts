@@ -21,7 +21,8 @@ export async function GET(
 
     const storageRoot = process.env.STORAGE_ROOT ?? ''
     const absolutePath = path.join(storageRoot, image.watermarkUrl)
-    const contentType = getContentType(image.format)
+    const ext = path.extname(image.watermarkUrl).slice(1) || image.format
+    const contentType = getContentType(ext)
 
     return serveFile(
       absolutePath,

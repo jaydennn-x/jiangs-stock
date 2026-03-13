@@ -109,7 +109,7 @@ function FilterContent({
               />
               <Label
                 htmlFor={`cat-${cat.slug}`}
-                className="cursor-pointer text-sm font-normal text-gray-700"
+                className="cursor-pointer text-sm font-normal text-gray-700 dark:text-gray-300"
               >
                 {cat.name}
               </Label>
@@ -136,7 +136,7 @@ function FilterContent({
               onChange={() => setOrientation('')}
               className="h-4 w-4 accent-gray-900"
             />
-            <span className="text-sm text-gray-700">전체</span>
+            <span className="text-sm text-gray-700 dark:text-gray-300">전체</span>
           </label>
           {ORIENTATIONS.map(ori => (
             <label
@@ -151,7 +151,7 @@ function FilterContent({
                 onChange={() => setOrientation(ori.value)}
                 className="h-4 w-4 accent-gray-900"
               />
-              <span className="text-sm text-gray-700">{ori.label}</span>
+              <span className="text-sm text-gray-700 dark:text-gray-300">{ori.label}</span>
             </label>
           ))}
         </div>
@@ -207,7 +207,7 @@ export function SearchFilters(props: SearchFiltersProps) {
   return (
     <aside className="hidden w-56 shrink-0 lg:block">
       <div className="sticky top-6">
-        <p className="mb-4 text-sm font-semibold text-gray-900">필터</p>
+        <p className="mb-4 text-sm font-semibold text-gray-900 dark:text-gray-100">필터</p>
         <FilterContent {...props} />
       </div>
     </aside>

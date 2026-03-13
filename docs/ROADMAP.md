@@ -283,45 +283,45 @@ JiangsStock은 블로그/웹사이트/마케팅 자료용 고품질 이미지를
 
 > 관리자가 상품을 관리하고 자동 이미지 처리 파이프라인이 동작하도록 한다. 결제할 상품이 먼저 존재해야 하므로 결제 시스템보다 선행한다.
 
-- **Task 027: 자동 이미지 처리 파이프라인 구현 (F014)** - 우선순위
-  - Sharp 0.34.x 설치 및 설정: limitInputPixels(300_000_000), concurrency(SHARP_CONCURRENCY 환경변수)
-  - 이미지 업로드 원자적 순서: DB 레코드 PENDING 생성 -> 원본 파일 디스크 저장 -> BullMQ 작업 등록
-  - 이미지 처리 BullMQ 워커: XL/L/M/S 비동기 리사이징, 워터마크 합성, 로컬 디스크 저장
-  - 출력 포맷: 다운로드용 JPEG (quality: 90), 썸네일 WebP (quality: 85)
-  - EXIF 메타데이터 제거: `.withMetadata(false)` 모든 출력에 적용
-  - 처리 상태 관리: PENDING -> PROCESSING -> COMPLETED / FAILED
-  - 실패 시 Cleanup: 로컬 파일 삭제 + DB 상태 FAILED 업데이트
-  - 재시도 전략: 최대 3회, 지수 백오프, 영구 실패 시 Dead Letter Queue 이동
-  - Graceful Shutdown: 워커 종료 시 진행 중인 작업 완료 후 종료
-  - 업로드 허용 포맷: JPEG, PNG, TIFF (Zod 검증)
-  - 로컬 저장 디렉토리 구조: originals/, downloads/, watermarks/, thumbnails/
+- [x] **Task 027: 자동 이미지 처리 파이프라인 구현 (F014)** - 완료
+  - [x] Sharp 0.34.x 설치 및 설정: limitInputPixels(300_000_000), concurrency(SHARP_CONCURRENCY 환경변수)
+  - [x] 이미지 업로드 원자적 순서: DB 레코드 PENDING 생성 -> 원본 파일 디스크 저장 -> BullMQ 작업 등록
+  - [x] 이미지 처리 BullMQ 워커: XL/L/M/S 비동기 리사이징, 워터마크 합성, 로컬 디스크 저장
+  - [x] 출력 포맷: 다운로드용 JPEG (quality: 90), 썸네일 WebP (quality: 85)
+  - [x] EXIF 메타데이터 제거: Sharp 0.34.x 기본 동작 (메타데이터 미포함)
+  - [x] 처리 상태 관리: PENDING -> PROCESSING -> COMPLETED / FAILED
+  - [x] 실패 시 Cleanup: 로컬 파일 삭제 + DB 상태 FAILED 업데이트
+  - [x] 재시도 전략: 최대 3회, 지수 백오프, 영구 실패 시 Dead Letter Queue 이동
+  - [x] Graceful Shutdown: 워커 종료 시 진행 중인 작업 완료 후 종료
+  - [x] 업로드 허용 포맷: JPEG, PNG, TIFF (Zod 검증)
+  - [x] 로컬 저장 디렉토리 구조: originals/, downloads/, watermarks/, thumbnails/
 
-- **Task 028: 관리자 상품 관리 API 및 연동 (F013)**
-  - 상품 CRUD Server Action: 등록 (이미지 업로드 + 메타데이터), 수정 (메타데이터만), 소프트 삭제 (isActive=false)
-  - 상품 목록 조회 API: 필터 (카테고리, 활성화 여부), 페이지네이션
-  - 활성화/비활성화 토글 Server Action
-  - 이미지 업로드 처리: Next.js body 크기 제한 조정 (50MB), FormData 처리
-  - 관리자 상품 관리 페이지 더미 데이터를 실제 API로 교체
-  - 이미지 처리 상태 배지 실시간 표시 (TanStack Query 폴링)
-  - 소프트 삭제 파일 정리 Cron: isActive=false인 이미지의 모든 OrderItem.expiresAt 경과 확인 후 물리적 파일 삭제 스케줄러 구현
-  - Playwright MCP를 활용한 상품 관리 E2E 테스트
+- [x]**Task 028: 관리자 상품 관리 API 및 연동 (F013)**
+  - [x]상품 CRUD Server Action: 등록 (이미지 업로드 + 메타데이터), 수정 (메타데이터만), 소프트 삭제 (isActive=false)
+  - [x]상품 목록 조회 API: 필터 (카테고리, 활성화 여부), 페이지네이션
+  - [x]활성화/비활성화 토글 Server Action
+  - [x]이미지 업로드 처리: Next.js body 크기 제한 조정 (50MB), FormData 처리
+  - [x]관리자 상품 관리 페이지 더미 데이터를 실제 API로 교체
+  - [x]이미지 처리 상태 배지 실시간 표시 (TanStack Query 폴링)
+  - [x]소프트 삭제 파일 정리 Cron: isActive=false인 이미지의 모든 OrderItem.expiresAt 경과 확인 후 물리적 파일 삭제 스케줄러 구현
+  - [x] Playwright MCP를 활용한 상품 관리 E2E 테스트
 
-- **Task 029: 관리자 주문 관리 API 및 연동 (F015)**
-  - 주문 목록 조회 API: 검색 (주문번호, 이메일), 날짜 범위 필터, 페이지네이션
-  - 주문 상세 조회 API: 주문아이템 + 거래 로그 포함
-  - 이메일 재발송 Server Action: BullMQ를 통한 다운로드 링크 이메일 재전송
-  - 다운로드 횟수/만료 초기화 Server Action (관리자 전용)
-  - 관리자 주문 관리 페이지 더미 데이터를 실제 API로 교체
-  - Playwright MCP를 활용한 주문 관리 E2E 테스트
+- [x] **Task 029: 관리자 주문 관리 API 및 연동 (F015)** - 완료
+  - [x] 주문 목록 조회 API: 검색 (주문번호, 이메일), 날짜 범위 필터, 페이지네이션
+  - [x] 주문 상세 조회 API: 주문아이템 + 거래 로그 포함
+  - [x] 이메일 재발송 Server Action: BullMQ를 통한 다운로드 링크 이메일 재전송
+  - [x] 다운로드 횟수/만료 초기화 Server Action (관리자 전용)
+  - [x] 관리자 주문 관리 페이지 더미 데이터를 실제 API로 교체
+  - [x] Playwright MCP를 활용한 주문 관리 E2E 테스트
 
 - **Task 030: 관리자 대시보드 통계 API 및 연동 (F016)**
-  - 매출 통계 API: 오늘/이번 주/이번 달 매출 집계
-  - 총 판매 건수 API
-  - 최근 주문 목록 API (최근 10건)
-  - 인기 상품 TOP 10 API (salesCount 기준)
-  - 일별/월별 매출 추이 API (Recharts 데이터 포맷)
-  - 관리자 대시보드 더미 데이터를 실제 API로 교체
-  - Playwright MCP를 활용한 대시보드 통계 E2E 테스트
+  - [x] 매출 통계 API: 오늘/이번 주/이번 달 매출 집계
+  - [x] 총 판매 건수 API
+  - [x] 최근 주문 목록 API (최근 10건)
+  - [x] 인기 상품 TOP 10 API (salesCount 기준)
+  - [x] 일별/월별 매출 추이 API (Recharts 데이터 포맷)
+  - [x] 관리자 대시보드 더미 데이터를 실제 API로 교체
+  - [x] Playwright MCP를 활용한 대시보드 통계 E2E 테스트
 
 ---
 

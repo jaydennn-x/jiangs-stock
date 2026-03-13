@@ -1,10 +1,15 @@
 import { Queue } from 'bullmq'
 import type { ConnectionOptions } from 'bullmq'
-import type { ImageProcessingJobData, EmailJobData } from './job-types'
+import type {
+  ImageProcessingJobData,
+  EmailJobData,
+  CleanupJobData,
+} from './job-types'
 
 export const QUEUE_NAMES = {
   IMAGE_PROCESSING: 'image-processing',
   EMAIL: 'email',
+  CLEANUP: 'cleanup',
   DEAD_LETTER: 'dead-letter',
 } as const
 
@@ -38,3 +43,5 @@ export const imageProcessingQueue = createQueue<ImageProcessingJobData>(
 )
 
 export const emailQueue = createQueue<EmailJobData>(QUEUE_NAMES.EMAIL)
+
+export const cleanupQueue = createQueue<CleanupJobData>(QUEUE_NAMES.CLEANUP)

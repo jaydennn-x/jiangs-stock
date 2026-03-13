@@ -4,7 +4,10 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
   images: {
-    formats: ['image/webp', 'image/avif'],
+    formats: ['image/avif', 'image/webp'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384, 640],
+    qualities: [75, 85, 95, 100],
     remotePatterns: [
       {
         protocol: 'https',
@@ -14,6 +17,9 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     optimizePackageImports: ['lucide-react'],
+    serverActions: {
+      bodySizeLimit: '50mb',
+    },
   },
   async headers() {
     return [

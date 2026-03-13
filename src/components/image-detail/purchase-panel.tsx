@@ -48,7 +48,7 @@ export function PurchasePanel({ image }: PurchasePanelProps) {
       price,
       basePrice: image.basePrice,
       imageName: image.name,
-      thumbnailUrl: image.thumbnailUrl,
+      thumbnailUrl: `/api/images/thumbnail/${image.id}`,
     })
     if (session?.user) {
       await addToServerCart(image.id, selectedSize, selectedLicense)
@@ -64,10 +64,10 @@ export function PurchasePanel({ image }: PurchasePanelProps) {
     <div className="sticky top-6 space-y-5">
       {/* 이미지 이름 + 현재 선택 가격 */}
       <div>
-        <h1 className="text-xl leading-snug font-bold text-gray-900">
+        <h1 className="text-xl leading-snug font-bold text-gray-900 dark:text-gray-100">
           {image.name}
         </h1>
-        <p className="mt-3 text-3xl font-bold text-gray-900">
+        <p className="mt-3 text-3xl font-bold text-gray-900 dark:text-gray-100">
           {formatPrice(price)}
         </p>
       </div>

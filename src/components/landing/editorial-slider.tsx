@@ -38,16 +38,16 @@ export function EditorialSlider() {
   const next = () => setCurrent(i => (i + 1) % SLIDES.length)
 
   return (
-    <section className="bg-white py-12">
+    <section className="bg-white py-12 dark:bg-black">
       <div className="relative flex items-center">
         {/* 이전 버튼 */}
         <button
           type="button"
           onClick={prev}
-          className="absolute left-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white shadow-md transition-shadow hover:shadow-lg"
+          className="absolute left-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white shadow-md transition-shadow hover:shadow-lg dark:border-gray-700 dark:bg-gray-800"
           aria-label="이전 슬라이드"
         >
-          <ChevronLeft className="h-5 w-5 text-gray-600" />
+          <ChevronLeft className="h-5 w-5 text-gray-600 dark:text-gray-200" />
         </button>
 
         {/* 슬라이드 트랙 */}
@@ -96,10 +96,10 @@ export function EditorialSlider() {
         <button
           type="button"
           onClick={next}
-          className="absolute right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white shadow-md transition-shadow hover:shadow-lg"
+          className="absolute right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white shadow-md transition-shadow hover:shadow-lg dark:border-gray-700 dark:bg-gray-800"
           aria-label="다음 슬라이드"
         >
-          <ChevronRight className="h-5 w-5 text-gray-600" />
+          <ChevronRight className="h-5 w-5 text-gray-600 dark:text-gray-200" />
         </button>
       </div>
 
@@ -112,7 +112,7 @@ export function EditorialSlider() {
             onClick={() => setCurrent(i)}
             className={cn(
               'h-1.5 rounded-full transition-all duration-300',
-              i === current ? 'w-6 bg-gray-800' : 'w-1.5 bg-gray-300'
+              i === current ? 'w-6 bg-gray-800 dark:bg-gray-200' : 'w-1.5 bg-gray-300 dark:bg-gray-600'
             )}
             aria-label={`슬라이드 ${i + 1}`}
           />

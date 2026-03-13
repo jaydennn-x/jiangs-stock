@@ -29,8 +29,8 @@ export async function serveFile(
     return new Response('Storage not configured', { status: 500 })
   }
 
-  const normalizedAbsolute = path.normalize(absolutePath)
-  const normalizedRoot = path.normalize(storageRoot)
+  const normalizedAbsolute = path.resolve(absolutePath)
+  const normalizedRoot = path.resolve(storageRoot)
   if (!normalizedAbsolute.startsWith(normalizedRoot)) {
     return new Response('Forbidden', { status: 403 })
   }

@@ -80,7 +80,7 @@ export function SearchResultsClient({
 
   return (
     <div>
-      <p className="mb-4 text-sm text-gray-500">
+      <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
         {totalCount > 0 && `총 ${totalCount.toLocaleString()}개`}
       </p>
 

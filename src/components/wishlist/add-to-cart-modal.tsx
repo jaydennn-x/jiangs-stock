@@ -41,7 +41,7 @@ export function AddToCartModal({
       licenseType: selectedLicense,
       price: calculatePrice(image.basePrice, selectedSize, selectedLicense),
       imageName: image.name,
-      thumbnailUrl: image.thumbnailUrl,
+      thumbnailUrl: `/api/images/thumbnail/${image.id}`,
     })
     onOpenChange(false)
   }
@@ -55,7 +55,7 @@ export function AddToCartModal({
 
         <div className="relative h-32 w-full overflow-hidden rounded">
           <ProtectedImage
-            src={image.thumbnailUrl}
+            src={`/api/images/thumbnail/${image.id}`}
             alt={image.name}
             fill
             sizes="(max-width: 768px) 100vw, 448px"

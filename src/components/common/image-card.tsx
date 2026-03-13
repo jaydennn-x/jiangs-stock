@@ -10,11 +10,7 @@ import { formatPrice } from '@/lib/price'
 import { ProtectedImage } from './protected-image'
 import type { Image } from '@/types/models'
 
-const ASPECT_MAP: Record<string, string> = {
-  LANDSCAPE: 'aspect-[4/3]',
-  PORTRAIT: 'aspect-[3/4]',
-  SQUARE: 'aspect-square',
-}
+const ASPECT_CLASS = 'aspect-square'
 
 interface ImageCardProps {
   image: Image
@@ -37,18 +33,18 @@ export function ImageCard({
   className,
 }: ImageCardProps) {
   const [isWishlisted, setIsWishlisted] = useState(false)
-  const aspectClass = ASPECT_MAP[image.orientation] ?? 'aspect-[4/3]'
   const src = resolveImageSrc(image.thumbnailUrl, image.id)
 
   return (
     <div className={cn('group relative overflow-hidden rounded-sm', className)}>
       <Link href={`/images/${image.id}`}>
-        <div className={cn('relative overflow-hidden', aspectClass)}>
+        <div className={cn('relative overflow-hidden', ASPECT_CLASS)}>
           <ProtectedImage
             src={src}
             alt={image.name}
             fill
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+            quality={100}
             className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
 

@@ -12,6 +12,7 @@ interface ProtectedImageProps {
   fill?: boolean
   className?: string
   sizes?: string
+  quality?: number
 }
 
 export function ProtectedImage({
@@ -22,6 +23,7 @@ export function ProtectedImage({
   fill,
   className,
   sizes,
+  quality,
 }: ProtectedImageProps) {
   return (
     <Image
@@ -31,9 +33,10 @@ export function ProtectedImage({
       height={fill ? undefined : height}
       fill={fill}
       sizes={sizes}
+      quality={quality}
       className={cn('select-none', className)}
       draggable={false}
-      unoptimized={src.startsWith('/api/')}
+      unoptimized={false}
       onContextMenu={e => e.preventDefault()}
       onDragStart={e => e.preventDefault()}
     />

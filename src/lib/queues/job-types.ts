@@ -9,3 +9,7 @@ export interface EmailJobData {
   type: 'ORDER_CONFIRMATION' | 'ADMIN_LOGIN_ALERT'
   payload: Record<string, unknown>
 }
+
+export interface CleanupJobData {
+  triggeredAt: string
+}

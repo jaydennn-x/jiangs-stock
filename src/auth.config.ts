@@ -27,7 +27,7 @@ export const authConfig: NextAuthConfig = {
   callbacks: {
     jwt({ token, user }) {
       if (user) {
-        if ('role' in user) token.role = (user as { role: UserRole }).role
+        if ('role' in user && user.role) token.role = (user as { role: UserRole }).role
         if (user.id) token.sub = user.id
       }
       return token
@@ -39,8 +39,9 @@ export const authConfig: NextAuthConfig = {
       }
       return session
     },
-    authorized({ auth: session }) {
-      return !!session
+    authorized() {
+      // 인증 체크는 middleware.ts에서 직접 처리
+      return true
     },
   },
   cookies: {

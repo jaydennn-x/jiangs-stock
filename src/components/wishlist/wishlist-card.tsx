@@ -26,7 +26,7 @@ export function WishlistCard({ image, className }: WishlistCardProps) {
       <Link href={`/images/${image.id}`}>
         <div className="relative aspect-[4/3] overflow-hidden">
           <ProtectedImage
-            src={image.thumbnailUrl}
+            src={`/api/images/thumbnail/${image.id}`}
             alt={image.name}
             fill
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"

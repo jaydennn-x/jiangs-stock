@@ -20,20 +20,28 @@ const TRENDING_TAGS = [
 
 const HERO_TABS = ['이미지', '비디오', '에디토리얼']
 
-const HERO_MOSAIC_SEEDS = [10, 20, 30, 40, 50, 60, 70, 80]
+const HERO_MOSAIC_IMAGES = [
+  '/hero/201003_SDC12851.jpg',
+  '/hero/201107_IMG_5951.jpg',
+  '/hero/202006_IMG_7641.jpg',
+  '/hero/202011_IMG_8667.jpg',
+  '/hero/202204_IMG_0090.jpg',
+  '/hero/202204_IMG_0109.jpg',
+  '/hero/202204_IMG_0435.jpg',
+  '/hero/202204_IMG_0465.jpg',
+]
 
-const GRID_ROW_HEIGHTS = [280, 380, 300]
 
 function HeroSection() {
   return (
     <div className="relative flex min-h-[88vh] items-center justify-center overflow-hidden bg-black">
       <div className="absolute inset-0 grid grid-cols-4 grid-rows-2 gap-px opacity-60">
-        {HERO_MOSAIC_SEEDS.map(seed => (
+        {HERO_MOSAIC_IMAGES.map(src => (
           <div
-            key={seed}
+            key={src}
             className="relative overflow-hidden"
             style={{
-              backgroundImage: `url(https://picsum.photos/seed/${seed}/600/500)`,
+              backgroundImage: `url(${src})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}
@@ -90,37 +98,31 @@ function HeroSection() {
 
 function FullBleedGrid({ images }: { images: Image[] }) {
   return (
-    <section className="border-t border-gray-100">
+    <section className="border-t border-gray-100 dark:border-gray-800">
       <div className="flex items-center justify-between px-6 py-6 md:px-10">
-        <h2 className="text-lg font-semibold tracking-tight text-gray-900">
+        <h2 className="text-lg font-semibold tracking-tight text-gray-900 dark:text-gray-100">
           베스트셀러
         </h2>
         <Link
           href="/search?sort=popular"
-          className="text-sm text-gray-500 transition-colors hover:text-gray-900"
+          className="text-sm text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
         >
           전체 보기 →
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 gap-px bg-gray-200 sm:grid-cols-2 lg:grid-cols-3">
-        {images.slice(0, 9).map((image, i) => (
+      <div className="grid grid-cols-2 gap-px bg-gray-200 dark:bg-gray-800 sm:grid-cols-3">
+        {images.slice(0, 9).map(image => (
           <Link
             key={image.id}
             href={`/images/${image.id}`}
             className="group block"
           >
-            <div
-              className="relative overflow-hidden"
-              style={{
-                height:
-                  GRID_ROW_HEIGHTS[Math.floor(i / 3) % GRID_ROW_HEIGHTS.length],
-              }}
-            >
+            <div className="relative aspect-square overflow-hidden">
               <div
                 className="absolute inset-0 transition-transform duration-500 group-hover:scale-105"
                 style={{
-                  backgroundImage: `url(${image.thumbnailUrl})`,
+                  backgroundImage: `url(/api/images/thumbnail/${image.id})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                 }}
@@ -139,7 +141,7 @@ function FullBleedGrid({ images }: { images: Image[] }) {
       <div className="flex justify-center py-8">
         <Link
           href="/search"
-          className="rounded-sm border border-gray-300 px-8 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:border-gray-800 hover:text-gray-900"
+          className="rounded-sm border border-gray-300 px-8 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:border-gray-800 hover:text-gray-900 dark:border-gray-600 dark:text-gray-300 dark:hover:border-gray-400 dark:hover:text-gray-100"
         >
           더 많은 이미지 보기
         </Link>
@@ -150,37 +152,31 @@ function FullBleedGrid({ images }: { images: Image[] }) {
 
 function NewImagesGrid({ images }: { images: Image[] }) {
   return (
-    <section className="border-t border-gray-100">
+    <section className="border-t border-gray-100 dark:border-gray-800">
       <div className="flex items-center justify-between px-6 py-6 md:px-10">
-        <h2 className="text-lg font-semibold tracking-tight text-gray-900">
+        <h2 className="text-lg font-semibold tracking-tight text-gray-900 dark:text-gray-100">
           최신 이미지
         </h2>
         <Link
           href="/search?sort=latest"
-          className="text-sm text-gray-500 transition-colors hover:text-gray-900"
+          className="text-sm text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
         >
           전체 보기 →
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 gap-px bg-gray-200 sm:grid-cols-2 lg:grid-cols-3">
-        {images.slice(0, 9).map((image, i) => (
+      <div className="grid grid-cols-2 gap-px bg-gray-200 dark:bg-gray-800 sm:grid-cols-3">
+        {images.slice(0, 9).map(image => (
           <Link
             key={image.id}
             href={`/images/${image.id}`}
             className="group block"
           >
-            <div
-              className="relative overflow-hidden"
-              style={{
-                height:
-                  GRID_ROW_HEIGHTS[Math.floor(i / 3) % GRID_ROW_HEIGHTS.length],
-              }}
-            >
+            <div className="relative aspect-square overflow-hidden">
               <div
                 className="absolute inset-0 transition-transform duration-500 group-hover:scale-105"
                 style={{
-                  backgroundImage: `url(${image.thumbnailUrl})`,
+                  backgroundImage: `url(/api/images/thumbnail/${image.id})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                 }}
@@ -199,7 +195,7 @@ function NewImagesGrid({ images }: { images: Image[] }) {
       <div className="flex justify-center py-8">
         <Link
           href="/search"
-          className="rounded-sm border border-gray-300 px-8 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:border-gray-800 hover:text-gray-900"
+          className="rounded-sm border border-gray-300 px-8 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:border-gray-800 hover:text-gray-900 dark:border-gray-600 dark:text-gray-300 dark:hover:border-gray-400 dark:hover:text-gray-100"
         >
           더 많은 이미지 보기
         </Link>
@@ -245,7 +241,7 @@ export default async function HomePage() {
   const { newImages, bestImages } = await fetchLandingImages()
 
   return (
-    <main className="bg-white">
+    <main className="bg-white dark:bg-black">
       <HeroSection />
       <EditorialSlider />
       <NewImagesGrid images={newImages} />

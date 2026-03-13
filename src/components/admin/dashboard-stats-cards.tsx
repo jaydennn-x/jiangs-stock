@@ -1,53 +1,6 @@
 import { TrendingUp, Calendar, BarChart2, ShoppingBag } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { dummyOrders } from '@/lib/dummy'
-
-function isSameDay(a: Date, b: Date) {
-  return (
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate()
-  )
-}
-
-function isSameWeek(date: Date, now: Date) {
-  const startOfWeek = new Date(now)
-  startOfWeek.setDate(
-    now.getDate() - now.getDay() + (now.getDay() === 0 ? -6 : 1)
-  )
-  startOfWeek.setHours(0, 0, 0, 0)
-  const endOfWeek = new Date(startOfWeek)
-  endOfWeek.setDate(startOfWeek.getDate() + 6)
-  endOfWeek.setHours(23, 59, 59, 999)
-  return date >= startOfWeek && date <= endOfWeek
-}
-
-function isSameMonth(a: Date, b: Date) {
-  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth()
-}
-
-function calcStats() {
-  const now = new Date()
-  const completed = dummyOrders.filter(
-    o => o.status === 'COMPLETED' && o.paidAt != null
-  )
-
-  const todaySales = completed
-    .filter(o => isSameDay(o.paidAt!, now))
-    .reduce((sum, o) => sum + o.totalAmount, 0)
-
-  const weekSales = completed
-    .filter(o => isSameWeek(o.paidAt!, now))
-    .reduce((sum, o) => sum + o.totalAmount, 0)
-
-  const monthSales = completed
-    .filter(o => isSameMonth(o.paidAt!, now))
-    .reduce((sum, o) => sum + o.totalAmount, 0)
-
-  const totalCount = completed.reduce((sum, o) => sum + o.items.length, 0)
-
-  return { todaySales, weekSales, monthSales, totalCount }
-}
+import { getDashboardStats } from '@/lib/actions/admin-dashboard'
 
 const STATS_CONFIG = [
   {
@@ -76,8 +29,8 @@ const STATS_CONFIG = [
   },
 ]
 
-export function DashboardStatsCards() {
-  const stats = calcStats()
+export async function DashboardStatsCards() {
+  const stats = await getDashboardStats()
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">

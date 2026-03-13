@@ -11,7 +11,7 @@ export default function BuyerLayout({
     <CartSyncProvider>
       <div className="flex min-h-screen flex-col">
         <Header />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 bg-white dark:bg-black">{children}</main>
         <Footer />
       </div>
     </CartSyncProvider>

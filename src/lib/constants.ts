@@ -22,7 +22,7 @@ export const ALLOWED_IMAGE_FORMATS = ['jpeg', 'png', 'tiff'] as const
 
 export const SHARP_OUTPUT_QUALITY = {
   JPEG: 90,
-  WEBP: 85,
+  WEBP: 90,
 } as const
 
 export const SHARP_LIMIT_INPUT_PIXELS = 300_000_000 as const

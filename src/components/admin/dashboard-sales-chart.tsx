@@ -10,67 +10,18 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from 'recharts'
+import { Loader2 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { dummyOrders } from '@/lib/dummy'
+import { useSalesChart } from '@/lib/hooks/use-admin-dashboard'
 
 type ChartMode = 'daily' | 'monthly'
 
-interface ChartEntry {
-  label: string
-  amount: number
-}
-
-function getLast7DaysData(): ChartEntry[] {
-  const now = new Date()
-  return Array.from({ length: 7 }, (_, i) => {
-    const date = new Date(now)
-    date.setDate(now.getDate() - (6 - i))
-    date.setHours(0, 0, 0, 0)
-
-    const next = new Date(date)
-    next.setDate(date.getDate() + 1)
-
-    const amount = dummyOrders
-      .filter(
-        o =>
-          o.status === 'COMPLETED' &&
-          o.paidAt != null &&
-          o.paidAt >= date &&
-          o.paidAt < next
-      )
-      .reduce((sum, o) => sum + o.totalAmount, 0)
-
-    const label = `${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`
-    return { label, amount }
-  })
-}
-
-function getLast6MonthsData(): ChartEntry[] {
-  const now = new Date()
-  return Array.from({ length: 6 }, (_, i) => {
-    const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1)
-    const nextMonth = new Date(d.getFullYear(), d.getMonth() + 1, 1)
-
-    const amount = dummyOrders
-      .filter(
-        o =>
-          o.status === 'COMPLETED' &&
-          o.paidAt != null &&
-          o.paidAt >= d &&
-          o.paidAt < nextMonth
-      )
-      .reduce((sum, o) => sum + o.totalAmount, 0)
-
-    const label = `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}`
-    return { label, amount }
-  })
-}
-
 export function DashboardSalesChart() {
   const [mode, setMode] = useState<ChartMode>('daily')
+  const { data, isLoading, isError } = useSalesChart(mode)
 
-  const data = mode === 'daily' ? getLast7DaysData() : getLast6MonthsData()
+  const chartData = data?.data ?? []
 
   return (
     <Card>
@@ -96,37 +47,51 @@ export function DashboardSalesChart() {
         </div>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart
-            data={data}
-            margin={{ top: 4, right: 8, left: 8, bottom: 4 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-            <XAxis
-              dataKey="label"
-              tick={{ fontSize: 12 }}
-              tickLine={false}
-              axisLine={false}
-            />
-            <YAxis
-              tick={{ fontSize: 12 }}
-              tickLine={false}
-              axisLine={false}
-              tickFormatter={v => (v === 0 ? '0' : `${(v / 1000).toFixed(0)}k`)}
-            />
-            <Tooltip
-              formatter={value => [
-                `${Number(value).toLocaleString('ko-KR')}원`,
-                '매출',
-              ]}
-            />
-            <Bar
-              dataKey="amount"
-              radius={[4, 4, 0, 0]}
-              className="fill-primary"
-            />
-          </BarChart>
-        </ResponsiveContainer>
+        {isLoading ? (
+          <div className="flex h-[300px] items-center justify-center">
+            <Loader2 className="text-muted-foreground h-6 w-6 animate-spin" />
+          </div>
+        ) : isError ? (
+          <div className="flex h-[300px] items-center justify-center">
+            <p className="text-destructive text-sm">
+              매출 데이터를 불러오는 데 실패했습니다.
+            </p>
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart
+              data={chartData}
+              margin={{ top: 4, right: 8, left: 8, bottom: 4 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+              <XAxis
+                dataKey="label"
+                tick={{ fontSize: 12 }}
+                tickLine={false}
+                axisLine={false}
+              />
+              <YAxis
+                tick={{ fontSize: 12 }}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={v =>
+                  v === 0 ? '0' : `${(v / 1000).toFixed(0)}k`
+                }
+              />
+              <Tooltip
+                formatter={value => [
+                  `${Number(value).toLocaleString('ko-KR')}원`,
+                  '매출',
+                ]}
+              />
+              <Bar
+                dataKey="amount"
+                radius={[4, 4, 0, 0]}
+                className="fill-primary"
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        )}
       </CardContent>
     </Card>
   )

@@ -25,13 +25,6 @@ import {
   getStrengthPercent,
 } from '@/lib/password-strength'
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Progress } from '@/components/ui/progress'
@@ -128,13 +121,15 @@ export function SignupForm() {
   }
 
   return (
-    <Card>
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl">회원가입</CardTitle>
-        <CardDescription>새 계정을 만들어 서비스를 시작하세요</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
+    <div className="space-y-6">
+      <div className="text-center">
+        <h2 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">Create account</h2>
+        <p className="mt-1.5 text-[13px] text-gray-500 dark:text-gray-400">
+          새 계정을 만들어 서비스를 시작하세요
+        </p>
+      </div>
+
+      <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             {/* 이메일 */}
             <FormField
@@ -142,7 +137,7 @@ export function SignupForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>이메일 *</FormLabel>
+                  <FormLabel className="text-[13px] font-medium">이메일 *</FormLabel>
                   <FormControl>
                     <Input
                       type="email"
@@ -161,7 +156,7 @@ export function SignupForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>비밀번호 *</FormLabel>
+                  <FormLabel className="text-[13px] font-medium">비밀번호 *</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Input
@@ -200,7 +195,7 @@ export function SignupForm() {
               name="passwordConfirm"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>비밀번호 확인 *</FormLabel>
+                  <FormLabel className="text-[13px] font-medium">비밀번호 확인 *</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Input
@@ -235,7 +230,7 @@ export function SignupForm() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>이름 (선택)</FormLabel>
+                  <FormLabel className="text-[13px] font-medium">이름 (선택)</FormLabel>
                   <FormControl>
                     <Input placeholder="홍길동" {...field} />
                   </FormControl>
@@ -250,7 +245,7 @@ export function SignupForm() {
               name="country"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>국가 (선택)</FormLabel>
+                  <FormLabel className="text-[13px] font-medium">국가 (선택)</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -276,7 +271,7 @@ export function SignupForm() {
               name="birthYear"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>출생연도 (선택)</FormLabel>
+                  <FormLabel className="text-[13px] font-medium">출생연도 (선택)</FormLabel>
                   <Select
                     onValueChange={val => field.onChange(Number(val))}
                     value={field.value?.toString()}
@@ -314,7 +309,7 @@ export function SignupForm() {
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel className="cursor-pointer font-normal">
+                    <FormLabel className="cursor-pointer text-[13px] font-normal">
                       <Link
                         href="/terms"
                         className="text-primary underline-offset-4 hover:underline"
@@ -344,7 +339,7 @@ export function SignupForm() {
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel className="cursor-pointer font-normal">
+                    <FormLabel className="cursor-pointer text-[13px] font-normal">
                       <Link
                         href="/privacy"
                         className="text-primary underline-offset-4 hover:underline"
@@ -365,24 +360,12 @@ export function SignupForm() {
               </p>
             )}
 
-            <Button type="submit" className="w-full" disabled={isPending}>
+            <Button type="submit" className="w-full text-sm font-semibold tracking-wide" disabled={isPending}>
               {isPending ? '가입 중...' : '회원가입하기'}
             </Button>
           </form>
         </Form>
 
-        <div className="mt-6 text-center">
-          <p className="text-muted-foreground text-sm">
-            이미 계정이 있으신가요?{' '}
-            <Link
-              href="/login"
-              className="text-primary underline-offset-4 hover:underline"
-            >
-              로그인
-            </Link>
-          </p>
-        </div>
-      </CardContent>
-    </Card>
+    </div>
   )
 }

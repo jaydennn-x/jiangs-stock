@@ -51,8 +51,8 @@ export function SearchHeader({
   const title = query ? `"${query}" 검색 결과` : '전체 이미지'
 
   return (
-    <div className="mb-6 flex items-center justify-between border-b border-gray-100 py-4">
-      <h1 className="text-base font-semibold text-gray-900">{title}</h1>
+    <div className="mb-6 flex items-center justify-between border-b border-gray-100 py-4 dark:border-gray-800">
+      <h1 className="text-base font-semibold text-gray-900 dark:text-gray-100">{title}</h1>
 
       <div className="flex items-center gap-3">
         {/* 모바일 필터 버튼 */}

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Search, X } from 'lucide-react'
+import { Search, X, Loader2 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -15,15 +15,8 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { OrderDetailModal } from '@/components/admin/order-detail-modal'
-import type { DummyOrder } from '@/lib/dummy'
-import type { User, Image } from '@/types/models'
+import { useAdminOrders } from '@/lib/hooks/use-admin-orders'
 import type { OrderStatus } from '@/types/enums'
-
-interface AdminOrdersClientProps {
-  orders: DummyOrder[]
-  users: User[]
-  images: Image[]
-}
 
 const ITEMS_PER_PAGE = 10
 
@@ -44,110 +37,66 @@ const ORDER_STATUS_VARIANT: Record<
   CANCELLED: 'outline',
 }
 
-export function AdminOrdersClient({
-  orders,
-  users,
-  images,
-}: AdminOrdersClientProps) {
-  const [localOrders, setLocalOrders] = useState<DummyOrder[]>(() => [
-    ...orders,
-  ])
-  const [orderNumberQuery, setOrderNumberQuery] = useState('')
-  const [emailQuery, setEmailQuery] = useState('')
+export function AdminOrdersClient() {
+  const [search, setSearch] = useState('')
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [detailModalOpen, setDetailModalOpen] = useState(false)
-  const [detailTarget, setDetailTarget] = useState<DummyOrder | null>(null)
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
 
-  function getUserEmail(userId: string) {
-    return users.find(u => u.id === userId)?.email ?? ''
-  }
-
-  const filtered = localOrders.filter(order => {
-    const email = getUserEmail(order.userId)
-    const orderNumMatch = order.orderNumber
-      .toLowerCase()
-      .includes(orderNumberQuery.toLowerCase())
-    const emailMatch = email.toLowerCase().includes(emailQuery.toLowerCase())
-    const fromMatch =
-      !dateFrom || new Date(order.createdAt) >= new Date(dateFrom)
-    const toMatch =
-      !dateTo || new Date(order.createdAt) <= new Date(dateTo + 'T23:59:59')
-    return orderNumMatch && emailMatch && fromMatch && toMatch
+  const { data, isPending, isError } = useAdminOrders({
+    page: currentPage,
+    limit: ITEMS_PER_PAGE,
+    search: search || undefined,
+    startDate: dateFrom || undefined,
+    endDate: dateTo || undefined,
   })
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE))
-  const paginated = filtered.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  )
+  const orders = data?.orders ?? []
+  const total = data?.total ?? 0
+  const totalPages = data?.totalPages ?? 1
 
-  function handleQueryChange(setter: (v: string) => void, value: string) {
+  function handleSearchChange(value: string) {
+    setSearch(value)
+    setCurrentPage(1)
+  }
+
+  function handleDateChange(setter: (v: string) => void, value: string) {
     setter(value)
     setCurrentPage(1)
   }
 
   function handleReset() {
-    setOrderNumberQuery('')
-    setEmailQuery('')
+    setSearch('')
     setDateFrom('')
     setDateTo('')
     setCurrentPage(1)
   }
 
-  function handleDetailClick(order: DummyOrder) {
-    setDetailTarget(order)
+  function handleDetailClick(orderId: string) {
+    setSelectedOrderId(orderId)
     setDetailModalOpen(true)
   }
 
-  function handleResetDownload(orderId: string, itemId: string) {
-    setLocalOrders(prev =>
-      prev.map(o =>
-        o.id !== orderId
-          ? o
-          : {
-              ...o,
-              items: o.items.map(i =>
-                i.id !== itemId ? i : { ...i, downloadCount: 0 }
-              ),
-            }
-      )
-    )
-  }
-
   const pageNumbers = getPaginationNumbers(currentPage, totalPages)
-
-  const hasFilter = orderNumberQuery || emailQuery || dateFrom || dateTo
+  const hasFilter = search || dateFrom || dateTo
 
   return (
     <div className="space-y-4">
       {/* 검색 바 */}
       <Card>
         <CardContent className="flex flex-wrap items-end gap-3 pt-4">
-          <div className="min-w-[160px] flex-1 space-y-1">
-            <label className="text-muted-foreground text-xs">주문번호</label>
+          <div className="min-w-[200px] flex-1 space-y-1">
+            <label className="text-muted-foreground text-xs">
+              주문번호 / 이메일
+            </label>
             <div className="relative">
               <Search className="text-muted-foreground absolute top-1/2 left-2.5 h-3.5 w-3.5 -translate-y-1/2" />
               <Input
-                value={orderNumberQuery}
-                onChange={e =>
-                  handleQueryChange(setOrderNumberQuery, e.target.value)
-                }
-                placeholder="주문번호 검색"
-                className="pl-8"
-              />
-            </div>
-          </div>
-
-          <div className="min-w-[160px] flex-1 space-y-1">
-            <label className="text-muted-foreground text-xs">이메일</label>
-            <div className="relative">
-              <Search className="text-muted-foreground absolute top-1/2 left-2.5 h-3.5 w-3.5 -translate-y-1/2" />
-              <Input
-                value={emailQuery}
-                onChange={e => handleQueryChange(setEmailQuery, e.target.value)}
-                placeholder="이메일 검색"
+                value={search}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                placeholder="주문번호 또는 이메일 검색"
                 className="pl-8"
               />
             </div>
@@ -158,7 +107,7 @@ export function AdminOrdersClient({
             <input
               type="date"
               value={dateFrom}
-              onChange={e => handleQueryChange(setDateFrom, e.target.value)}
+              onChange={(e) => handleDateChange(setDateFrom, e.target.value)}
               className="border-input bg-background text-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border px-3 py-1 text-sm shadow-xs focus-visible:ring-1 focus-visible:outline-none"
             />
           </div>
@@ -168,7 +117,7 @@ export function AdminOrdersClient({
             <input
               type="date"
               value={dateTo}
-              onChange={e => handleQueryChange(setDateTo, e.target.value)}
+              onChange={(e) => handleDateChange(setDateTo, e.target.value)}
               className="border-input bg-background text-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border px-3 py-1 text-sm shadow-xs focus-visible:ring-1 focus-visible:outline-none"
             />
           </div>
@@ -183,7 +132,7 @@ export function AdminOrdersClient({
       </Card>
 
       {/* 결과 수 */}
-      <p className="text-muted-foreground text-sm">총 {filtered.length}건</p>
+      <p className="text-muted-foreground text-sm">총 {total}건</p>
 
       {/* 주문 목록 테이블 */}
       <Card>
@@ -201,7 +150,25 @@ export function AdminOrdersClient({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {paginated.length === 0 ? (
+              {isPending ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={7}
+                    className="py-12 text-center"
+                  >
+                    <Loader2 className="mx-auto h-6 w-6 animate-spin" />
+                  </TableCell>
+                </TableRow>
+              ) : isError ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={7}
+                    className="text-destructive py-12 text-center text-sm"
+                  >
+                    주문 목록을 불러오는데 실패했습니다.
+                  </TableCell>
+                </TableRow>
+              ) : orders.length === 0 ? (
                 <TableRow>
                   <TableCell
                     colSpan={7}
@@ -211,13 +178,12 @@ export function AdminOrdersClient({
                   </TableCell>
                 </TableRow>
               ) : (
-                paginated.map(order => {
-                  const email = getUserEmail(order.userId)
-                  const totalDownloaded = order.items.reduce(
+                orders.map((order) => {
+                  const totalDownloaded = order.orderItems.reduce(
                     (sum, item) => sum + item.downloadCount,
                     0
                   )
-                  const totalLimit = order.items.reduce(
+                  const totalLimit = order.orderItems.reduce(
                     (sum, item) => sum + item.downloadLimit,
                     0
                   )
@@ -227,17 +193,23 @@ export function AdminOrdersClient({
                         {order.orderNumber}
                       </TableCell>
                       <TableCell className="text-muted-foreground text-sm">
-                        {email || order.userId}
+                        {order.user.email}
                       </TableCell>
                       <TableCell className="text-right text-sm font-medium">
                         {order.totalAmount.toLocaleString('ko-KR')}원
                       </TableCell>
                       <TableCell className="text-muted-foreground text-sm">
-                        {order.createdAt.toLocaleDateString('ko-KR')}
+                        {new Date(order.createdAt).toLocaleDateString('ko-KR')}
                       </TableCell>
                       <TableCell>
-                        <Badge variant={ORDER_STATUS_VARIANT[order.status]}>
-                          {ORDER_STATUS_LABEL[order.status]}
+                        <Badge
+                          variant={
+                            ORDER_STATUS_VARIANT[
+                              order.status as OrderStatus
+                            ]
+                          }
+                        >
+                          {ORDER_STATUS_LABEL[order.status as OrderStatus]}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-sm">
@@ -255,7 +227,7 @@ export function AdminOrdersClient({
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleDetailClick(order)}
+                          onClick={() => handleDetailClick(order.id)}
                         >
                           상세보기
                         </Button>
@@ -276,7 +248,7 @@ export function AdminOrdersClient({
             variant="outline"
             size="sm"
             disabled={currentPage === 1}
-            onClick={() => setCurrentPage(prev => prev - 1)}
+            onClick={() => setCurrentPage((prev) => prev - 1)}
           >
             이전
           </Button>
@@ -286,7 +258,7 @@ export function AdminOrdersClient({
                 key={`ellipsis-${idx}`}
                 className="text-muted-foreground px-1 text-sm"
               >
-                …
+                ...
               </span>
             ) : (
               <Button
@@ -303,7 +275,7 @@ export function AdminOrdersClient({
             variant="outline"
             size="sm"
             disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage(prev => prev + 1)}
+            onClick={() => setCurrentPage((prev) => prev + 1)}
           >
             다음
           </Button>
@@ -312,13 +284,9 @@ export function AdminOrdersClient({
 
       {/* 주문 상세 모달 */}
       <OrderDetailModal
-        key={detailTarget?.id}
         open={detailModalOpen}
         onOpenChange={setDetailModalOpen}
-        order={detailTarget}
-        users={users}
-        images={images}
-        onResetDownload={handleResetDownload}
+        orderId={selectedOrderId}
       />
     </div>
   )

@@ -60,7 +60,7 @@ export default async function SearchPage({
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-black">
       <div className="mx-auto max-w-screen-xl px-4 py-8 md:px-8">
         <div className="flex gap-8">
           <SearchFilters

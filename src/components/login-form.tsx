@@ -10,13 +10,6 @@ import { useState } from 'react'
 import { loginSchema, type LoginFormData } from '@/types/forms'
 import { loginAction } from '@/lib/actions/auth'
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import {
@@ -40,33 +33,35 @@ export function LoginForm() {
   function onSubmit(data: LoginFormData) {
     startTransition(async () => {
       const result = await loginAction(data)
-      if (!result.success) {
+      if (result.success) {
+        window.location.href = '/'
+        return
+      } else {
         form.setError('root', { message: result.error })
       }
     })
   }
 
   return (
-    <Card className="mx-auto w-full max-w-md">
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-center text-2xl font-bold">로그인</CardTitle>
-        <CardDescription className="text-center">
+    <div className="space-y-6">
+      <div className="text-center">
+        <h2 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">Welcome back</h2>
+        <p className="mt-1.5 text-[13px] text-gray-500 dark:text-gray-400">
           계정에 로그인하여 서비스를 이용하세요
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
+        </p>
+      </div>
+
+      <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>이메일</FormLabel>
                   <FormControl>
                     <Input
                       type="email"
-                      placeholder="your@email.com"
+                      placeholder="Username or email"
                       {...field}
                     />
                   </FormControl>
@@ -80,12 +75,11 @@ export function LoginForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>비밀번호</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Input
                         type={showPassword ? 'text' : 'password'}
-                        placeholder="비밀번호를 입력하세요"
+                        placeholder="Password"
                         className="pr-10"
                         {...field}
                       />
@@ -122,7 +116,7 @@ export function LoginForm() {
                       }
                     />
                   </FormControl>
-                  <FormLabel className="cursor-pointer font-normal">
+                  <FormLabel className="cursor-pointer text-[13px] font-normal">
                     로그인 상태 유지
                   </FormLabel>
                 </FormItem>
@@ -135,24 +129,12 @@ export function LoginForm() {
               </p>
             )}
 
-            <Button type="submit" className="w-full" disabled={isPending}>
+            <Button type="submit" className="w-full text-sm font-semibold tracking-wide" disabled={isPending}>
               {isPending ? '로그인 중...' : '로그인하기'}
             </Button>
           </form>
         </Form>
 
-        <div className="mt-6 text-center">
-          <p className="text-muted-foreground text-sm">
-            아직 계정이 없으신가요?{' '}
-            <Link
-              href="/signup"
-              className="text-primary underline-offset-4 hover:underline"
-            >
-              회원가입
-            </Link>
-          </p>
-        </div>
-      </CardContent>
-    </Card>
+    </div>
   )
 }

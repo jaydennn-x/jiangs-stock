@@ -86,7 +86,7 @@ function cartItemToLocal(
     ),
     basePrice,
     imageName: item.image.name,
-    thumbnailUrl: item.image.thumbnailUrl,
+    thumbnailUrl: `/api/images/thumbnail/${item.imageId}`,
     addedAt: Date.now(),
   }
 }
