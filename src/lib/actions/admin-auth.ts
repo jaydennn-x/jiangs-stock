@@ -4,7 +4,8 @@ import { headers } from 'next/headers'
 import { AuthError } from 'next-auth'
 import { isRedirectError } from 'next/dist/client/components/redirect-error'
 import { z } from 'zod'
-import { signIn, signOut, auth } from '@/auth'
+import { signIn, signOut } from '@/auth'
+import { prisma } from '@/lib/prisma'
 import { isIpAllowed } from '@/lib/ip-whitelist'
 import { env } from '@/lib/env'
 import type { ActionResult } from './auth'
@@ -40,6 +41,16 @@ export async function adminLoginAction(
 
   const { email, password } = parsed.data
 
+  // signIn 전에 DB에서 직접 관리자 권한 확인
+  // (signIn 후 같은 요청에서 auth()를 호출하면 쿠키 미반영으로 세션이 없음)
+  const user = await prisma.user.findUnique({
+    where: { email },
+    select: { role: true },
+  })
+  if (!user || user.role !== 'ADMIN') {
+    return { success: false, error: '관리자 권한이 없습니다' }
+  }
+
   try {
     await signIn('credentials', { email, password, redirect: false })
   } catch (error) {
@@ -51,12 +62,6 @@ export async function adminLoginAction(
       }
     }
     return { success: false, error: '로그인 중 오류가 발생했습니다' }
-  }
-
-  const session = await auth()
-  if (!session?.user || session.user.role !== 'ADMIN') {
-    await signOut({ redirect: false })
-    return { success: false, error: '관리자 권한이 없습니다' }
   }
 
   return { success: true }
