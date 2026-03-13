@@ -1,7 +1,7 @@
 import fs from 'fs/promises'
 import path from 'path'
 
-const STORAGE_DIRS = ['originals', 'downloads', 'watermarks', 'thumbnails'] as const
+const STORAGE_DIRS = ['temp', 'downloads', 'watermarks', 'thumbnails'] as const
 
 function getStorageRoot(): string {
   const root = process.env.STORAGE_ROOT
@@ -18,8 +18,17 @@ export async function ensureStorageDirs(): Promise<void> {
   )
 }
 
-export function getOriginalPath(imageId: string, ext: string): string {
-  return path.join(getStorageRoot(), 'originals', `${imageId}.${ext}`)
+export function getTempOriginalPath(imageId: string, ext: string): string {
+  return path.join(getStorageRoot(), 'temp', `${imageId}.${ext}`)
+}
+
+export function deleteTempOriginal(imageId: string): Promise<void> {
+  const exts = ['jpeg', 'jpg', 'png', 'tiff']
+  return Promise.all(
+    exts.map(ext =>
+      fs.unlink(path.join(getStorageRoot(), 'temp', `${imageId}.${ext}`)).catch(() => {})
+    )
+  ).then(() => {})
 }
 
 export function getDownloadPath(imageId: string, size: string): string {
@@ -43,11 +52,11 @@ export async function cleanupImageFiles(imageId: string): Promise<void> {
   const sizes = ['XL', 'L', 'M', 'S']
 
   const filesToDelete = [
-    // Try common extensions for originals
-    getOriginalPath(imageId, 'jpeg'),
-    getOriginalPath(imageId, 'jpg'),
-    getOriginalPath(imageId, 'png'),
-    getOriginalPath(imageId, 'tiff'),
+    // Temp originals (processing 중 실패 시 정리)
+    getTempOriginalPath(imageId, 'jpeg'),
+    getTempOriginalPath(imageId, 'jpg'),
+    getTempOriginalPath(imageId, 'png'),
+    getTempOriginalPath(imageId, 'tiff'),
     // Watermark and thumbnail
     getWatermarkPath(imageId),
     getThumbnailPath(imageId),

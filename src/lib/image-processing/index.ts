@@ -3,7 +3,8 @@ export { createWatermark, createThumbnail } from './watermark'
 export {
   ensureStorageDirs,
   cleanupImageFiles,
-  getOriginalPath,
+  deleteTempOriginal,
+  getTempOriginalPath,
   getDownloadPath,
   getWatermarkPath,
   getThumbnailPath,

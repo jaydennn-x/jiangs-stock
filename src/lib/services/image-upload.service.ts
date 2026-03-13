@@ -4,8 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { imageProcessingQueue } from '@/lib/queues'
 import {
   ensureStorageDirs,
-  getOriginalPath,
-  getRelativePath,
+  getTempOriginalPath,
   cleanupImageFiles,
 } from '@/lib/image-processing/storage'
 import type { Orientation } from '@/types/enums'
@@ -30,8 +29,11 @@ export interface UploadImageInput {
 /**
  * Upload an image with atomic ordering guarantee:
  * 1. Create DB record (PENDING)
- * 2. Save original file to disk
+ * 2. Save original file to temp/ for processing
  * 3. Enqueue BullMQ processing job
+ *
+ * 원본은 temp/에 임시 저장 → 워커가 처리 후 삭제.
+ * 원본 보관은 로컬 PC (D:\jiangsstock)에서 관리.
  *
  * On failure at any step, previous steps are rolled back.
  */
@@ -65,22 +67,15 @@ export async function uploadImage(
   })
 
   try {
-    // Step 2: Save original file to disk
-    const originalPath = getOriginalPath(image.id, input.format)
-    await fs.mkdir(path.dirname(originalPath), { recursive: true })
-    await fs.writeFile(originalPath, input.file)
-
-    // Update originalUrl with relative path
-    const relativePath = getRelativePath(originalPath)
-    await prisma.image.update({
-      where: { id: image.id },
-      data: { originalUrl: relativePath },
-    })
+    // Step 2: Save original to temp/ for processing (not permanent storage)
+    const tempPath = getTempOriginalPath(image.id, input.format)
+    await fs.mkdir(path.dirname(tempPath), { recursive: true })
+    await fs.writeFile(tempPath, input.file)
 
     // Step 3: Enqueue BullMQ processing job
     await imageProcessingQueue.add('process-image', {
       imageId: image.id,
-      originalPath,
+      originalPath: tempPath,
       basePrice: input.basePrice,
     })
 

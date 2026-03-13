@@ -22,7 +22,7 @@ export function createCleanupWorker(): Worker<CleanupJobData> {
       const inactiveImages = await prisma.image.findMany({
         where: {
           isActive: false,
-          originalUrl: { not: '' },
+          watermarkUrl: { not: '' },
         },
         select: { id: true, name: true },
       })

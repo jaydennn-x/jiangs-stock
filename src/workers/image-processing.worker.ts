@@ -9,6 +9,7 @@ import { resizeImage } from '@/lib/image-processing/resize'
 import { createWatermark, createThumbnail } from '@/lib/image-processing/watermark'
 import {
   cleanupImageFiles,
+  deleteTempOriginal,
   ensureStorageDirs,
 } from '@/lib/image-processing/storage'
 import '@/lib/image-processing/sharp-config'
@@ -81,6 +82,9 @@ export function createImageProcessingWorker(): Worker<ImageProcessingJobData> {
             thumbnailUrl,
           },
         })
+
+        // 5. Delete temp original (원본은 로컬 PC에서 관리)
+        await deleteTempOriginal(imageId)
 
         console.log(
           '[image-worker] Successfully processed image:',
