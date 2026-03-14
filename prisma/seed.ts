@@ -10,28 +10,6 @@ import sharp from 'sharp'
 const adapter = new PrismaPg({ connectionString: process.env['DATABASE_URL'] })
 const prisma = new PrismaClient({ adapter })
 
-const CATEGORIES = [
-  { name: '자연/풍경', slug: 'nature-landscape' },
-  { name: '인물', slug: 'people' },
-  { name: '비즈니스', slug: 'business' },
-  { name: '음식', slug: 'food' },
-  { name: '건축', slug: 'architecture' },
-  { name: '기타', slug: 'other' },
-] as const
-
-async function seedCategories() {
-  console.log('카테고리 seed 중...')
-  for (let i = 0; i < CATEGORIES.length; i++) {
-    const cat = CATEGORIES[i]
-    await prisma.category.upsert({
-      where: { slug: cat.slug },
-      update: {},
-      create: { name: cat.name, slug: cat.slug, sortOrder: i },
-    })
-  }
-  console.log(`카테고리 ${CATEGORIES.length}건 완료`)
-}
-
 async function seedSystemConfig() {
   console.log('SystemConfig seed 중...')
   const configs = [
@@ -129,15 +107,7 @@ const DUMMY_COLOR_TAGS = [
   ['다색'],
 ]
 
-// 카테고리별 placeholder 색상
-const CATEGORY_COLORS: Record<string, { r: number; g: number; b: number }> = {
-  'nature-landscape': { r: 76, g: 140, b: 90 },
-  people: { r: 180, g: 120, b: 90 },
-  business: { r: 70, g: 90, b: 140 },
-  food: { r: 190, g: 130, b: 60 },
-  architecture: { r: 100, g: 100, b: 110 },
-  other: { r: 130, g: 130, b: 130 },
-}
+const PLACEHOLDER_COLOR = { r: 130, g: 130, b: 130 }
 
 async function generatePlaceholderImage(
   outputPath: string,
@@ -159,17 +129,13 @@ async function generatePlaceholderImage(
 
 async function seedDummyImages() {
   console.log('더미 이미지 seed 중...')
-  const categories = await prisma.category.findMany({
-    orderBy: { sortOrder: 'asc' },
-  })
 
   const storageRoot = process.env['STORAGE_ROOT'] ?? './storage'
   await fs.mkdir(path.join(storageRoot, 'thumbnails'), { recursive: true })
   await fs.mkdir(path.join(storageRoot, 'watermarks'), { recursive: true })
 
   for (let i = 1; i <= 30; i++) {
-    const catIdx = (i - 1) % categories.length
-    const cat = categories[catIdx]
+    const tagIdx = (i - 1) % DUMMY_TAGS.length
     const code = `IMG-${String(i).padStart(4, '0')}`
 
     const image = await prisma.image.upsert({
@@ -178,8 +144,7 @@ async function seedDummyImages() {
       create: {
         code,
         name: `더미 이미지 ${i}`,
-        description: `${cat.name} 카테고리 더미 이미지 ${i}번`,
-        categoryId: cat.id,
+        description: `더미 이미지 ${i}번`,
         orientation:
           i % 3 === 0 ? 'SQUARE' : i % 2 === 0 ? 'PORTRAIT' : 'LANDSCAPE',
         width: 6000,
@@ -196,8 +161,8 @@ async function seedDummyImages() {
           S: { path: `downloads/${code}/S.jpg`, width: 420, height: 280 },
         },
         fileSizesJson: { XL: 8500000, L: 3200000, M: 900000, S: 180000 },
-        tags: DUMMY_TAGS[catIdx] ?? ['기타'],
-        colorTags: DUMMY_COLOR_TAGS[catIdx] ?? ['다색'],
+        tags: DUMMY_TAGS[tagIdx] ?? ['기타'],
+        colorTags: DUMMY_COLOR_TAGS[tagIdx] ?? ['다색'],
         processingStatus: 'COMPLETED',
         isActive: true,
       },
@@ -216,7 +181,7 @@ async function seedDummyImages() {
     })
 
     // 실제 placeholder 파일 생성
-    const color = CATEGORY_COLORS[cat.slug] ?? { r: 130, g: 130, b: 130 }
+    const color = PLACEHOLDER_COLOR
     const thumbnailPath = path.join(storageRoot, thumbnailRelPath)
     const watermarkPath = path.join(storageRoot, watermarkRelPath)
 
@@ -275,7 +240,6 @@ async function seedDummyOrders() {
 
 async function main() {
   console.log('Seed 시작...')
-  await seedCategories()
   await seedSystemConfig()
   await seedAdminUser()
   await seedDummyUsers()

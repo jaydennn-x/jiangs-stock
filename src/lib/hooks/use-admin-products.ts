@@ -8,7 +8,6 @@ import {
   toggleProductActive,
   bulkDeleteProducts,
   bulkUpdateProductsActive,
-  bulkUpdateProductsCategory,
 } from '@/lib/actions/admin-products'
 import type {
   AdminProductListResponse,
@@ -30,7 +29,6 @@ export const adminProductKeys = {
 export interface AdminProductListParams {
   page?: number
   limit?: number
-  categoryId?: string
   isActive?: boolean | undefined
   search?: string
   sort?: string
@@ -45,7 +43,6 @@ async function fetchAdminProducts(
 
   if (params.page) searchParams.set('page', String(params.page))
   if (params.limit) searchParams.set('limit', String(params.limit))
-  if (params.categoryId) searchParams.set('categoryId', params.categoryId)
   if (params.isActive !== undefined)
     searchParams.set('isActive', String(params.isActive))
   if (params.search) searchParams.set('search', params.search)
@@ -247,14 +244,3 @@ export function useBulkUpdateProductsActive() {
   })
 }
 
-export function useBulkUpdateProductsCategory() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: ({ imageIds, categoryId }: { imageIds: string[]; categoryId: string }) =>
-      bulkUpdateProductsCategory(imageIds, categoryId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: adminProductKeys.all })
-    },
-  })
-}

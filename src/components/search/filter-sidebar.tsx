@@ -2,7 +2,6 @@
 
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
-import { dummyCategories } from '@/lib/dummy/categories'
 import type { Orientation } from '@/types/enums'
 
 const ORIENTATION_OPTIONS: { value: Orientation; label: string }[] = [
@@ -25,8 +24,6 @@ const COLOR_OPTIONS = [
 ]
 
 interface FilterSidebarProps {
-  selectedCategories: string[]
-  onCategoryChange: (categories: string[]) => void
   selectedOrientations: Orientation[]
   onOrientationChange: (orientations: Orientation[]) => void
   selectedColors: string[]
@@ -35,22 +32,12 @@ interface FilterSidebarProps {
 }
 
 export function FilterSidebar({
-  selectedCategories,
-  onCategoryChange,
   selectedOrientations,
   onOrientationChange,
   selectedColors,
   onColorChange,
   className,
 }: FilterSidebarProps) {
-  const toggleCategory = (slug: string) => {
-    if (selectedCategories.includes(slug)) {
-      onCategoryChange(selectedCategories.filter(c => c !== slug))
-    } else {
-      onCategoryChange([...selectedCategories, slug])
-    }
-  }
-
   const toggleOrientation = (orientation: Orientation) => {
     if (selectedOrientations.includes(orientation)) {
       onOrientationChange(selectedOrientations.filter(o => o !== orientation))
@@ -69,24 +56,6 @@ export function FilterSidebar({
 
   return (
     <aside className={cn('flex flex-col gap-6', className)}>
-      <div>
-        <h3 className="mb-3 text-sm font-semibold">카테고리</h3>
-        <div className="flex flex-col gap-2">
-          {dummyCategories.map(category => (
-            <label
-              key={category.id}
-              className="flex cursor-pointer items-center gap-2"
-            >
-              <Checkbox
-                checked={selectedCategories.includes(category.slug)}
-                onCheckedChange={() => toggleCategory(category.slug)}
-              />
-              <span className="text-sm">{category.name}</span>
-            </label>
-          ))}
-        </div>
-      </div>
-
       <div>
         <h3 className="mb-3 text-sm font-semibold">방향</h3>
         <div className="flex flex-col gap-2">

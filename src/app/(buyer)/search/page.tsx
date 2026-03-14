@@ -6,7 +6,6 @@ import { SearchResultsClient } from '@/components/search/search-results-client'
 
 type SearchPageParams = Promise<{
   q?: string
-  category?: string | string[]
   orientation?: string
   sort?: string
   tag?: string
@@ -36,11 +35,6 @@ export default async function SearchPage({
   const params = await searchParams
 
   const q = params.q ?? ''
-  const categories = Array.isArray(params.category)
-    ? params.category
-    : params.category
-      ? [params.category]
-      : []
   const orientation = (params.orientation ?? '') as Orientation | ''
   const sort = params.sort ?? 'popular'
   const tag = params.tag ?? ''
@@ -50,7 +44,6 @@ export default async function SearchPage({
 
   const initialParams = {
     q: q || undefined,
-    category: categories[0] || undefined,
     orientation: orientation || undefined,
     sort: sort as 'latest' | 'popular' | 'price_asc' | 'price_desc',
     tag: tag || undefined,
@@ -64,7 +57,6 @@ export default async function SearchPage({
       <div className="mx-auto max-w-screen-xl px-4 py-8 md:px-8">
         <div className="flex gap-8">
           <SearchFilters
-            selectedCategories={categories}
             selectedOrientation={orientation}
             minPrice={params.minPrice ?? ''}
             maxPrice={params.maxPrice ?? ''}
@@ -73,7 +65,6 @@ export default async function SearchPage({
             <SearchHeader
               query={q}
               currentSort={sort}
-              selectedCategories={categories}
               selectedOrientation={orientation}
               minPrice={params.minPrice ?? ''}
               maxPrice={params.maxPrice ?? ''}

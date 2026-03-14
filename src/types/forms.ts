@@ -47,7 +47,6 @@ export const productSchema = z.object({
     .min(1, '상품명을 입력해주세요')
     .max(100, '상품명은 100자 이하여야 합니다'),
   description: z.string().optional(),
-  categoryId: z.string().uuid('올바른 카테고리를 선택해주세요'),
   tags: z.array(z.string()).min(1, '태그를 최소 1개 입력해주세요'),
   colorTags: z.array(z.string()),
   basePrice: z.coerce.number().positive('기준 가격은 0보다 커야 합니다'),

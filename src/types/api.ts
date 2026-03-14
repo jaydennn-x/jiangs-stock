@@ -1,9 +1,8 @@
 import type { ImageSize, LicenseType, Orientation } from './enums'
-import type { Category, Image } from './models'
+import type { Image } from './models'
 
 export interface SearchParams {
   q?: string
-  category?: string
   tag?: string
   orientation?: Orientation
   colorTag?: string
@@ -43,7 +42,6 @@ export interface ImageListResponse {
 }
 
 export type ImageDetailResponse = Image & {
-  category: Category
   priceOptions: PriceOption[]
   isPurchased: boolean
 }

@@ -1,15 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/auth'
 import { prisma } from '@/lib/prisma'
+import { calculatePrice } from '@/lib/price'
+import { getExtendedMultiplier } from '@/lib/actions/cart'
+import type { ImageSize, LicenseType } from '@/types/enums'
 
-const SIZES = ['XL', 'L', 'M', 'S'] as const
-const SIZE_RATIOS: Record<string, number> = {
-  XL: 1.0,
-  L: 0.45,
-  M: 0.2,
-  S: 0.07,
-}
-const LICENSE_MULTIPLIERS: Record<string, number> = { STANDARD: 1, EXTENDED: 3 }
+const SIZES: ImageSize[] = ['XL', 'L', 'M', 'S']
+const LICENSE_TYPES: LicenseType[] = ['STANDARD', 'EXTENDED']
 
 export async function GET(
   _request: NextRequest,
@@ -22,7 +19,6 @@ export async function GET(
 
     const image = await prisma.image.findFirst({
       where: { id: imageId, isActive: true, processingStatus: 'COMPLETED' },
-      include: { category: true },
     })
 
     if (!image) {
@@ -48,6 +44,7 @@ export async function GET(
     }
 
     const basePrice = Number(image.basePrice)
+    const extendedMultiplier = await getExtendedMultiplier()
     const sizesJson = image.sizesJson as Record<
       string,
       { width: number; height: number; path: string }
@@ -55,12 +52,10 @@ export async function GET(
     const fileSizesJson = image.fileSizesJson as Record<string, number>
 
     const priceOptions = SIZES.flatMap(size =>
-      ['STANDARD', 'EXTENDED'].map(license => ({
+      LICENSE_TYPES.map(licenseType => ({
         size,
-        licenseType: license,
-        price: Math.round(
-          basePrice * SIZE_RATIOS[size] * LICENSE_MULTIPLIERS[license]
-        ),
+        licenseType,
+        price: calculatePrice(basePrice, size, licenseType, extendedMultiplier),
         width: sizesJson[size]?.width ?? 0,
         height: sizesJson[size]?.height ?? 0,
         fileSizeBytes: fileSizesJson[size] ?? 0,
@@ -72,7 +67,6 @@ export async function GET(
       data: {
         ...image,
         basePrice,
-        category: image.category,
         priceOptions,
         isPurchased,
       },

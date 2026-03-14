@@ -10,6 +10,3 @@ export type OrderStatus = 'PENDING' | 'COMPLETED' | 'FAILED' | 'CANCELLED'
 
 export type ProcessingStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED'
 
-export type TransactionAction = 'PAYMENT' | 'EMAIL_SENT' | 'DOWNLOAD'
-
-export type TransactionStatus = 'SUCCESS' | 'FAILURE'

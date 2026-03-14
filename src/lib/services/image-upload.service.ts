@@ -15,7 +15,6 @@ export interface UploadImageInput {
   code: string
   name: string
   description?: string
-  categoryId: string
   orientation: Orientation
   width: number
   height: number
@@ -48,7 +47,6 @@ export async function uploadImage(
       code: input.code,
       name: input.name,
       description: input.description,
-      categoryId: input.categoryId,
       orientation: input.orientation,
       width: input.width,
       height: input.height,

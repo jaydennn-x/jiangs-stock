@@ -24,20 +24,17 @@ import {
 } from '@/components/ui/select'
 import { useCreateProduct } from '@/lib/hooks/use-admin-products'
 import { IMAGE_UPLOAD_MAX_SIZE_MB } from '@/lib/constants'
-import type { Category } from '@/types/models'
 import type { Orientation } from '@/types/enums'
 
 interface ProductUploadModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  categories: Category[]
 }
 
 interface FieldErrors {
   file?: string
   name?: string
   code?: string
-  categoryId?: string
   basePrice?: string
   server?: string
 }
@@ -52,14 +49,12 @@ function FieldError({ message }: { message?: string }) {
 export function ProductUploadModal({
   open,
   onOpenChange,
-  categories,
 }: ProductUploadModalProps) {
   const [file, setFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
   const [name, setName] = useState('')
   const [code, setCode] = useState('')
   const [description, setDescription] = useState('')
-  const [categoryId, setCategoryId] = useState('')
   const [orientation, setOrientation] = useState<Orientation>('LANDSCAPE')
   const [basePrice, setBasePrice] = useState('')
   const [tags, setTags] = useState<string[]>([])
@@ -78,7 +73,6 @@ export function ProductUploadModal({
     setName('')
     setCode('')
     setDescription('')
-    setCategoryId('')
     setOrientation('LANDSCAPE')
     setBasePrice('')
     setTags([])
@@ -121,7 +115,6 @@ export function ProductUploadModal({
     const errs: FieldErrors = {}
     if (!file) errs.file = '이미지 파일을 선택해주세요'
     if (!name.trim()) errs.name = '상품명은 필수 항목입니다'
-    if (!categoryId) errs.categoryId = '카테고리를 선택해주세요'
     if (!basePrice || Number(basePrice) <= 0)
       errs.basePrice = '1원 이상의 가격을 입력해주세요'
     return errs
@@ -140,7 +133,6 @@ export function ProductUploadModal({
         name: name.trim(),
         code: code.trim(),
         description: description.trim() || undefined,
-        categoryId,
         orientation,
         basePrice: Number(basePrice),
         tags,
@@ -285,17 +277,17 @@ export function ProductUploadModal({
               id="upload-code"
               value={code}
               onChange={e => {
-                setCode(e.target.value)
+                setCode(e.target.value.replace(/\D/g, '').slice(0, 10))
                 clearField('code')
               }}
-              placeholder="비워두면 EXIF 촬영일 기반 자동 생성"
+              placeholder="숫자 10자리"
               className={`text-[14px] ${errors.code ? ERR_STYLE : ''}`}
             />
             {errors.code ? (
               <FieldError message={errors.code} />
             ) : (
               <p className="text-muted-foreground text-xs">
-                예: NAT-250313-001 (카테고리-촬영일-순번)
+                비워두면 숫자 난수로 자동 생성됩니다
               </p>
             )}
           </div>
@@ -329,32 +321,6 @@ export function ProductUploadModal({
               rows={3}
               className="text-[14px]"
             />
-          </div>
-
-          {/* 카테고리 */}
-          <div className="space-y-1.5">
-            <Label className="text-[13px]">
-              카테고리 <span className="text-destructive">*</span>
-            </Label>
-            <Select
-              value={categoryId}
-              onValueChange={v => {
-                setCategoryId(v)
-                clearField('categoryId')
-              }}
-            >
-              <SelectTrigger className={`text-[14px] ${errors.categoryId ? ERR_STYLE : ''}`}>
-                <SelectValue placeholder="카테고리 선택" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map(cat => (
-                  <SelectItem key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <FieldError message={errors.categoryId} />
           </div>
 
           {/* 방향 */}

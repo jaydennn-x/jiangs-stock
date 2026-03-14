@@ -43,6 +43,8 @@ next-env.d.ts
 # Claude Code
 .claude/
 .mcp.json
+.agents/
+skills-lock.json
 
 # scraped/generated assets
 /public/scraped/

@@ -15,14 +15,6 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from '@/components/ui/navigation-menu'
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -32,7 +24,6 @@ import {
 import { SearchInput } from '@/components/search/search-input'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { useCartStore } from '@/stores/cart-store'
-import { dummyCategories } from '@/lib/dummy/categories'
 import { Container } from './container'
 
 function CartButton() {
@@ -55,36 +46,6 @@ function CartButton() {
         </Badge>
       )}
     </div>
-  )
-}
-
-function CategoryNav() {
-  return (
-    <NavigationMenu>
-      <NavigationMenuList>
-        <NavigationMenuItem>
-          <NavigationMenuTrigger className="text-sm">
-            카테고리
-          </NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="grid w-48 gap-1 p-2">
-              {dummyCategories.map(cat => (
-                <li key={cat.id}>
-                  <NavigationMenuLink asChild>
-                    <Link
-                      href={`/search?category=${cat.slug}`}
-                      className="hover:bg-accent block rounded-sm px-3 py-2 text-sm transition-colors"
-                    >
-                      {cat.name}
-                    </Link>
-                  </NavigationMenuLink>
-                </li>
-              ))}
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-      </NavigationMenuList>
-    </NavigationMenu>
   )
 }
 
@@ -173,23 +134,6 @@ function MobileMenu({ userName, userRole }: { userName?: string | null; userRole
         </SheetHeader>
         <div className="flex flex-col gap-4 px-4 pb-4">
           <SearchInput placeholder="이미지 검색..." />
-          <div>
-            <p className="text-muted-foreground mb-2 text-xs font-semibold tracking-wider uppercase">
-              카테고리
-            </p>
-            <nav className="flex flex-col gap-1">
-              {dummyCategories.map(cat => (
-                <Link
-                  key={cat.id}
-                  href={`/search?category=${cat.slug}`}
-                  onClick={close}
-                  className="hover:bg-accent rounded-sm px-2 py-2 text-sm transition-colors"
-                >
-                  {cat.name}
-                </Link>
-              ))}
-            </nav>
-          </div>
           <div className="border-t pt-4">
             {userName ? (
               <nav className="flex flex-col gap-1">
@@ -266,9 +210,8 @@ export function Header() {
             <span className="text-xl font-bold">JiangsStock</span>
           </Link>
 
-          {/* 데스크톱 전용: 카테고리 + 검색 */}
+          {/* 데스크톱 전용: 검색 */}
           <div className="hidden md:contents">
-            <CategoryNav />
             <SearchInput
               className="max-w-sm flex-1"
               placeholder="이미지 검색..."

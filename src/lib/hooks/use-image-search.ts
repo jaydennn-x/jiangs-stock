@@ -9,7 +9,6 @@ async function fetchImages(
   const searchParams = new URLSearchParams()
 
   if (params.q) searchParams.set('q', params.q)
-  if (params.category) searchParams.set('category', params.category)
   if (params.tag) searchParams.set('tag', params.tag)
   if (params.orientation) searchParams.set('orientation', params.orientation)
   if (params.colorTag) searchParams.set('colorTag', params.colorTag)

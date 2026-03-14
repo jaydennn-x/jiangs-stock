@@ -26,12 +26,3 @@ export const SHARP_OUTPUT_QUALITY = {
 } as const
 
 export const SHARP_LIMIT_INPUT_PIXELS = 300_000_000 as const
-
-export const CATEGORIES: ReadonlyArray<{ name: string; slug: string }> = [
-  { name: '자연/풍경', slug: 'nature-landscape' },
-  { name: '인물', slug: 'people' },
-  { name: '비즈니스', slug: 'business' },
-  { name: '음식', slug: 'food' },
-  { name: '건축', slug: 'architecture' },
-  { name: '기타', slug: 'other' },
-] as const

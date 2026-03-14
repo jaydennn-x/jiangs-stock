@@ -29,7 +29,6 @@ async function main() {
     code: `TEST-${Date.now()}`,
     name: 'Test Stock Photo - Sunset',
     description: 'Pipeline test with real stock photo',
-    categoryId: await getFirstCategoryId(),
     orientation: metadata.width! > metadata.height! ? 'LANDSCAPE' : metadata.width! < metadata.height! ? 'PORTRAIT' : 'SQUARE',
     width: metadata.width!,
     height: metadata.height!,
@@ -109,12 +108,6 @@ async function main() {
   }
 
   await prisma.$disconnect()
-}
-
-async function getFirstCategoryId(): Promise<string> {
-  const category = await prisma.category.findFirst()
-  if (!category) throw new Error('No categories found. Run seed first.')
-  return category.id
 }
 
 main().catch(err => {

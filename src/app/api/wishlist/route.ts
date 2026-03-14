@@ -16,9 +16,7 @@ export async function GET(_request: NextRequest) {
     const items = await prisma.wishlist.findMany({
       where: { userId },
       include: {
-        image: {
-          include: { category: true },
-        },
+        image: true,
       },
       orderBy: { createdAt: 'desc' },
     })

@@ -76,23 +76,11 @@ model User {
   cart      Cart?
 }
 
-model Category {
-  id          String  @id @default(cuid())
-  name        String
-  slug        String  @unique
-  description String?
-  sortOrder   Int     @default(0)
-  isActive    Boolean @default(true)
-
-  images Image[]
-}
-
 model Image {
   id               String           @id @default(cuid())
   code             String           @unique
   name             String
   description      String?
-  categoryId       String
   orientation      Orientation
   width            Int
   height           Int
@@ -112,12 +100,11 @@ model Image {
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
 
-  category   Category    @relation(fields: [categoryId], references: [id])
   orderItems OrderItem[]
   wishlists  Wishlist[]
   cartItems  CartItem[]
 
-  @@index([categoryId, isActive])
+  @@index([isActive])
 }
 
 model Order {

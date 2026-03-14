@@ -3,9 +3,6 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { SlidersHorizontal } from 'lucide-react'
 
-import { cn } from '@/lib/utils'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
@@ -17,15 +14,6 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 
-const CATEGORIES = [
-  { id: 'cat-001', name: '자연/풍경', slug: 'nature-landscape' },
-  { id: 'cat-002', name: '인물', slug: 'people' },
-  { id: 'cat-003', name: '비즈니스', slug: 'business' },
-  { id: 'cat-004', name: '음식', slug: 'food' },
-  { id: 'cat-005', name: '건축', slug: 'architecture' },
-  { id: 'cat-006', name: '기타', slug: 'other' },
-]
-
 const ORIENTATIONS = [
   { value: 'LANDSCAPE', label: '가로형' },
   { value: 'PORTRAIT', label: '세로형' },
@@ -33,14 +21,12 @@ const ORIENTATIONS = [
 ]
 
 interface SearchFiltersProps {
-  selectedCategories: string[]
   selectedOrientation: string
   minPrice: string
   maxPrice: string
 }
 
 function FilterContent({
-  selectedCategories,
   selectedOrientation,
   minPrice,
   maxPrice,
@@ -50,18 +36,6 @@ function FilterContent({
 
   function buildParams() {
     return new URLSearchParams(searchParams.toString())
-  }
-
-  function toggleCategory(slug: string) {
-    const params = buildParams()
-    const current = params.getAll('category')
-    params.delete('category')
-    if (current.includes(slug)) {
-      current.filter(c => c !== slug).forEach(c => params.append('category', c))
-    } else {
-      ;[...current, slug].forEach(c => params.append('category', c))
-    }
-    router.push('/search?' + params.toString())
   }
 
   function setOrientation(value: string) {
@@ -94,32 +68,6 @@ function FilterContent({
 
   return (
     <div className="w-full space-y-5">
-      {/* 카테고리 */}
-      <div>
-        <p className="mb-3 text-xs font-semibold tracking-wider text-gray-500 uppercase">
-          카테고리
-        </p>
-        <div className="space-y-2.5">
-          {CATEGORIES.map(cat => (
-            <div key={cat.slug} className="flex items-center gap-2.5">
-              <Checkbox
-                id={`cat-${cat.slug}`}
-                checked={selectedCategories.includes(cat.slug)}
-                onCheckedChange={() => toggleCategory(cat.slug)}
-              />
-              <Label
-                htmlFor={`cat-${cat.slug}`}
-                className="cursor-pointer text-sm font-normal text-gray-700 dark:text-gray-300"
-              >
-                {cat.name}
-              </Label>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <Separator />
-
       {/* 방향 */}
       <div>
         <p className="mb-3 text-xs font-semibold tracking-wider text-gray-500 uppercase">
@@ -216,7 +164,6 @@ export function SearchFilters(props: SearchFiltersProps) {
 
 export function MobileFilterSheet(props: SearchFiltersProps) {
   const activeCount =
-    props.selectedCategories.length +
     (props.selectedOrientation ? 1 : 0) +
     (props.minPrice ? 1 : 0) +
     (props.maxPrice ? 1 : 0)

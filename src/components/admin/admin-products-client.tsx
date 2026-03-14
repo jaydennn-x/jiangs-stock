@@ -17,7 +17,6 @@ import {
   Search,
   Eye,
   EyeOff,
-  FolderEdit,
 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -60,17 +59,13 @@ import {
   useToggleProductActive,
   useBulkDeleteProducts,
   useBulkUpdateProductsActive,
-  useBulkUpdateProductsCategory,
 } from '@/lib/hooks/use-admin-products'
 import type { ImageWithCategory } from '@/lib/validations/admin-product'
 import type { ProcessingStatus } from '@/types/enums'
-import type { Category } from '@/types/models'
 
 // --- Types ---
 
-interface AdminProductsClientProps {
-  categories: Category[]
-}
+interface AdminProductsClientProps {}
 
 interface EditingCell {
   rowId: string
@@ -455,10 +450,7 @@ function EditableTagsCell({
 
 const columnHelper = createColumnHelper<ImageWithCategory>()
 
-export function AdminProductsClient({
-  categories,
-}: AdminProductsClientProps) {
-  const [categoryFilter, setCategoryFilter] = useState('all')
+export function AdminProductsClient({}: AdminProductsClientProps) {
   const [activeFilter, setActiveFilter] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [searchInput, setSearchInput] = useState('')
@@ -471,8 +463,6 @@ export function AdminProductsClient({
   const [savingCell, setSavingCell] = useState<EditingCell | null>(null)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false)
-  const [bulkCategoryOpen, setBulkCategoryOpen] = useState(false)
-  const [bulkCategoryId, setBulkCategoryId] = useState('')
   const [editTarget, setEditTarget] = useState<ImageWithCategory | null>(null)
 
   const searchTimerRef = useRef<ReturnType<typeof setTimeout>>(null)
@@ -480,7 +470,6 @@ export function AdminProductsClient({
   const queryParams = {
     page: currentPage,
     limit: 20,
-    categoryId: categoryFilter !== 'all' ? categoryFilter : undefined,
     isActive:
       activeFilter === 'active'
         ? true
@@ -496,7 +485,6 @@ export function AdminProductsClient({
   const toggleMutation = useToggleProductActive()
   const bulkDeleteMutation = useBulkDeleteProducts()
   const bulkActiveMutation = useBulkUpdateProductsActive()
-  const bulkCategoryMutation = useBulkUpdateProductsCategory()
 
   const images = data?.images ?? []
   const totalPages = data?.totalPages ?? 1
@@ -511,11 +499,6 @@ export function AdminProductsClient({
       setSearchQuery(value)
       setCurrentPage(1)
     }, 300)
-  }
-
-  function handleCategoryFilter(value: string) {
-    setCategoryFilter(value)
-    setCurrentPage(1)
   }
 
   function handleActiveFilter(value: string) {
@@ -586,8 +569,7 @@ export function AdminProductsClient({
   const selectedArray = Array.from(selectedIds)
   const isBulkPending =
     bulkDeleteMutation.isPending ||
-    bulkActiveMutation.isPending ||
-    bulkCategoryMutation.isPending
+    bulkActiveMutation.isPending
 
   function handleBulkDelete() {
     const ids = [...selectedArray]
@@ -615,33 +597,6 @@ export function AdminProductsClient({
       }
     )
   }
-
-  function handleBulkCategoryConfirm() {
-    if (!bulkCategoryId) return
-    const count = selectedArray.length
-    const catName = categories.find(c => c.id === bulkCategoryId)?.name
-    bulkCategoryMutation.mutate(
-      { imageIds: selectedArray, categoryId: bulkCategoryId },
-      {
-        onSuccess: () => {
-          toast.success(`${count}개 상품의 카테고리가 "${catName}"(으)로 변경되었습니다`)
-          clearSelection()
-          setBulkCategoryOpen(false)
-          setBulkCategoryId('')
-        },
-        onError: () => {
-          toast.error('카테고리 변경에 실패했습니다')
-        },
-        onSettled: () => setBulkCategoryOpen(false),
-      }
-    )
-  }
-
-  // --- Category options ---
-  const categoryOptions = categories.map(cat => ({
-    value: cat.id,
-    label: cat.name,
-  }))
 
   const orientationOptions = [
     { value: 'LANDSCAPE', label: '가로' },
@@ -733,26 +688,6 @@ export function AdminProductsClient({
               <Loader2 className="text-muted-foreground absolute -right-1 top-0.5 h-3 w-3 animate-spin" />
             )}
           </div>
-        )
-      },
-    }),
-
-    columnHelper.accessor('categoryId', {
-      header: () => <span className="text-xs">카테고리</span>,
-      size: 120,
-      cell: ({ row }) => {
-        const img = row.original
-        return (
-          <EditableSelectCell
-            value={img.categoryId}
-            imageId={img.id}
-            field="categoryId"
-            options={categoryOptions}
-            editingCell={editingCell}
-            onStartEdit={handleStartEdit}
-            onSave={handleSaveField}
-            onCancel={handleCancelEdit}
-          />
         )
       },
     }),
@@ -910,20 +845,6 @@ export function AdminProductsClient({
           />
         </div>
 
-        <Select value={categoryFilter} onValueChange={handleCategoryFilter}>
-          <SelectTrigger className="h-9 w-36">
-            <SelectValue placeholder="카테고리" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">전체</SelectItem>
-            {categories.map(cat => (
-              <SelectItem key={cat.id} value={cat.id}>
-                {cat.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
         <Select value={activeFilter} onValueChange={handleActiveFilter}>
           <SelectTrigger className="h-9 w-28">
             <SelectValue placeholder="활성 여부" />
@@ -971,19 +892,6 @@ export function AdminProductsClient({
           >
             <EyeOff className="h-3.5 w-3.5" />
             비활성화
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 gap-1.5"
-            disabled={isBulkPending}
-            onClick={() => {
-              setBulkCategoryId('')
-              setBulkCategoryOpen(true)
-            }}
-          >
-            <FolderEdit className="h-3.5 w-3.5" />
-            카테고리 변경
           </Button>
           <Button
             variant="outline"
@@ -1127,7 +1035,6 @@ export function AdminProductsClient({
       <ProductUploadModal
         open={uploadModalOpen}
         onOpenChange={setUploadModalOpen}
-        categories={categories}
       />
 
       {/* Edit Modal */}
@@ -1137,7 +1044,6 @@ export function AdminProductsClient({
           if (!open) setEditTarget(null)
         }}
         image={editTarget}
-        categories={categories}
       />
 
       {/* Delete Confirmation */}
@@ -1191,40 +1097,6 @@ export function AdminProductsClient({
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Bulk Category Change */}
-      <AlertDialog open={bulkCategoryOpen} onOpenChange={setBulkCategoryOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {selectedIds.size}개 상품의 카테고리를 변경합니다
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              선택된 상품들의 카테고리가 일괄 변경됩니다.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <Select value={bulkCategoryId} onValueChange={setBulkCategoryId}>
-            <SelectTrigger>
-              <SelectValue placeholder="카테고리 선택" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map(cat => (
-                <SelectItem key={cat.id} value={cat.id}>
-                  {cat.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <AlertDialogFooter>
-            <AlertDialogCancel>취소</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleBulkCategoryConfirm}
-              disabled={!bulkCategoryId || bulkCategoryMutation.isPending}
-            >
-              {bulkCategoryMutation.isPending ? '변경 중...' : '변경'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   )
 }

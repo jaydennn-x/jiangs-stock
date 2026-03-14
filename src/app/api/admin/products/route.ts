@@ -18,16 +18,11 @@ export async function GET(request: NextRequest) {
     const { searchParams } = request.nextUrl
     const page = Math.max(1, Number(searchParams.get('page')) || 1)
     const limit = Math.min(50, Math.max(1, Number(searchParams.get('limit')) || 10))
-    const categoryId = searchParams.get('categoryId') || undefined
     const isActiveParam = searchParams.get('isActive')
     const search = searchParams.get('search') || undefined
     const sort = searchParams.get('sort') || 'createdAt_desc'
 
     const where: Prisma.ImageWhereInput = {}
-
-    if (categoryId) {
-      where.categoryId = categoryId
-    }
 
     if (isActiveParam !== null) {
       where.isActive = isActiveParam === 'true'
@@ -45,11 +40,6 @@ export async function GET(request: NextRequest) {
     const [images, total] = await Promise.all([
       prisma.image.findMany({
         where,
-        include: {
-          category: {
-            select: { id: true, name: true, slug: true },
-          },
-        },
         orderBy,
         skip: (page - 1) * limit,
         take: limit,

@@ -29,63 +29,17 @@ export async function requireAdmin(): Promise<string | null> {
   return null
 }
 
-// --- Category slug → 3-letter prefix mapping ---
-const CATEGORY_PREFIX: Record<string, string> = {
-  'nature-landscape': 'NAT',
-  people: 'PPL',
-  business: 'BIZ',
-  food: 'FUD',
-  architecture: 'ARC',
-  other: 'ETC',
-}
-
-async function generateProductCode(
-  categorySlug: string,
-  shootDateStr?: string
-): Promise<string> {
-  const prefix = CATEGORY_PREFIX[categorySlug] ?? 'ETC'
-
-  // Use shoot date from EXIF, fallback to today
-  let dateStr: string
-  if (shootDateStr) {
-    // Parse various formats: "2025:03:13", "2025-03-13", "20250313"
-    const cleaned = shootDateStr.replace(/[: ]/g, '-').slice(0, 10)
-    const d = new Date(cleaned)
-    if (!isNaN(d.getTime())) {
-      const yy = String(d.getFullYear()).slice(2)
-      const mm = String(d.getMonth() + 1).padStart(2, '0')
-      const dd = String(d.getDate()).padStart(2, '0')
-      dateStr = `${yy}${mm}${dd}`
-    } else {
-      dateStr = formatToday()
-    }
-  } else {
-    dateStr = formatToday()
-  }
-
-  // Find next sequence number for this prefix+date
-  const pattern = `${prefix}-${dateStr}-`
-  const lastImage = await prisma.image.findFirst({
-    where: { code: { startsWith: pattern } },
-    orderBy: { code: 'desc' },
-    select: { code: true },
-  })
-
-  let seq = 1
-  if (lastImage) {
-    const lastSeq = parseInt(lastImage.code.split('-').pop() ?? '0', 10)
-    seq = lastSeq + 1
-  }
-
-  return `${prefix}-${dateStr}-${String(seq).padStart(3, '0')}`
-}
-
-function formatToday(): string {
-  const now = new Date()
-  const yy = String(now.getFullYear()).slice(2)
-  const mm = String(now.getMonth() + 1).padStart(2, '0')
-  const dd = String(now.getDate()).padStart(2, '0')
-  return `${yy}${mm}${dd}`
+async function generateProductCode(): Promise<string> {
+  let code: string
+  do {
+    code = String(Math.floor(Math.random() * 9_000_000_000 + 1_000_000_000))
+    const exists = await prisma.image.findUnique({
+      where: { code },
+      select: { id: true },
+    })
+    if (!exists) break
+  } while (true)
+  return code
 }
 
 export async function createProduct(
@@ -172,11 +126,7 @@ export async function createProduct(
     // Auto-generate code if not provided
     let code = validated.data.code
     if (!code) {
-      const category = await prisma.category.findUnique({
-        where: { id: validated.data.categoryId },
-        select: { slug: true },
-      })
-      code = await generateProductCode(category?.slug ?? 'other', shootDate)
+      code = await generateProductCode()
     }
 
     const image = await uploadImage({
@@ -184,7 +134,6 @@ export async function createProduct(
       code,
       name: validated.data.name,
       description: validated.data.description,
-      categoryId: validated.data.categoryId,
       orientation: validated.data.orientation,
       width: sharpMetadata.width,
       height: sharpMetadata.height,
@@ -240,7 +189,6 @@ export async function updateProduct(
       data: {
         name: updateData.name,
         description: updateData.description,
-        categoryId: updateData.categoryId,
         orientation: updateData.orientation,
         basePrice: updateData.basePrice,
         tags: updateData.tags,
@@ -290,7 +238,6 @@ export async function deleteProduct(
 const INLINE_EDITABLE_FIELDS = [
   'name',
   'description',
-  'categoryId',
   'orientation',
   'basePrice',
   'tags',
@@ -328,7 +275,7 @@ export async function updateProductField(
 
     if (field === 'basePrice') {
       const num = Number(value)
-      if (isNaN(num) || num <= 0 || num > 10_000_000) {
+      if (isNaN(num) || num <= 0 || num > 999_999_999) {
         return { success: false, error: '유효한 가격을 입력해주세요' }
       }
       sanitizedValue = num
@@ -425,41 +372,6 @@ export async function bulkUpdateProductsActive(
   } catch (error) {
     console.error('[bulkUpdateProductsActive]', error)
     return { success: false, error: '일괄 상태 변경에 실패했습니다' }
-  }
-}
-
-export async function bulkUpdateProductsCategory(
-  imageIds: string[],
-  categoryId: string
-): Promise<AdminProductMutationResult> {
-  const authError = await requireAdmin()
-  if (authError) {
-    return { success: false, error: authError }
-  }
-
-  if (!imageIds.length || imageIds.length > 100) {
-    return { success: false, error: '1~100개의 상품을 선택해주세요' }
-  }
-
-  try {
-    const category = await prisma.category.findUnique({
-      where: { id: categoryId },
-      select: { id: true },
-    })
-    if (!category) {
-      return { success: false, error: '카테고리를 찾을 수 없습니다' }
-    }
-
-    await prisma.image.updateMany({
-      where: { id: { in: imageIds } },
-      data: { categoryId },
-    })
-
-    revalidatePath('/admin/products')
-    return { success: true }
-  } catch (error) {
-    console.error('[bulkUpdateProductsCategory]', error)
-    return { success: false, error: '일괄 카테고리 변경에 실패했습니다' }
   }
 }
 

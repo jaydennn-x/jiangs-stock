@@ -24,19 +24,16 @@ import {
 } from '@/components/ui/select'
 import { useUpdateProduct } from '@/lib/hooks/use-admin-products'
 import type { ImageWithCategory } from '@/lib/validations/admin-product'
-import type { Category } from '@/types/models'
 import type { Orientation } from '@/types/enums'
 
 interface ProductEditModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   image: ImageWithCategory | null
-  categories: Category[]
 }
 
 interface FieldErrors {
   name?: string
-  categoryId?: string
   basePrice?: string
   server?: string
 }
@@ -52,11 +49,9 @@ export function ProductEditModal({
   open,
   onOpenChange,
   image,
-  categories,
 }: ProductEditModalProps) {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
-  const [categoryId, setCategoryId] = useState('')
   const [orientation, setOrientation] = useState<Orientation>('LANDSCAPE')
   const [basePrice, setBasePrice] = useState('')
   const [tags, setTags] = useState<string[]>([])
@@ -72,7 +67,6 @@ export function ProductEditModal({
     if (image && open) {
       setName(image.name)
       setDescription(image.description ?? '')
-      setCategoryId(image.categoryId)
       setOrientation(image.orientation)
       setBasePrice(String(image.basePrice))
       setTags([...image.tags])
@@ -101,7 +95,6 @@ export function ProductEditModal({
   function validate(): FieldErrors {
     const errs: FieldErrors = {}
     if (!name.trim()) errs.name = '상품명은 필수 항목입니다'
-    if (!categoryId) errs.categoryId = '카테고리를 선택해주세요'
     if (!basePrice || Number(basePrice) <= 0)
       errs.basePrice = '1원 이상의 가격을 입력해주세요'
     return errs
@@ -121,7 +114,6 @@ export function ProductEditModal({
         imageId: image.id,
         name: name.trim(),
         description: description.trim() || undefined,
-        categoryId,
         orientation,
         basePrice: Number(basePrice),
         tags,
@@ -237,32 +229,6 @@ export function ProductEditModal({
               rows={3}
               className="text-[14px]"
             />
-          </div>
-
-          {/* 카테고리 */}
-          <div className="space-y-1.5">
-            <Label className="text-[13px]">
-              카테고리 <span className="text-destructive">*</span>
-            </Label>
-            <Select
-              value={categoryId}
-              onValueChange={v => {
-                setCategoryId(v)
-                clearField('categoryId')
-              }}
-            >
-              <SelectTrigger className={`text-[14px] ${errors.categoryId ? ERR_STYLE : ''}`}>
-                <SelectValue placeholder="카테고리 선택" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map(cat => (
-                  <SelectItem key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <FieldError message={errors.categoryId} />
           </div>
 
           {/* 방향 */}

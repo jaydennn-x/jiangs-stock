@@ -25,7 +25,6 @@ export async function GET(request: NextRequest) {
     const { searchParams } = request.nextUrl
 
     const q = searchParams.get('q') ?? ''
-    const category = searchParams.get('category') ?? ''
     const tag = searchParams.get('tag') ?? ''
     const orientation = searchParams.get('orientation') ?? ''
     const colorTag = searchParams.get('colorTag') ?? ''
@@ -51,10 +50,6 @@ export async function GET(request: NextRequest) {
         { description: { contains: q, mode: 'insensitive' } },
         { tags: { hasSome: [q] } },
       ]
-    }
-
-    if (category) {
-      where.category = { slug: category }
     }
 
     if (tag) {

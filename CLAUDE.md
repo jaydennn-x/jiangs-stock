@@ -20,6 +20,7 @@
 - **🧩 컴포넌트 패턴**: `@/docs/guides/component-patterns.md`
 - **⚡ Next.js 15.5.3 전문 가이드**: `@/docs/guides/nextjs-15.md`
 - **📝 폼 처리 완전 가이드**: `@/docs/guides/forms-react-hook-form.md`
+- **🔒 보안 다운로드 아키텍처**: `@/docs/guides/secure-download-architecture.md`
 
 ## ⚡ 자주 사용하는 명령어
 

@@ -21,11 +21,11 @@ const SIZE_RESOLUTIONS: Record<ImageSize, string> = {
 export function calculatePrice(
   basePrice: number,
   size: ImageSize,
-  licenseType: LicenseType
+  licenseType: LicenseType,
+  extendedMultiplier: number = DEFAULT_LICENSE_EXTENDED_MULTIPLIER
 ): number {
   const sizeRatio = SIZE_RATIOS[size]
-  const licenseMultiplier =
-    licenseType === 'EXTENDED' ? DEFAULT_LICENSE_EXTENDED_MULTIPLIER : 1
+  const licenseMultiplier = licenseType === 'EXTENDED' ? extendedMultiplier : 1
   return Math.round(basePrice * sizeRatio * licenseMultiplier)
 }
 

@@ -2,10 +2,8 @@
 
 import { auth } from '@/auth'
 import { prisma } from '@/lib/prisma'
-import {
-  SIZE_RATIOS,
-  DEFAULT_LICENSE_EXTENDED_MULTIPLIER,
-} from '@/lib/constants'
+import { DEFAULT_LICENSE_EXTENDED_MULTIPLIER } from '@/lib/constants'
+import { calculatePrice } from '@/lib/price'
 import type { ImageSize, LicenseType } from '@/types/enums'
 import type { LocalCartItem, PriceChangedItem } from '@/types/cart'
 
@@ -29,7 +27,7 @@ export type ValidateCartPricesResult =
   | { success: true; valid: boolean; changedItems: PriceChangedItem[] }
   | { success: false; error: string }
 
-async function getExtendedMultiplier(): Promise<number> {
+export async function getExtendedMultiplier(): Promise<number> {
   try {
     const config = await prisma.systemConfig.findUnique({
       where: { key: 'EXTENDED_LICENSE_MULTIPLIER' },
@@ -39,17 +37,6 @@ async function getExtendedMultiplier(): Promise<number> {
     // 폴백
   }
   return DEFAULT_LICENSE_EXTENDED_MULTIPLIER
-}
-
-function calculateServerPrice(
-  basePrice: number,
-  size: ImageSize,
-  licenseType: LicenseType,
-  extendedMultiplier: number
-): number {
-  const sizeRatio = SIZE_RATIOS[size]
-  const licenseMultiplier = licenseType === 'EXTENDED' ? extendedMultiplier : 1
-  return Math.round(basePrice * sizeRatio * licenseMultiplier)
 }
 
 type CartItemWithImage = {
@@ -78,7 +65,7 @@ function cartItemToLocal(
     imageId: item.imageId,
     size: item.size,
     licenseType: item.licenseType,
-    price: calculateServerPrice(
+    price: calculatePrice(
       basePrice,
       item.size,
       item.licenseType,
@@ -332,17 +319,21 @@ export async function validateCartPrices(
 ): Promise<ValidateCartPricesResult> {
   try {
     const extendedMultiplier = await getExtendedMultiplier()
+    const imageIds = [...new Set(items.map(i => i.imageId))]
+    const images = await prisma.image.findMany({
+      where: { id: { in: imageIds } },
+      select: { id: true, basePrice: true },
+    })
+    const priceMap = new Map(
+      images.map(img => [img.id, img.basePrice.toNumber()])
+    )
+
     const changedItems: PriceChangedItem[] = []
-
     for (const item of items) {
-      const image = await prisma.image.findUnique({
-        where: { id: item.imageId },
-        select: { basePrice: true },
-      })
-      if (!image) continue
+      const basePrice = priceMap.get(item.imageId)
+      if (basePrice === undefined) continue
 
-      const basePrice = image.basePrice.toNumber()
-      const serverPrice = calculateServerPrice(
+      const serverPrice = calculatePrice(
         basePrice,
         item.size,
         item.licenseType,

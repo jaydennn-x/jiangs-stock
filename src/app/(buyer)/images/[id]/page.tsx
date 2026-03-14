@@ -40,7 +40,6 @@ export default async function ImageDetailPage({ params }: Props) {
 
   const rawImage = await prisma.image.findFirst({
     where: { id, isActive: true, processingStatus: 'COMPLETED' },
-    include: { category: true },
   })
 
   if (!rawImage) notFound()
@@ -68,10 +67,10 @@ export default async function ImageDetailPage({ params }: Props) {
 
   const rawRelated = await prisma.image.findMany({
     where: {
-      categoryId: rawImage.categoryId,
       id: { not: id },
       isActive: true,
       processingStatus: 'COMPLETED',
+      ...(rawImage.tags.length > 0 && { tags: { hasSome: rawImage.tags } }),
     },
     orderBy: { salesCount: 'desc' },
     take: RELATED_IMAGES_LIMIT,

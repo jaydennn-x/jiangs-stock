@@ -12,7 +12,7 @@ export async function GET(
   try {
     const image = await prisma.image.findFirst({
       where: { id: imageId, isActive: true, processingStatus: 'COMPLETED' },
-      select: { categoryId: true },
+      select: { tags: true },
     })
 
     if (!image) {
@@ -27,10 +27,10 @@ export async function GET(
 
     const relatedImages = await prisma.image.findMany({
       where: {
-        categoryId: image.categoryId,
         id: { not: imageId },
         isActive: true,
         processingStatus: 'COMPLETED',
+        ...(image.tags.length > 0 && { tags: { hasSome: image.tags } }),
       },
       orderBy: { salesCount: 'desc' },
       take: RELATED_IMAGES_LIMIT,

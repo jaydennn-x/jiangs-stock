@@ -10,60 +10,17 @@ import {
 import { createProductSchema } from '@/lib/validations/admin-product'
 import { cleanupImageFiles } from '@/lib/image-processing/storage'
 
-// --- Category slug → 3-letter prefix mapping ---
-const CATEGORY_PREFIX: Record<string, string> = {
-  'nature-landscape': 'NAT',
-  people: 'PPL',
-  business: 'BIZ',
-  food: 'FUD',
-  architecture: 'ARC',
-  other: 'ETC',
-}
-
-function formatToday(): string {
-  const now = new Date()
-  const yy = String(now.getFullYear()).slice(2)
-  const mm = String(now.getMonth() + 1).padStart(2, '0')
-  const dd = String(now.getDate()).padStart(2, '0')
-  return `${yy}${mm}${dd}`
-}
-
-async function generateProductCode(
-  categorySlug: string,
-  shootDateStr?: string
-): Promise<string> {
-  const prefix = CATEGORY_PREFIX[categorySlug] ?? 'ETC'
-
-  let dateStr: string
-  if (shootDateStr) {
-    const cleaned = shootDateStr.replace(/[: ]/g, '-').slice(0, 10)
-    const d = new Date(cleaned)
-    if (!isNaN(d.getTime())) {
-      const yy = String(d.getFullYear()).slice(2)
-      const mm = String(d.getMonth() + 1).padStart(2, '0')
-      const dd = String(d.getDate()).padStart(2, '0')
-      dateStr = `${yy}${mm}${dd}`
-    } else {
-      dateStr = formatToday()
-    }
-  } else {
-    dateStr = formatToday()
-  }
-
-  const pattern = `${prefix}-${dateStr}-`
-  const lastImage = await prisma.image.findFirst({
-    where: { code: { startsWith: pattern } },
-    orderBy: { code: 'desc' },
-    select: { code: true },
-  })
-
-  let seq = 1
-  if (lastImage) {
-    const lastSeq = parseInt(lastImage.code.split('-').pop() ?? '0', 10)
-    seq = lastSeq + 1
-  }
-
-  return `${prefix}-${dateStr}-${String(seq).padStart(3, '0')}`
+async function generateProductCode(): Promise<string> {
+  let code: string
+  do {
+    code = String(Math.floor(Math.random() * 9_000_000_000 + 1_000_000_000))
+    const exists = await prisma.image.findUnique({
+      where: { code },
+      select: { id: true },
+    })
+    if (!exists) break
+  } while (true)
+  return code
 }
 
 export async function POST(request: NextRequest) {
@@ -116,8 +73,7 @@ export async function POST(request: NextRequest) {
       const issue = validated.error.issues[0]
       const fieldMap: Record<string, string> = {
         name: '상품명을 입력해주세요',
-        code: '상품 코드 형식이 올바르지 않습니다 (영문, 숫자, 하이픈만 가능)',
-        categoryId: '카테고리를 선택해주세요',
+        code: '상품 코드는 숫자만 입력 가능합니다',
         basePrice: '유효한 가격을 입력해주세요 (1원 이상)',
       }
       const field = String(issue?.path?.[0] ?? '')
@@ -175,11 +131,7 @@ export async function POST(request: NextRequest) {
     // Auto-generate code if not provided
     let code = validated.data.code
     if (!code) {
-      const category = await prisma.category.findUnique({
-        where: { id: validated.data.categoryId },
-        select: { slug: true },
-      })
-      code = await generateProductCode(category?.slug ?? 'other', shootDate)
+      code = await generateProductCode()
     }
 
     // Check for duplicate code
@@ -199,7 +151,6 @@ export async function POST(request: NextRequest) {
       code,
       name: validated.data.name,
       description: validated.data.description,
-      categoryId: validated.data.categoryId,
       orientation: validated.data.orientation,
       width: sharpMetadata.width,
       height: sharpMetadata.height,
@@ -214,8 +165,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, imageId: image.id })
   } catch (error) {
     console.error('[POST /api/admin/products/upload]', error)
+    const message = error instanceof Error ? error.message : String(error)
     return NextResponse.json(
-      { error: '상품 등록 중 서버 오류가 발생했습니다. 다시 시도해주세요.' },
+      { error: `상품 등록 중 서버 오류: ${message}` },
       { status: 500 }
     )
   }

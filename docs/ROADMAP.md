@@ -1,6 +1,6 @@
 # JiangsStock 개발 로드맵
 
-스톡 이미지를 크기별/라이선스별로 판매하고, 구매자에게 보안 다운로드 링크로 디지털 파일을 안전하게 전달하는 1인 개발 이커머스 플랫폼
+스톡 이미지를 크기별/라이선스별로 판매하고, 구매자에게 사이트 내 보안 다운로드를 통해 디지털 파일을 안전하게 전달하는 1인 개발 이커머스 플랫폼
 
 ## 개요
 
@@ -8,7 +8,7 @@ JiangsStock은 블로그/웹사이트/마케팅 자료용 고품질 이미지를
 
 - **이미지 검색 및 탐색**: 키워드, 태그, 카테고리, 색상, 방향 기반 검색과 무한스크롤
 - **크기/라이선스 기반 판매**: XL/L/M/S 크기와 스탠다드/확장 라이선스 조합 가격 체계
-- **보안 디지털 파일 전달**: UUID 토큰 기반 보안 다운로드 링크 (3회/7일 만료)
+- **보안 디지털 파일 전달**: 사이트 내 On-Demand 보안 다운로드 (3회/7일 만료, 프로세스 권한 분리)
 - **자동 이미지 처리**: Sharp + BullMQ 기반 비동기 리사이징/워터마크 합성
 - **결제 시스템**: 포트원 v2 또는 토스페이먼츠 연동 카드 결제
 - **관리자 대시보드**: 상품 관리, 주문 관리, 판매 통계
@@ -150,7 +150,7 @@ JiangsStock은 블로그/웹사이트/마케팅 자료용 고품질 이미지를
 
 - [x] **Task 011: 결제 페이지 및 결제 완료 페이지 UI 구현** - 완료
   - [x] 결제 페이지: 주문 요약 (이미지 목록, 옵션, 개별 가격), 총 결제 금액, 결제 수단 선택 영역 (PG 위젯 placeholder), 구매 동의 체크박스, "결제하기" 버튼
-  - [x] 결제 완료 페이지: 성공 메시지 + 주문번호 표시, 구매 이미지 목록 (썸네일/이름/옵션), 이미지별 "다운로드" 버튼 (더미), 다운로드 안내 (3회 한도/7일 만료), 이메일 발송 완료 안내, "구매 내역으로 이동" 버튼, "홈으로" 버튼
+  - [x] 결제 완료 페이지: 성공 메시지 + 주문번호 표시, 구매 이미지 목록 (썸네일/이름/옵션), 이미지별 "다운로드" 버튼 (더미, 사이트 내 다운로드), 다운로드 안내 (3회 한도/7일 만료, 마이페이지에서도 가능), 구매 확인 이메일 안내, "구매 내역으로 이동" 버튼, "홈으로" 버튼
   - [x] 결제 실패 상태 UI: 에러 메시지 + 재시도 버튼
 
 - [x] **Task 012: 위시리스트 페이지 UI 구현** - 완료
@@ -340,20 +340,25 @@ JiangsStock은 블로그/웹사이트/마케팅 자료용 고품질 이미지를
   - 서버 사이드 금액 검증: 클라이언트 금액과 서버 재계산 금액 일치 확인
   - Playwright MCP를 활용한 결제 플로우 E2E 테스트
 
-- **Task 032: 보안 파일 다운로드 구현 (F006)**
-  - 결제 완료 시 UUID 토큰 기반 보안 다운로드 링크 생성 (OrderItem별)
+- **Task 032: 보안 파일 다운로드 구현 (F006)** — 상세: `docs/guides/secure-download-architecture.md`
+  - 결제 완료 시 UUID 토큰 기반 다운로드 권한 생성 (OrderItem별, 사이트 내 전용)
   - 다운로드 API Route: `/api/downloads/[downloadToken]`
-  - 다운로드 검증: 토큰 유효성, 횟수 제한 (3회), 만료일 검증 (7일)
+  - 6중 보안 검증: 토큰 유효성, 만료일 (7일), 횟수 제한 (3회), 소유자 확인 (session.userId), Rate Limit (분당 5회), 주문 상태 (COMPLETED)
+  - **프로세스 권한 분리**: 웹서버(Next.js, webuser)는 원본 접근 불가, Worker(worker)만 원본 읽기
+  - **On-Demand 리사이즈**: Worker가 `ORIGINALS_ROOT/{Image.code}.jpg`에서 요청 사이즈 생성
+  - **AES-256-GCM 암호화**: Worker가 리사이즈 파일 암호화 → `pending-downloads/` 임시 저장, 키는 Redis (TTL 5분)
+  - **스트림 전송**: Next.js가 Redis 키로 복호화 → Response stream → 전송 완료 즉시 파일 삭제
   - Prisma 원자적 업데이트: `downloadCount: { increment: 1 }` (Race Condition 방지)
-  - fs.createReadStream 스트리밍 응답 + 적절한 Content-Disposition 헤더
   - 다운로드 IP/UA TransactionLog DOWNLOAD 기록
-  - 응답 헤더: Referrer-Policy: no-referrer, Cache-Control: private, no-store
+  - 응답 헤더: Referrer-Policy: no-referrer, Cache-Control: no-store, X-Content-Type-Options: nosniff
   - 결제 완료 페이지/마이페이지 다운로드 버튼 실제 연동
+  - 다운로드 준비 Worker: `src/workers/download-prepare.worker.ts` (BullMQ, 동시 처리 3건)
+  - 만료 파일 정리 Worker: `src/workers/download-cleanup.worker.ts` (Cron, 10분 주기)
   - Playwright MCP를 활용한 다운로드 플로우 E2E 테스트
 
 - **Task 033: 이메일 전송 워커 구현 (F007)**
-  - 이메일 전송 큐 워커: 결제 완료 이메일 (구매 확인 + 다운로드 링크)
-  - AWS SES 연동: 이메일 템플릿 작성 (구매 확인, 관리자 로그인 알림)
+  - 이메일 전송 큐 워커: 결제 완료 알림 이메일 (구매 확인 + 마이페이지 다운로드 안내, 다운로드 링크 미포함)
+  - AWS SES 연동: 이메일 템플릿 작성 (구매 확인 알림, 관리자 로그인 알림)
   - 이메일 발송 워커: 실패 시 자동 재시도 (최대 3회, 지수 백오프)
   - 실패 시 TransactionLog FAILURE 기록 (이메일 실패가 주문 상태에 영향 없음)
   - 관리자 로그인 알림 이메일: 로그인 성공 시 IP/UA/시각 포함 이메일 발송
@@ -393,8 +398,9 @@ JiangsStock은 블로그/웹사이트/마케팅 자료용 고품질 이미지를
 
 - **Task 037: AWS 인프라 구축 및 배포 설정** - 우선순위
   - EC2 인스턴스 설정: Node.js 런타임, PM2 프로세스 관리 (pm2-logrotate: max_size 50M, retain 7)
-  - EBS 볼륨 설정: `/data/jiangs-storage/` 디렉토리 구조 생성 (originals/, downloads/, watermarks/, thumbnails/)
-  - 파일 시스템 권한 설정: originals/ chmod 700
+  - EBS 볼륨 설정: `/data/jiangs-storage/` 디렉토리 구조 생성 (watermarks/, thumbnails/, pending-downloads/)
+  - 원본 이미지 디스크 마운트: `/mnt/originals/` (ORIGINALS_ROOT)
+  - OS 레벨 프로세스 권한 분리: webuser(Next.js) + worker(Worker) 계정 생성, 원본 디렉토리 chmod 700 worker 전용, pending-downloads/ 공유 그룹 설정
   - RDS PostgreSQL 16 인스턴스 설정
   - ElastiCache Redis 설정 (RDB + AOF 영속성 활성화)
   - ALB + ACM 인증서 설정 (HTTPS/TLS 종료)

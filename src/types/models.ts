@@ -4,8 +4,6 @@ import type {
   OrderStatus,
   Orientation,
   ProcessingStatus,
-  TransactionAction,
-  TransactionStatus,
   UserRole,
 } from './enums'
 
@@ -40,7 +38,6 @@ export interface Image {
   code: string
   name: string
   description?: string
-  categoryId: string
   orientation: Orientation
   width: number
   height: number
@@ -59,12 +56,6 @@ export interface Image {
   salesCount: number
   createdAt: Date
   updatedAt: Date
-}
-
-export interface Category {
-  id: string
-  name: string
-  slug: string
 }
 
 export interface Order {
@@ -94,61 +85,3 @@ export interface OrderItem {
   expiresAt: Date
 }
 
-export interface Wishlist {
-  id: string
-  userId: string
-  imageId: string
-  createdAt: Date
-}
-
-export interface Cart {
-  id: string
-  userId: string
-  createdAt: Date
-  updatedAt: Date
-}
-
-export interface CartItem {
-  id: string
-  cartId: string
-  imageId: string
-  size: ImageSize
-  licenseType: LicenseType
-  price: number
-}
-
-export interface PaymentTransactionDetails {
-  pgTxId: string
-  amount: number
-  method: string
-  approvedAt: string
-}
-
-export interface EmailTransactionDetails {
-  recipient: string
-  subject: string
-}
-
-export interface DownloadTransactionDetails {
-  ip: string
-  userAgent: string
-}
-
-export interface TransactionLog {
-  id: string
-  orderId: string
-  timestamp: Date
-  action: TransactionAction
-  status: TransactionStatus
-  details:
-    | PaymentTransactionDetails
-    | EmailTransactionDetails
-    | DownloadTransactionDetails
-}
-
-export interface SystemConfig {
-  key: string
-  value: string
-  description?: string
-  updatedAt: Date
-}

@@ -21,7 +21,6 @@ const SORT_OPTIONS = [
 interface SearchHeaderProps {
   query: string
   currentSort: string
-  selectedCategories: string[]
   selectedOrientation: string
   minPrice: string
   maxPrice: string
@@ -30,7 +29,6 @@ interface SearchHeaderProps {
 export function SearchHeader({
   query,
   currentSort,
-  selectedCategories,
   selectedOrientation,
   minPrice,
   maxPrice,
@@ -58,7 +56,6 @@ export function SearchHeader({
         {/* 모바일 필터 버튼 */}
         <div className="lg:hidden">
           <MobileFilterSheet
-            selectedCategories={selectedCategories}
             selectedOrientation={selectedOrientation}
             minPrice={minPrice}
             maxPrice={maxPrice}
